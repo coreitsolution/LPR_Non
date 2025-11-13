@@ -1,0 +1,317 @@
+.App {
+  text-align: center;
+}
+
+:root {
+  --background-color: #000000;
+  --text-color: #ffffff;
+  --primary-color: #2B9BED;
+  --primary-hover-color: #227CBE;
+  --primary-disable-color: #BCBCBC;
+  --tertiary-color: #BCBCBC;
+  --tertiary-hover-color: #969696;
+  --tertiary-disable-color: #222222;
+  --quaternary-color: #253745;
+  --delete-color: #EF4444;
+  --delete-hover-color: #BF3636 ;
+  --approve-unapprove-color: #FFF;
+  --approve-unapprove-hover-color: #EEE;
+  --approve-unapprove-disable-color: #BCBCBC;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+body .swal2-container {
+  z-index: 9999 !important;
+}
+
+body .swal2-popup {
+  z-index: 9999 !important;
+}
+
+body .swal2-backdrop-show {
+  z-index: 9998 !important;
+}
+
+.primary-btn {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+.primary-btn:hover {
+  background-color: var(--primary-hover-color) !important;
+}
+
+.primary-btn:disabled {
+  background-color: var(--primary-disable-color) !important;
+  color: black !important;
+}
+
+.secondary-btn {
+  background-color: white !important;
+  color: var(--primary-color) !important;
+  border: solid 1px var(--primary-color) !important;
+}
+
+.secondary-btn:hover {
+  background-color: #CCCCCC !important;
+}
+
+.secondary-btn-without-border {
+  background-color: white !important;
+  color: var(--primary-color) !important;
+}
+
+.secondary-btn-without-border:hover {
+  background-color: #CCCCCC !important;
+}
+
+.tertiary-btn {
+  background-color: var(--tertiary-color) !important;
+  color: black !important;
+}
+
+.tertiary-btn:hover {
+  background-color: var(--tertiary-hover-color) !important;
+}
+
+.tertiary-btn:disabled {
+  background-color: var(--tertiary-disable-color) !important;
+  color: black !important;
+}
+
+.quaternary-btn {
+  background-color: var(--quaternary-color) !important;
+  color: white !important;
+}
+
+.cancel-btn {
+  background-color: white !important;
+  color: black !important;
+  
+}
+
+.pin-map-btn {
+  background-color: #797979 !important;
+}
+
+.primary-checkpoint-search-btn {
+  background-color: #227CBE !important;
+  color: black !important;
+}
+
+.submit-btn {
+  background-color: #2B9BED !important;
+  color: white !important;
+}
+
+.secondary-checkpoint-search-btn {
+  background-color: white !important;
+  color: black !important;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.current-location-btn {
+  background-color: #FFFFFF !important;
+}
+
+.leaflet-control-zoom.leaflet-bar {
+  display: flex;
+  flex-direction: row;
+  border-width: 0 !important;
+  margin-left: 45px !important;
+}
+
+.leaflet-control-zoom.leaflet-bar a {
+  margin-right: 4px;
+}
+
+.leaflet-control-zoom-in {
+  border-radius: 4px !important;
+  padding: 0 !important;
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.leaflet-control-zoom-out {
+  border-radius: 4px !important;
+  padding: 0 !important;
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.delete-btn {
+  background-color: var(--delete-color) !important;
+  color: white !important;
+}
+
+.delete-btn:hover {
+  background-color: var(--delete-hover-color) !important;
+}
+
+.delete-btn:disabled {
+  background-color: #222222 !important;
+  color: white !important;
+  cursor: not-allowed !important;
+}
+
+.copy-btn {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+.copy-btn:hover {
+  background-color: var(--primary-hover-color) !important;
+}
+
+.copy-btn:disabled {
+  background-color: #222222 !important;
+  color: white !important;
+  cursor: not-allowed !important;
+}
+
+.popup-link {
+  color: #4FC3F7;
+  text-decoration: none;
+}
+
+.popup-link:hover {
+  text-decoration: underline;
+}
+
+.approve-unapprove-btn {
+  background-color: var(--approve-unapprove-color) !important;
+}
+
+.approve-unapprove-btn:hover {
+  background-color: var(--approve-unapprove-hover-color) !important;
+}
+
+.approve-unapprove-btn:disabled {
+  background-color: var(--approve-unapprove-disable-color) !important;
+  cursor: not-allowed !important;
+}
+
+.camera-active-btn {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+.camera-active-btn:hover {
+  background-color: var(--primary-hover-color) !important;
+}
+
+.camera-active-btn:disabled {
+  background-color: var(--primary-disable-color) !important;
+  color: white !important;
+}
+
+.bell-btn:hover {
+  background-color: rgba(43, 155, 237, 0.5) !important;
+}
+
+.success-progress-bar {
+  background-color: #4CB64C !important;
+  --toastify-color-progress-light: #4CB64C !important;
+}
+
+@keyframes bellShake {
+  0%, 16.67% {
+    transform: rotate(0deg);
+  }
+  2.78%, 8.33% {
+    transform: rotate(5deg);
+  }
+  5.56%, 11.11% {
+    transform: rotate(-5deg);
+  }
+  13.89% {
+    transform: rotate(5deg);
+  }
+  16.67%, 33.33% {
+    transform: rotate(0deg);
+  }
+  36.11%, 41.67% {
+    transform: rotate(-5deg);
+  }
+  38.89%, 44.44% {
+    transform: rotate(5deg);
+  }
+  47.22% {
+    transform: rotate(-5deg);
+  }
+  50%, 100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes ringShake {
+  0%, 16.67% {
+    transform: rotate(0deg);
+  }
+  2.78%, 8.33% {
+    transform: rotate(-1deg);
+  }
+  5.56%, 11.11% {
+    transform: rotate(1deg);
+  }
+  13.89% {
+    transform: rotate(-1deg);
+  }
+  16.67%, 33.33% {
+    transform: rotate(0deg);
+  }
+  36.11%, 41.67% {
+    transform: rotate(1deg);
+  }
+  38.89%, 44.44% {
+    transform: rotate(-1deg);
+  }
+  47.22% {
+    transform: rotate(1deg);
+  }
+  50%, 100% {
+    transform: rotate(0deg);
+  }
+}
+
+.bell-shake {
+  animation: bellShake 3s infinite;
+  transform-origin: top center;
+}
+
+.ring-shake {
+  animation: ringShake 3s infinite;
+  transform-origin: top center;
+}
+
+@keyframes shine {
+  0% {
+    transform: rotate(25deg) translateX(-350px);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(25deg) translateX(100%);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .leaflet-control-zoom.leaflet-bar a {
+    padding: 0 10px;
+  }
+}

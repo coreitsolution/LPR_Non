@@ -1,0 +1,12 @@
+{
+  "CENTER_API": "https://lpr-center.local",
+  "CENTER_FILE_URL": "https://lpr-center.local",
+  "CENTER_API_VERSION": "v0",
+  "CENTER_TOKEN": "1e7c00ad1e0bfd4a4e7c0d617345c1dca95493f36974d7b295cbf54bb8af736a",
+  "CENTER_KAFKA_URL": "wss://lpr-center.local:19092",
+  "CENTER_OSRM_URL": "http://localhost:5000",
+  "CENTER_SETTING_WEBSOCKET_URL": "wss://lpr-center.local:19093",
+  "CENTER_SETTING_WEBSOCKET_TOKEN": "3b0c1f8d2e4f5a6b7c8d9e0f1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0",
+  "PROJECT_NAME": "License Plate Recognition",
+  "NAV_LOGO_BG_WHITE": false
+}
