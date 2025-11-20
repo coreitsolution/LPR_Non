@@ -63,19 +63,19 @@ const CompareRoutes: React.FC<CompareRoutesProps> = ({ open, onClose, plateDetai
       </DialogTitle>
       <DialogContent className="bg-black">
         <div className="flex flex-col h-[80vh] overflow-y-auto">
-          <div className="flex flex-grow overflow-x-auto whitespace-nowrap">
+          <div className="flex grow overflow-x-auto whitespace-nowrap">
             {plateDetailList.map((data, index) => (
               <div
                 key={`vehicle_detail_${index}`}
-                className="w-[500px] max-w-[500px] h-full text-white flex-shrink-0"
+                className="w-[500px] max-w-[500px] h-full text-white shrink-0"
               >
                 <div className="flex items-center justify-center py-1 space-x-2 bg-[#242727] z-10">
                   <p className="text-white text-[16px]">{`${t('text.car-no')} ${index + 1}`}</p>
                 </div>
 
                 <div className={`${index % 2 === 0 ? 'bg-[#48494B]' : 'bg-[#393B3A]'} p-1`}>
-                  <div className="flex items-center justify-center h-[160px] bg-black border-b-[1px] border-[#384043]">
-                    <div className="h-[160px] w-[60%] relative">
+                  <div className="flex items-center justify-center h-40 bg-black border-b border-[#384043]">
+                    <div className="h-40 w-[60%] relative">
                       <img src={`${CENTER_FILE_URL}${data.vehicle_image}`} alt="Vehicle" className="h-full w-full" />
                       <img
                         src={`${CENTER_FILE_URL}${data.plate_image}`}

@@ -17,7 +17,7 @@ const FileImportBreadCrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
       <div className="flex items-center justify-between relative">
         {items.map((item) => (
           <React.Fragment key={item.label}>
-            <div className={`flex items-center flex-grow`}>
+            <div className={`flex items-center grow`}>
               <div className={`flex items-center ${
                 item.isActive ? 'text-white' : 'text-white/60'
               }`}>
@@ -29,7 +29,7 @@ const FileImportBreadCrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
                 <span className="ml-2 text-[18px] font-medium">{item.label}</span>
               </div>
               <div className="flex-1 mx-4">
-                <div className="h-[2px] bg-[#2B9BED]/30"></div>
+                <div className="h-0.5 bg-[#2B9BED]/30"></div>
               </div>
             </div>
           </React.Fragment>

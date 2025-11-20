@@ -5,6 +5,7 @@ export const mockRealTimeLprData: RealTimeLprData[] = Array.from({ length: 2 }, 
   const timestamp = dayjs().add(index, "second").toISOString();
 
   return {
+    id: 3000000 + index,
     camera_id: 10000000 + index,
     camera_uid: "5bbd43d7-4524-4172-9428-dfa01bfdc4f0",
     checkpoint_id: `1`,
@@ -33,7 +34,6 @@ export const mockRealTimeLprData: RealTimeLprData[] = Array.from({ length: 2 }, 
     plate_y2: 525 + index,
     plate_y3: 590 + index,
     plate_y4: 585 + index,
-    ref_id: 3000000 + index,
     region_code: "th-46",
     region_confidence: (90 + Math.random() * 10).toFixed(2),
     source_image_height: 1080,
@@ -69,6 +69,7 @@ export const mockRealTimeLprData: RealTimeLprData[] = Array.from({ length: 2 }, 
     title_name: "",
     color: "white",
     pin_background_color: "black",
+    text_shadow: "",
   };
 }).sort((a, b) => {
   return new Date(b.epoch_end).getTime() - new Date(a.epoch_end).getTime();

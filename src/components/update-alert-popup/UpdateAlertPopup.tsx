@@ -45,7 +45,7 @@ const UpdateAlertPopup: React.FC<UpdateAlertPopupProps> = ({
   return (
     <div
       className={cx(
-        'flex flex-col w-full space-y-2 p-[14px]'
+        'flex flex-col w-full space-y-2 p-3.5'
       )}
     >
       <h3

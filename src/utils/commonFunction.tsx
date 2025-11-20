@@ -89,6 +89,7 @@ export const getPlateTypeColor = (plateType: number | null) => {
   let backgroundColor = "white";
   let pinBackgroundColor = "black";
   let feedBackgroundColor = "#161817";
+  let textShadow = "";
   let title = "";
   let showAlert = false;
 
@@ -101,29 +102,35 @@ export const getPlateTypeColor = (plateType: number | null) => {
       break;
     case 3:
       color = "white";
-      backgroundColor = "#009900";
-      pinBackgroundColor = "#009900";
-      feedBackgroundColor = "#009900";
+      backgroundColor = "#0099ff";
+      pinBackgroundColor = "#0099ff";
+      feedBackgroundColor = "#0099ff";
       title = "Member";
       showAlert = true;
       break;
     case 4:
       color = "white";
-      backgroundColor = "#0099ff";
-      pinBackgroundColor = "#0099ff";
-      feedBackgroundColor = "#0099ff";
+      backgroundColor = "#009900";
+      pinBackgroundColor = "#009900";
+      feedBackgroundColor = "#009900";
       title = "VIP";
       showAlert = true;
       break;
-    case 5:
-      title = "Watchlist";
-      break;
     case 6:
       color = "white";
-      backgroundColor = "#9F0C0C";
-      pinBackgroundColor = "#9F0C0C";
-      feedBackgroundColor = "#9F0C0C";
+      backgroundColor = "#FF0000";
+      pinBackgroundColor = "#FF0000";
+      feedBackgroundColor = "#FF0000";
       title = "BlackList";
+      textShadow = "2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff, 1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff";
+      showAlert = true;
+      break;
+    case 7:
+      color = "white";
+      backgroundColor = "#FDB600";
+      pinBackgroundColor = "#FDB600";
+      feedBackgroundColor = "#FDB600";
+      title = "WatchList";
       showAlert = true;
       break;
     default:
@@ -134,7 +141,7 @@ export const getPlateTypeColor = (plateType: number | null) => {
       title = "";
       break;
   }
-  return { color, backgroundColor, feedBackgroundColor, pinBackgroundColor, title, showAlert }
+  return { color, backgroundColor, feedBackgroundColor, pinBackgroundColor, title, showAlert, textShadow }
 }
 
 export const getImageFormat = (src: string) => {

@@ -19,8 +19,8 @@ import DrawingCanvas from '../../../components/drawing-canvas/DrawingCanvas'
 import { useTranslation } from 'react-i18next';
 
 // Types
-import { Camera, CameraResponse } from "../../../features/types";
-import { DetectionArea } from "../../../components/drawing-canvas/types"
+import { Camera, CameraResponse, MaskResponse } from "../../../features/types";
+import { Mask } from "../../../components/drawing-canvas/types"
 
 // Icons
 import { X, Save } from "lucide-react";
@@ -52,8 +52,8 @@ const SensorSetting: React.FC<SensorSettingProps> = ({open, onClose, selectedRow
 
   // Data
   const imgRef = useRef<HTMLImageElement>(null);
-  const [sensorSettingData, setSensorSettingData] = useState<DetectionArea | null>(null);
-  const [originalData, setOriginalData] = useState<DetectionArea | null>(null);
+  const [sensorSettingData, setSensorSettingData] = useState<Mask | null>(null);
+  const [originalData, setOriginalData] = useState<Mask | null>(null);
 
   const sliceDropdown = useSelector(
     (state: RootState) => state.dropdownData
@@ -64,16 +64,17 @@ const SensorSetting: React.FC<SensorSettingProps> = ({open, onClose, selectedRow
   useEffect(() => {
     if (open && selectedRow) {
       setImageLoaded(false);
-      if (selectedRow.detection_area) {
+      if (selectedRow.detection_area && !selectedRow.detection_area.includes("null")) {
         setSensorSettingData(JSON.parse(selectedRow.detection_area))
         setOriginalData(JSON.parse(selectedRow.detection_area))
       }
       const user_group = sliceDropdown.userGroups?.data.find(userGroup => userGroup.id === authData.authData.userInfo?.user_group_id && userGroup.group_name.toLowerCase() === "super user");
       setIsSuperUser(user_group ? true : false);
+      setIsRestarting(false);
     }
   }, [open, selectedRow])
 
-  const handleCustomShapeDrawn = (customShape: DetectionArea) => {
+  const handleCustomShapeDrawn = (customShape: Mask) => {
     setIsDrawingEnabled(false)
     setSensorSettingData(customShape)
   }
@@ -94,12 +95,15 @@ const SensorSetting: React.FC<SensorSettingProps> = ({open, onClose, selectedRow
     
     try {
       if (selectedRow) {
-        await fetchClient<CameraResponse>(combineURL(CENTER_API, "/cameras/update"), {
-          method: "PATCH",
+        const body = {
+          camera_uid: selectedRow.camera_uid,
+        }
+        await fetchClient<CameraResponse>(combineURL(CENTER_API, "/cameras/reboot-engine"), {
+          method: "POST",
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(selectedRow),
+          body: JSON.stringify(body),
         })
         PopupMessage(t('message.success.restart-engine-success'), "", "success")
         setTimeout(() => {
@@ -131,21 +135,17 @@ const SensorSetting: React.FC<SensorSettingProps> = ({open, onClose, selectedRow
           return
         }
         else {
-          let updateData = selectedRow
-          updateData = {
-            ...selectedRow, 
-            detection_area: sensorSettingData ? JSON.stringify(sensorSettingData) : ""
+          const body = {
+            camera_uid: selectedRow.camera_uid, 
+            height: sensorSettingData.height,
+            width: sensorSettingData.width,
+            points: sensorSettingData.points
           }
-          if (updateData) {
-            await fetchClient<CameraResponse>(combineURL(CENTER_API, "/cameras/update"), {
-              method: "PATCH",
-              body: JSON.stringify(updateData),
-            })
-            PopupMessage(t('message.success.save-success'), t('message.success.save-success-message'), "success")
-          } 
-          else {
-            PopupMessage(t('message.error.something-wrong-occur'), t('message.error.please-input-all-data'), 'error')
-          }
+          await fetchClient<MaskResponse>(combineURL(CENTER_API, "/cameras/draw-mask"), {
+            method: "POST",
+            body: JSON.stringify(body),
+          })
+          PopupMessage(t('message.success.save-success'), t('message.success.save-success-message'), "success")
         }
       }
     } 
@@ -197,23 +197,23 @@ const SensorSetting: React.FC<SensorSettingProps> = ({open, onClose, selectedRow
                     {/* Clear Button */}
                     <button 
                       type="button" 
-                      className="flex items-center justify-center bg-white w-[90px] h-[40px] rounded cursor-pointer" 
+                      className="flex items-center justify-center bg-white w-[90px] h-10 rounded cursor-pointer" 
                       onClick={() => handleClearCanvas()}
                     >
-                      <img src="/icons/clear.png" alt="Clear" className='w-[20px] h-[20px]' />
+                      <img src="/icons/clear.png" alt="Clear" className='w-5 h-5' />
                       <span className='ml-[5px] text-[#2B9BED]'>{t('button.clear')}</span>
                     </button>
                     {/* Start Button */}
                     <button 
                       type="button" 
-                      className={`flex items-center justify-center w-[150px] h-[40px] rounded text-white cursor-pointer 
+                      className={`flex items-center justify-center w-[150px] h-10 rounded text-white cursor-pointer 
                         ${ !isDrawingEnabled ? "bg-[#2B9BED]" : "bg-[#2B9BED]/30"}
                         disabled:bg-[##383A39]
                       `} 
                       onClick={() => setIsDrawingEnabled(!isDrawingEnabled)}
                       disabled={isDrawingEnabled || sensorSettingData !== null}
                     >
-                      <img src="/icons/start.png" alt="Start" className='w-[20px] h-[20px]' />
+                      <img src="/icons/start.png" alt="Start" className='w-5 h-5' />
                       <span className='ml-[5px]'>{t('button.start-plot-sensor')}</span>
                     </button>
                   </>
@@ -222,7 +222,7 @@ const SensorSetting: React.FC<SensorSettingProps> = ({open, onClose, selectedRow
             </div>
           </div>
 
-          <div className='p-5 border-[#2B9BED] border-[1px] flex flex-col gap-2'>
+          <div className='p-5 border-[#2B9BED] border flex flex-col gap-2'>
             <div className='relative'>
               <Image 
                 imageSrc={`${CENTER_FILE_URL}${selectedRow?.sample_image_url}`}
@@ -251,7 +251,7 @@ const SensorSetting: React.FC<SensorSettingProps> = ({open, onClose, selectedRow
                   <button
                     type="button"
                     disabled={isRestarting}
-                    className={`flex items-center justify-center w-[90px] h-[40px] rounded mr-[10px] text-white cursor-pointer 
+                    className={`flex items-center justify-center w-[90px] h-10 rounded mr-2.5 text-white cursor-pointer 
                       ${isRestarting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#2B9BED]'}
                     `}
                     onClick={onRestartClick}
@@ -259,7 +259,7 @@ const SensorSetting: React.FC<SensorSettingProps> = ({open, onClose, selectedRow
                     <img
                       src={isRestarting ? "/icons/restart-disable.png" : "/icons/restart.png"}
                       alt="Restart"
-                      className={`w-[20px] h-[20px] ${isRestarting ? 'animate-spin' : ''}`}
+                      className={`w-5 h-5 ${isRestarting ? 'animate-spin' : ''}`}
                     />
                     <span className="ml-[5px]">{t('button.restart')}</span>
                   </button>

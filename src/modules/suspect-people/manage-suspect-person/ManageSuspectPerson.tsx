@@ -324,10 +324,10 @@ const ManageSuspectPerson: React.FC<ManageSuspectPersonProps> = ({open, onClose}
         <Typography variant="h5" color="white" className="font-bold">จัดการบุคคลต้องสงสัย</Typography>
       </DialogTitle>
       <DialogContent className='bg-black'>
-        <form className='border-[1px] border-[#2B9BED]'>
+        <form className='border border-[#2B9BED]'>
           <div className='grid grid-cols-[auto_25%] py-1'>
             {/* Column 1 */}
-            <div className='grid grid-cols-3 gap-x-5 gap-y-3 px-4 py-2 border-r-[1px] border-[#999999]'>
+            <div className='grid grid-cols-3 gap-x-5 gap-y-3 px-4 py-2 border-r border-[#999999]'>
               <AutoComplete 
                 id="prefix-select"
                 sx={{ marginTop: "5px"}}
@@ -597,7 +597,7 @@ const ManageSuspectPerson: React.FC<ManageSuspectPersonProps> = ({open, onClose}
             {/* Column 2 */}
             <div
               id="file-import-container"
-              className="h-full border-l-[2px] border-nobel px-[25px] py-2"
+              className="h-full border-l-2 border-nobel px-[25px] py-2"
             >
               <div className="h-full text-white">
                 {/* Image Upload Section */}
@@ -617,7 +617,7 @@ const ManageSuspectPerson: React.FC<ManageSuspectPersonProps> = ({open, onClose}
                             />
                             <button
                               type="button"
-                              className="absolute z-[52] top-2 right-2 text-white bg-red-500 rounded-full w-[30px] h-[30px] flex items-center justify-center hover:cursor-pointer"
+                              className="absolute z-52 top-2 right-2 text-white bg-red-500 rounded-full w-[30px] h-[30px] flex items-center justify-center hover:cursor-pointer"
                               onClick={() => handleDeleteImage(0, formData.imagesData[0].url)}
                             >
                               &times;
@@ -632,7 +632,7 @@ const ManageSuspectPerson: React.FC<ManageSuspectPersonProps> = ({open, onClose}
                               formData.imagesData[position] && (
                                 <div
                                   key={position}
-                                  className="relative w-[80px] h-[60px] border border-white bg-tuna"
+                                  className="relative w-20 h-[60px] border border-white bg-tuna"
                                 >
                                   <img
                                     src={`${formData.imagesData[position].url}`}
@@ -641,7 +641,7 @@ const ManageSuspectPerson: React.FC<ManageSuspectPersonProps> = ({open, onClose}
                                   />
                                   <button
                                     type="button"
-                                    className="absolute z-[52] top-[-5px] right-[-5px] text-white bg-red-500 rounded-full w-[20px] h-[20px] flex items-center justify-center hover:cursor-pointer"
+                                    className="absolute z-52 top-[-5px] right-[-5px] text-white bg-red-500 rounded-full w-5 h-5 flex items-center justify-center hover:cursor-pointer"
                                     onClick={() => handleDeleteImage(position, formData.imagesData[position].url)}
                                   >
                                     &times;
@@ -655,7 +655,7 @@ const ManageSuspectPerson: React.FC<ManageSuspectPersonProps> = ({open, onClose}
                       /* No Images */
                       <div className="flex flex-col justify-center items-center">
                         <Icon icon={Download} size={80} color="#999999" />
-                        <span className="text-[18px] text-nobel mt-[20px]">
+                        <span className="text-[18px] text-nobel mt-5">
                           อัพโหลดรูปภาพ
                         </span>
                       </div>
@@ -710,12 +710,12 @@ const ManageSuspectPerson: React.FC<ManageSuspectPersonProps> = ({open, onClose}
                         formData.filesData.map((file, index) => (
                           <tr
                             key={`${file.title}-${index}`}
-                            className={`h-[40px] ${
+                            className={`h-10 ${
                               index % 2 === 0 ? "bg-swamp" : "bg-celtic"
                             } ${
                               index === formData.filesData.length - 1
                                 ? "border-b border-white"
-                                : "border-b-[1px] border-dashed border-gray-300"
+                                : "border-b border-dashed border-gray-300"
                             }`}
                           >
                             <td className="font-medium text-center">
@@ -736,8 +736,8 @@ const ManageSuspectPerson: React.FC<ManageSuspectPersonProps> = ({open, onClose}
                           </tr>
                         ))
                       ) : (
-                        <tr className="font-medium h-[40px] bg-swamp border-b border-white">
-                          <td className="text-start pl-[10px]">ไม่มีข้อมูล</td>
+                        <tr className="font-medium h-10 bg-swamp border-b border-white">
+                          <td className="text-start pl-2.5">ไม่มีข้อมูล</td>
                         </tr>
                       )}
                     </tbody>

@@ -442,7 +442,7 @@
 //   };
 
 //   return (
-//     <div id='manage-log' className={`main-content ${isOpen ? "pl-[130px]" : "pl-[10px]"} pr-[10px] transition-all duration-500`}>
+//     <div id='manage-log' className={`main-content ${isOpen ? "pl-[130px]" : "pl-2.5"} pr-2.5 transition-all duration-500`}>
 //       <div className='flex flex-col'>
 //         {/* Header */}
 //         <Typography variant="h5" color="white" className="font-bold">ระบบบริหารจัดการ Log File</Typography>
@@ -543,7 +543,7 @@
 
 //           <div className='flex flex-col w-full'>
 //             <Typography sx={{ fontSize: "15px" }} variant='subtitle1' color='white'>{t('component.checkpoint-2')}</Typography>
-//             <div className='w-full items-center justify-center mt-[10px]'>
+//             <div className='w-full items-center justify-center mt-2.5'>
 //               <div className='flex-1'>
 //                 <MultiSelectCameras 
 //                   limitTags={3} 
@@ -626,7 +626,7 @@
 //               }}
 //               onClick={exportToCsvNotOverChunkSize}
 //             >
-//               <img src={CSVIcon} alt='CSV Icon' className='w-[20px] h-[20px]' />
+//               <img src={CSVIcon} alt='CSV Icon' className='w-5 h-5' />
 //             </IconButton>
 //           </div>
 //         </div>
@@ -722,7 +722,7 @@
 //           </TableContainer>
 //         </div>
 //         {/* Pagination Part */}
-//         <div className={`${mockLogs.length > 0 ? "flex" : "hidden"} items-center justify-between bg-[var(--background-color)] py-3 pl-1 sticky bottom-0`}>
+//         <div className={`${mockLogs.length > 0 ? "flex" : "hidden"} items-center justify-between bg-(--background-color) py-3 pl-1 sticky bottom-0`}>
 //           <PaginationComponent 
 //             page={page} 
 //             onChange={handlePageChange}

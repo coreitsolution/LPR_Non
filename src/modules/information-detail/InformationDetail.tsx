@@ -185,7 +185,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
       }));
       setProvincesOptions(options);
     }
-  }, [sliceDropdown.regions, i18n.language]);
+  }, [sliceDropdown.regions, i18n.language, i18n.isInitialized]);
 
   useEffect(() => {
     if (sliceDropdown.vehicleColors && sliceDropdown.vehicleColors.data) {
@@ -195,7 +195,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
       }));
       setCarColorsOptions(options);
     }
-  }, [sliceDropdown.vehicleColors, i18n.language]);
+  }, [sliceDropdown.vehicleColors, i18n.language, i18n.isInitialized]);
 
   useEffect(() => {
     if (sliceDropdown.vehicleMakes && sliceDropdown.vehicleMakes.data) {
@@ -509,7 +509,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
     <div id='location-detail' className={`fixed right-0 pt-[70px] top-0 h-screen w-[27%] ${open ? "!right-0 block" : "right-[-100%]"} transition-all duration-500`}>
       <div className='flex flex-col h-full'>
         {/* Header */}
-        <div className='flex justify-between px-[10px] py-2 bg-[#11212D]'>
+        <div className='flex justify-between px-2.5 py-2 bg-[#11212D]'>
           <Typography variant="h6" color="white" className="font-bold">{t('screen.route-detail.title')}</Typography>
           <IconButton 
             className="tertiary-btn"
@@ -518,7 +518,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
             }}
             onClick={() => setRouteDetailVisible(true)}
           >
-            <img src={ListIcon} alt='List Icon' className='w-[20px] h-[20px]' />
+            <img src={ListIcon} alt='List Icon' className='w-5 h-5' />
           </IconButton>
         </div>
         {/* Button Part */}
@@ -621,8 +621,8 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                         )}
                         
                         {/* Image */}
-                        <div className='flex items-center justify-center h-[160px] bg-black border-b-[1px] border-[#384043]'>
-                          <div className='h-[160px] w-[60%] relative'>
+                        <div className='flex items-center justify-center h-40 bg-black border-b border-[#384043]'>
+                          <div className='h-40 w-[60%] relative'>
                             <img src={`${CENTER_FILE_URL}${data.vehicle_image}`} alt='Vehicle Image' className='h-full w-full' />
                             <img src={`${CENTER_FILE_URL}${data.plate_image}`} alt='Plate Image' className='h-[30%] w-[100px] absolute bottom-0 left-0' />
                           </div>
@@ -632,7 +632,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                         <div className='bg-black py-2 px-6 text-center'>{`${data.plate}${data.region ? i18n.language === "th" ? ` ${data.region.name_th}` : ` ${data.region.name_en}` : ""}`}</div>
                         
                         {/* Route Detail */}
-                        <div className='flex flex-col mt-[10px]'>
+                        <div className='flex flex-col mt-2.5'>
                           <div className='flex items-center justify-start space-x-1'>
                             <img src={RouteList} alt='Route Icon' className='w-[30px] h-[30px]' />
                             <label>{t('text.travel-order')}</label>
@@ -647,7 +647,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                               </thead>
                               <tbody>
                                 {data.plateRoute && data.plateRoute[0].routes.map((route, index) => (
-                                  <tr key={`data_${index}`} className='h-[40px] text-[15px] border-b-[1px] border-[#ADADAD] border-dashed'>
+                                  <tr key={`data_${index}`} className='h-10 text-[15px] border-b border-[#ADADAD] border-dashed'>
                                     <td className='pl-3 text-start bg-[#393B3A]'>{route.camera_name}</td>
                                     <td className='text-center bg-[#48494B]'>{route.epoch_end}</td>
                                   </tr>
@@ -719,8 +719,8 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                           )}
 
                           {/* Image */}
-                          <div className='flex items-center justify-center h-[160px] bg-black border-b-[1px] border-[#384043]'>
-                            <div className='h-[160px] w-[60%] relative'>
+                          <div className='flex items-center justify-center h-40 bg-black border-b border-[#384043]'>
+                            <div className='h-40 w-[60%] relative'>
                               <img src={`${CENTER_FILE_URL}${data.vehicle_image}`} alt="Vehicle Image" className='h-full w-full' />
                               <img src={`${CENTER_FILE_URL}${data.plate_image}`} alt="Plate Image" className='h-[30%] w-[100px] absolute bottom-0 left-0' />
                             </div>
@@ -752,9 +752,9 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
 
                               return (
                                 showAlert && (
-                                  <div className={`${bgColor} p-2 border-[1px] border-[#2B9BED] flex justify-between`}>
+                                  <div className={`${bgColor} p-2 border border-[#2B9BED] flex justify-between`}>
                                     <div className='flex items-center justify-center space-x-3'>
-                                      <img src={icon} alt="Icon" className='w-[20px] h-[20px]' />
+                                      <img src={icon} alt="Icon" className='w-5 h-5' />
                                       <p className='text-[16px] text-[#9E9E9E]'>{alertText}</p>
                                     </div>
                                     <IconButton 
@@ -769,7 +769,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                           }
 
                           {/* Vehicle Detail */}
-                          <div className='flex flex-col mt-[10px]'>
+                          <div className='flex flex-col mt-2.5'>
                             <div className='flex justify-between'>
                               <div className='flex items-center justify-start space-x-1'>
                                 <img src={RouteList} alt='Vehicle Detail Icon' className='w-[30px] h-[30px]' />
@@ -788,10 +788,10 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                                 editingId === data.id ?
                                 (
                                   <form onSubmit={handleSubmit(handleClickSaveVehicleDetail)} className='grid grid-cols-[30%_auto]'>
-                                    <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-4'>
+                                    <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-4'>
                                       {t('text.vehicle-plate')}
                                     </div>
-                                    <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-4'>
+                                    <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-4'>
                                       <div className='flex flex-col'>
                                         <TextBox
                                           sx={{ fontSize: "15px" }}
@@ -838,10 +838,10 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                                       </div>
                                     </div>
 
-                                    <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-4'>
+                                    <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-4'>
                                       {t('text.brand')}
                                     </div>
-                                    <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-4'>
+                                    <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-4'>
                                       <div className='flex flex-col'>
                                         <AutoComplete 
                                           id="car-brand-select"
@@ -859,10 +859,10 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                                       </div>
                                     </div>
 
-                                    <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-4'>
+                                    <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-4'>
                                       {t('text.color')}
                                     </div>
-                                    <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-4'>
+                                    <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-4'>
                                       <div className='flex flex-col'>
                                         <AutoComplete 
                                           id="car-color-select"
@@ -917,24 +917,24 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                                 ) : 
                                 (
                                   <div className='grid grid-cols-[30%_auto]'>
-                                    <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-4'>
+                                    <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-4'>
                                       {t('text.vehicle-plate')}
                                     </div>
-                                    <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-4'>
+                                    <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-4'>
                                       {`${data.plate}${data.region ? i18n.language === "th" ? ` ${data.region.name_th}` : ` ${data.region.name_en}` : ""}`}
                                     </div>
 
-                                    <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-4'>
+                                    <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-4'>
                                       {t('text.brand')}
                                     </div>
-                                    <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-4'>
+                                    <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-4'>
                                       {data.vehicle_make_details && i18n.language === "th" ? data.vehicle_make_details.make_th || "-" : data.vehicle_make_details.make_en || "-"}
                                     </div>
 
-                                    <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-4'>
+                                    <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-4'>
                                       {t('text.color')}
                                     </div>
-                                    <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-4'>
+                                    <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-4'>
                                       {data.vehicle_color_details && i18n.language === "th" ? data.vehicle_color_details.color_th || "-" : data.vehicle_color_details.color_en || "-"}
                                     </div>
                                   </div>
@@ -990,13 +990,13 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                           )}
 
                           {/* Image */}
-                          <div className='flex items-center justify-center h-[180px] bg-black border-b-[1px] border-[#384043]'>
+                          <div className='flex items-center justify-center h-[180px] bg-black border-b border-[#384043]'>
                             <div className='h-[180px] py-2 w-[60%] relative'>
                               <img src={`${CENTER_FILE_URL}${data.vehicle_image}`} alt="Vehicle Image" className='h-full w-full' />
                               <img src={`${CENTER_FILE_URL}${data.plate_image}`} alt="Plate Image" className='h-[30%] w-[100px] absolute bottom-2 left-0' />
                             </div>
                           </div>
-                          <div className='flex flex-col mt-[10px] space-y-3'>
+                          <div className='flex flex-col mt-2.5 space-y-3'>
                             {/* Vehicle Detail */}
                             <div>
                               <div className='flex items-center justify-start space-x-1'>
@@ -1004,38 +1004,38 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                                 <label>{t('text.vehicle-data')}</label>
                               </div>
                               <div className='grid grid-cols-[30%_auto] text-[14px]'>
-                                <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                   {t('text.vehicle-plate')}
                                 </div>
-                                <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                   {`${data.plate}${data.region ? i18n.language === "th" ? ` ${data.region.name_th}` : ` ${data.region.name_en}` : ""}`}
                                 </div>
 
-                                <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                   {t('text.brand')}
                                 </div>
-                                <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                   {data.vehicle_make_details && i18n.language === "th" ? data.vehicle_make_details.make_th || "-" : data.vehicle_make_details.make_en || "-"}
                                 </div>
 
-                                <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                   {t('text.color')}
                                 </div>
-                                <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                   {data.vehicle_color_details && i18n.language === "th" ? data.vehicle_color_details.color_th || "-" : data.vehicle_color_details.color_en || "-"}
                                 </div>
 
-                                <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                   {t('text.model')}
                                 </div>
-                                <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                   {data.vehicle_model_details && i18n.language === "th" ? data.vehicle_model_details.model_th || "-" : data.vehicle_model_details.model_en || "-"}
                                 </div>
 
-                                <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                   {t('text.plate-group')}
                                 </div>
-                                <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                   {data.vehicle_body_type_details && i18n.language === "th" ? data.vehicle_body_type_details.body_type_th || "-" : data.vehicle_body_type_details.body_type_en || "-"}
                                 </div>
                               </div>
@@ -1047,24 +1047,24 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                                 <label>{t('text.owner-info')}</label>
                               </div>
                               <div className='grid grid-cols-[30%_auto] text-[14px]'>
-                                <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                   {t('text.owner-name')}
                                 </div>
-                                <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                   {data.ownerName || "-"}
                                 </div>
 
-                                <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                   {t('text.owner-pid')}
                                 </div>
-                                <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                   {data.ownerNationalId || "-"}
                                 </div>
 
-                                <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                   {t('text.owner-address')}
                                 </div>
-                                <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                   {data.ownerAddress || "-"}
                                 </div>
                               </div>
@@ -1076,24 +1076,24 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                                 <label>{t('text.ownership-info')}</label>
                               </div>
                               <div className='grid grid-cols-[30%_auto] text-[14px]'>
-                                <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                   {t('text.ownership-name')}
                                 </div>
-                                <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                   {data.ownershipName || "-"}
                                 </div>
 
-                                <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                   {t('text.ownership-pid')}
                                 </div>
-                                <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                   {data.ownershipNationalId || "-"}
                                 </div>
 
-                                <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                   {t('text.ownership-address')}
                                 </div>
-                                <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                                <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                   {data.ownershipAddress || "-"}
                                 </div>
                               </div>

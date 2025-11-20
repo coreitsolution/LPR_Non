@@ -496,7 +496,11 @@
       "export-all-confirmation": "ยืนยันการ Export ข้อมูลทั้งหมด",
       "export-all-confirmation-message": "จำนวนข้อมูลทั้งหมด {{totalNumber}} รายการ</br>อาจส่งผลให้การ Export ข้อมูลล่าช้า</br>ต้องการยืนยัน Export ข้อมูลหรือไม่",
       "data-incomplete": "ข้อมูลไม่สมบูรณ์",
-      "please-input-sensor-data": "กรุณากรอกข้อมูลเซ็นเซอร์"
+      "please-input-sensor-data": "กรุณากรอกข้อมูลเซ็นเซอร์",
+      "please-input-username": "กรุณากรอก username",
+      "please-input-password": "กรุณากรอก password",
+      "confirm-all-notification": "ยืนยันการแจ้งเตือนทั้งหมด",
+      "confirm-all-notification-message": "คุณต้องการดำเนินการต่อใช่หรือไม่?"
     },
     "camera": {
       "delete-approve": "อนุมัติลบกล้อง",
@@ -564,5 +568,10 @@
     "zip-file-creating": "กำลังสร้างไฟล์ ZIP ... กรุณารอสักครู่",
     "file-download-complete": "ดาวน์โหลดไฟล์สำเร็จ",
     "map-capture-preparing": "กำลังเตรียมภาพแผนที่"
+  },
+  "title": {
+    "show-notification": "Show Notification",
+    "hide-notification": "Hide Notification",
+    "confirm-all-notification": "Confirm All Notification"
   }
 }

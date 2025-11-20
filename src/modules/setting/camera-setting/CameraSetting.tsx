@@ -168,7 +168,7 @@ const CameraSetting: React.FC<CameraSettingProps> = ({open, onClose, isEdit, sel
       }))
       setDistrictsOptions([{ label: t('dropdown.all'), value: 0 }, ...options])
     }
-  }, [districtsList, i18n.language])
+  }, [districtsList, i18n.language, i18n.isInitialized])
 
   useEffect(() => {
     if (subDistrictsList) {
@@ -178,7 +178,7 @@ const CameraSetting: React.FC<CameraSettingProps> = ({open, onClose, isEdit, sel
       }))
       setSubDistrictsOptions([{ label: t('dropdown.all'), value: 0 }, ...options])
     }
-  }, [subDistrictsList, i18n.language])
+  }, [subDistrictsList, i18n.language, i18n.isInitialized])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -428,7 +428,7 @@ const CameraSetting: React.FC<CameraSettingProps> = ({open, onClose, isEdit, sel
       </DialogTitle>
       <DialogContent className='bg-black'>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className='p-3 border-[#2B9BED] border-[1px]'>
+          <div className='p-3 border-[#2B9BED] border'>
             <div className='flex flex-col gap-3'>
               {/* Camera Data */}
               <Typography variant="h6" color="white" className="font-bold">{t('text.camera-data')}</Typography>
@@ -515,7 +515,7 @@ const CameraSetting: React.FC<CameraSettingProps> = ({open, onClose, isEdit, sel
                   error={!!errors.rtspProcess}
                 />
 
-                <div className="grid grid-cols-2 gap-5 my-[10px]">
+                <div className="grid grid-cols-2 gap-5 my-2.5">
                   <AutoComplete 
                     id="province-select"
                     sx={{ marginTop: "10px"}}
@@ -548,7 +548,7 @@ const CameraSetting: React.FC<CameraSettingProps> = ({open, onClose, isEdit, sel
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-5 my-[10px]">
+                <div className="grid grid-cols-2 gap-5 my-2.5">
                   <AutoComplete 
                     id="subdistrict-select"
                     sx={{ marginTop: "10px"}}

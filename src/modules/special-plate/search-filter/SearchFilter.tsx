@@ -59,7 +59,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({onSearch}) => {
       }));
       setProvinceOptions(options);
     }
-  }, [sliceDropdown.provinces, i18n.language]);
+  }, [sliceDropdown.provinces, i18n.language, i18n.isInitialized]);
 
   useEffect(() => {
     if (sliceDropdown.plateTypes && sliceDropdown.plateTypes.data) {
@@ -79,7 +79,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({onSearch}) => {
       }));
       setStatusOptions([{label: t('dropdown.all-status'), value: 2}, ...options]);
     }
-  }, [sliceDropdown.status, i18n.language]);
+  }, [sliceDropdown.status, i18n.language, i18n.isInitialized]);
 
   const handleDropdownChange = (key: keyof typeof formData, value: string | number) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -150,9 +150,9 @@ const SearchFilter: React.FC<SearchFilterProps> = ({onSearch}) => {
   }
 
   return (
-    <div id='search-filter' className='h-screen w-[270px] pt-[20px]'>
+    <div id='search-filter' className='h-screen w-[270px] pt-5'>
       <div 
-        className='h-[91%] bg-[#2B9BED] p-[1px]'
+        className='h-[91%] bg-[#2B9BED] p-px'
         style={{
           clipPath: 'polygon(0 0, 164px 0, 172px 24px, 100% 24px, 100% 100%, 0% 100%, 0 0)',
         }}
@@ -164,7 +164,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({onSearch}) => {
           }}
         >
           <div className='flex space-x-2 text-white px-2 pt-1'>
-            <img src={CarSearchIcon} alt="Car Search Icon" className='w-[20px] h-[20px]' />
+            <img src={CarSearchIcon} alt="Car Search Icon" className='w-5 h-5' />
             <label>{t('search-filter.search-condition')}</label>
           </div>
 

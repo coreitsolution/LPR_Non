@@ -85,7 +85,7 @@ const ManagePermission: React.FC<ManagePermissionProps> = ({open, onClose}) => {
     // "executiveReport",
     "manageUser",
     "setting",
-    "manageCheckpointCameras"
+    // "manageCheckpointCameras"
   ];
 
   // i18n
@@ -123,9 +123,9 @@ const ManagePermission: React.FC<ManagePermissionProps> = ({open, onClose}) => {
     setting: {
       select: false,
     },
-    manageCheckpointCameras: {
-      select: false,
-    },
+    // manageCheckpointCameras: {
+    //   select: false,
+    // },
   };
 
   const DEFAULT_CENTER_PERMISSION_NAME = {
@@ -159,9 +159,9 @@ const ManagePermission: React.FC<ManagePermissionProps> = ({open, onClose}) => {
     setting: {
       name: t('text.ct-setting'),
     },
-    manageCheckpointCameras: {
-      name: t('text.ct-checkpoint-cameras'),
-    },
+    // manageCheckpointCameras: {
+    //   name: t('text.ct-checkpoint-cameras'),
+    // },
   };
 
   const {

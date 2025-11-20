@@ -1,14 +1,14 @@
 import React, { useRef, useEffect, useState } from "react"
 
 // Types
-import { DetectionArea } from "./types"
+import { Mask } from "./types"
 import {
   Camera
 } from '../../features/types'
 
 interface DrawingCanvasProps {
   imgRef: HTMLImageElement
-  onShapeDrawn?: (shape: DetectionArea) => void
+  onShapeDrawn?: (shape: Mask) => void
   isDrawingEnabled?: boolean
   clearCanvas?: boolean
   selectedRow: Camera | null
@@ -46,7 +46,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({
 
   useEffect(() => {
     if (selectedRow?.detection_area && selectedRow?.detection_area !== "") {
-      const detectionArea:DetectionArea  = JSON.parse(selectedRow?.detection_area)
+      const detectionArea:Mask  = JSON.parse(selectedRow?.detection_area)
       setPoints(detectionArea.points)
     }
   }, [selectedRow])
@@ -112,12 +112,21 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({
 
   useEffect(() => {
     if (shapeClosed && points.length > 2 && onShapeDrawn) {
+      const REAL_WIDTH = 1920;
+      const REAL_HEIGHT = 1080;
+
+      const scaleX = REAL_WIDTH / imgRef.width;
+      const scaleY = REAL_HEIGHT / imgRef.height;
+
+      const realPoints = points.map(p => ({
+        x: p.x * scaleX,
+        y: p.y * scaleY,
+      }));
+
       onShapeDrawn({
-        points: points,
-        frame: {
-          width: imgRef.width,
-          height: imgRef.height,
-        }
+        points: realPoints,
+        width: REAL_WIDTH,
+        height: REAL_HEIGHT,
       })
       setShapeClosed(false)
     }

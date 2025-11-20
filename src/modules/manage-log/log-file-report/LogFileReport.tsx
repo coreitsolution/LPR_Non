@@ -25,7 +25,7 @@ const LogFileReport: React.FC<LogFileReportProps> = ({open, onClose}) => {
     <Dialog id='log-file-report' open={open} maxWidth="xl" fullWidth>
       <DialogTitle className='flex items-center justify-between bg-black'>
         <div className='flex space-x-1 items-center justify-start'>
-          <img src="/svg/sm-logo.svg" alt="Logo" className="w-[60px] h-[40px] mb-[5px]" />
+          <img src="/svg/sm-logo.svg" alt="Logo" className="w-[60px] h-10 mb-[5px]" />
           <Typography variant="h5" color="white" className="font-bold">License Plate Recognition</Typography>
         </div>
         <button
@@ -39,9 +39,9 @@ const LogFileReport: React.FC<LogFileReportProps> = ({open, onClose}) => {
           <div className='bg-[#393B3A] w-full p-1 text-center'>
             <label className='text-white text-[16px]'>รายงานข้อมูล Log File</label>
           </div>
-          <div className='p-4 border-x-[1px] border-b-[1px] border-[#384043]'>
+          <div className='p-4 border-x border-b border-[#384043]'>
             {/* First Row */}
-            <div className='grid grid-cols-2 border-[1px] border-[#384043] text-white'>
+            <div className='grid grid-cols-2 border border-[#384043] text-white'>
               <div className='flex flex-col h-[70px] py-2 px-4 justify-between'>
                 <p className='text-[14px]'>วันเดือนปีที่ค้นหา :</p>
                 <p className='ml-[100px] text-[16px]'>10/10/2024 (10:00:00) - 12/10/2024 (10:00:00)</p>
@@ -53,7 +53,7 @@ const LogFileReport: React.FC<LogFileReportProps> = ({open, onClose}) => {
             </div>
 
             {/* Second Row */}
-            <div className='grid grid-cols-3 border-[1px] border-[#384043] text-white'>
+            <div className='grid grid-cols-3 border border-[#384043] text-white'>
               <div className='flex flex-col h-[70px] py-2 px-4 justify-between'>
                 <p className='text-[14px]'>หมวดอักษร :</p>
                 <p className='ml-[100px] text-[16px]'>ขต</p>
@@ -69,7 +69,7 @@ const LogFileReport: React.FC<LogFileReportProps> = ({open, onClose}) => {
             </div>
 
             {/* Third Row */}
-            <div className='grid grid-cols-3 border-[1px] border-[#384043] text-white'>
+            <div className='grid grid-cols-3 border border-[#384043] text-white'>
               <div className='flex flex-col h-[70px] py-2 px-4 justify-between'>
                 <p className='text-[14px]'>สถานี :</p>
                 <p className='ml-[100px] text-[16px]'>-</p>

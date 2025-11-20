@@ -58,7 +58,7 @@ const ManageUserGroup: React.FC<ManageUserGroupProps> = ({open, onClose, user, s
   const [isAccordionCenterOpen, setIsAccordionCenterOpen] = useState(true);
 
   // Constants
-  const USER_ROLE_ID = 3;
+  const USER_ROLE_ID = 2;
 
   // Key
   const centerKeys: CenterPermissionKey[] = [
@@ -72,7 +72,7 @@ const ManageUserGroup: React.FC<ManageUserGroupProps> = ({open, onClose, user, s
     // "executiveReport",
     "manageUser",
     "setting",
-    "manageCheckpointCameras"
+    // "manageCheckpointCameras"
   ];
 
   // i18n
@@ -114,9 +114,9 @@ const ManageUserGroup: React.FC<ManageUserGroupProps> = ({open, onClose, user, s
     setting: {
       select: false,
     },
-    manageCheckpointCameras: {
-      select: false,
-    },
+    // manageCheckpointCameras: {
+    //   select: false,
+    // },
   };
 
   const DEFAULT_CENTER_PERMISSION_NAME = {
@@ -150,9 +150,9 @@ const ManageUserGroup: React.FC<ManageUserGroupProps> = ({open, onClose, user, s
     setting: {
       name: t('text.ct-setting'),
     },
-    manageCheckpointCameras: {
-      name: t('text.ct-checkpoint-cameras'),
-    },
+    // manageCheckpointCameras: {
+    //   name: t('text.ct-checkpoint-cameras'),
+    // },
   };
 
   const DEFAULT_CHECKPOINT_PERMISSION = {

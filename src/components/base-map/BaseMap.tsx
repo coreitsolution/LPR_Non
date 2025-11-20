@@ -108,7 +108,7 @@ const BaseMap = forwardRef<BaseMapRef, MapProps> (({
             }}
             onClick={goToCurrentLocation}
           >
-            <img src={CurrentLocation} alt='Current Location' className='w-[20px] h-[20px]' />
+            <img src={CurrentLocation} alt='Current Location' className='w-5 h-5' />
           </IconButton>
         )
       }

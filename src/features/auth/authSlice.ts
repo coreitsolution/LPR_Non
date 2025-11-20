@@ -130,6 +130,7 @@ const authSlice = createSlice({
           state.authData.userId = 0
           localStorage.removeItem("token");
           localStorage.removeItem("userId");
+          window.location.href = '/login';
         }
       })
   },

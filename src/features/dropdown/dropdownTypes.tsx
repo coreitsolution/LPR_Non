@@ -332,7 +332,7 @@ export interface CenterPermissions {
   // executiveReport: PermissionDetail;
   manageUser: PermissionDetail;
   setting: PermissionDetail;
-  manageCheckpointCameras: PermissionDetail;
+  // manageCheckpointCameras: PermissionDetail;
 }
 
 export type CenterPermissionKey = keyof CenterPermissions;

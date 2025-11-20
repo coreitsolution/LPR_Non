@@ -21,6 +21,7 @@ interface CustomToastContentProps extends ToastContentProps {
   closeToast: () => void;
   titleName: string;
   color: string;
+  textShadow?: string;
   alertData: RealTimeLprData | null;
   onDelete?: () => void;
 }
@@ -29,6 +30,7 @@ const RealTimeToastify: React.FC<CustomToastContentProps> = ({
   closeToast,
   titleName,
   color,
+  textShadow,
   alertData,
   onDelete,
 }) => {
@@ -110,11 +112,21 @@ const RealTimeToastify: React.FC<CustomToastContentProps> = ({
           <CircleAlert className="w-[30px] h-[30px]" color={color} />
           {
             titleName && (
-              <p className="text-[16px] font-bold" style={{ color }}>{titleName}</p>
+              <p className="text-[16px] font-bold" 
+                style={{ 
+                  color,
+                  ...(textShadow ? { textShadow } : {}),
+                }}
+              >{titleName}</p>
             )
           }
         </div>
-        <p className="text-[16px]" style={{ color }}>
+        <p className="text-[16px]" 
+          style={{ 
+            color,
+            ...(textShadow ? { textShadow } : {}),
+          }}
+        >
           {dayjs(alertData.epoch_end).format("DD/MM/YYYY (HH:mm:ss)")}
         </p>
       </div>
@@ -130,7 +142,12 @@ const RealTimeToastify: React.FC<CustomToastContentProps> = ({
             loopImages()
           }
           
-          <div className="flex flex-col h-full items-center justify-center font-bold text-[16px] py-1" style={{ color }}>
+          <div className="flex flex-col h-full items-center justify-center font-bold text-[16px] py-1" 
+            style={{ 
+              color,
+              ...(textShadow ? { textShadow } : {}),
+            }}
+          >
             {
               (() => {
                 const province = sliceDropdown.regions?.data.find(region => region.region_code === alertData.region_code);
@@ -211,7 +228,7 @@ const RealTimeToastify: React.FC<CustomToastContentProps> = ({
             }
           </div>
           <div className="flex">
-            <span className="w-[80px] font-medium">{`${t('feed-data.plate-group')}:`}</span>
+            <span className="w-20 font-medium">{`${t('feed-data.plate-group')}:`}</span>
             <span>{alertData.plate_class_name || "-"}</span>
           </div>
           <div className="flex">
@@ -223,11 +240,11 @@ const RealTimeToastify: React.FC<CustomToastContentProps> = ({
             <span>{alertData.camera_name || "-"}</span>
           </div>
           <div className="flex">
-            <span className="w-[80px] font-medium">{`${t('feed-data.owner-name')}:`}</span>
+            <span className="w-20 font-medium">{`${t('feed-data.owner-name')}:`}</span>
             <span>{alertData.special_plate_owner_name || "-"}</span>
           </div>
           {/* <div className="flex">
-            <span className="w-[80px] font-medium">{`${t('feed-data.owner-agency')}:`}</span>
+            <span className="w-20 font-medium">{`${t('feed-data.owner-agency')}:`}</span>
             <span>{alertData.special_plate_owner_agency}</span>
           </div> */}
         </div>

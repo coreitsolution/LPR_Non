@@ -20,9 +20,6 @@ export const mockUserPermission: UserPermission[] = [
       setting: {
         select: true,
       },
-      manageCheckpointCameras: {
-        select: true,
-      },
     },
   },
   {
@@ -43,9 +40,6 @@ export const mockUserPermission: UserPermission[] = [
       setting: {
         select: true,
       },
-      manageCheckpointCameras: {
-        select: true,
-      },
     },
   },
   {
@@ -64,9 +58,6 @@ export const mockUserPermission: UserPermission[] = [
         select: true,
       },
       setting: {
-        select: true,
-      },
-      manageCheckpointCameras: {
         select: true,
       },
     },

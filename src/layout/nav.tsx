@@ -13,15 +13,9 @@ import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 
 // Components
-import UpdateAlertPopup from '../components/update-alert-popup/UpdateAlertPopup';
-import RequestDeleteCameraAlert from '../components/request-delete-camera-alert/RequestDeleteCameraAlert';
 import CameraStatusPopup from "../components/camera-status-popup/CameraStatusPopup";
-
-// API
-import { triggerCameraRefresh, triggerRequestDeleteCamera } from '../features/refresh/refreshSlice';
-
-// Material UI
-import IconButton from '@mui/material/IconButton';
+import NotificationBell from "../components/notification-bell/NotificationBell";
+import Loading from "../components/loading/Loading";
 
 // Context
 import { useHamburger } from "../context/HamburgerContext";
@@ -30,6 +24,7 @@ import { useHamburger } from "../context/HamburgerContext";
 import {
   logout
 } from "../features/auth/authSlice"
+import { addListNotification, NotificationType } from "../features/notification/notificationSlice";
 
 // Image Assets
 import User from "../assets/icons/user.png"
@@ -40,11 +35,13 @@ import { useTranslation } from 'react-i18next';
 // Config
 import { getUrls } from '../config/runtimeConfig';
 
-// Icon
-import BellIcon from "../assets/icons/bell.png";
-
 // Utils
-import { createNotificationToast } from "../utils/notification";
+import { createNotificationToast, confirmNotification } from "../utils/notification";
+import { toastChannel } from "../utils/channel";
+import { fetchClient, combineURL } from "../utils/fetchClient";
+
+// Types
+import { EventNotifyResponse, EventNotify } from "../features/types";
 
 dayjs.extend(buddhistEra);
 
@@ -53,7 +50,7 @@ function Nav() {
   const navigate = useNavigate();
   const dispatch: AppDispatch = useDispatch();
   const { isOpen, toggleMenu } = useHamburger();
-  const { PROJECT_NAME, NAV_LOGO_BG_WHITE, CENTER_FILE_URL } = getUrls();
+  const { PROJECT_NAME, NAV_LOGO_BG_WHITE, CENTER_FILE_URL, CENTER_API } = getUrls();
 
   // i18n
   const { i18n, t } = useTranslation();
@@ -61,6 +58,8 @@ function Nav() {
   // State
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [_, setBarChartOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Data
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -77,16 +76,16 @@ function Nav() {
   const { authData } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
+    setNotificationCount(notificationRedux.list.length)
+  }, [notificationRedux])
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(dayjs(new Date()).format(i18n.language === 'th' ? 'BBBB-MM-DD HH:mm:ss' : 'YYYY-MM-DD HH:mm:ss'))
     }, 1000)
 
     return () => clearInterval(interval)
   }, [dispatch])
-
-  useEffect(() => {
-    setNotificationCount(notificationRedux.list.length)
-  }, [notificationRedux.list])
 
   const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedLanguage = event.target.value;
@@ -115,11 +114,11 @@ function Nav() {
     //   icon: "detect-person",
     //   label: "search-suspect-person",
     // },
-    // {
-    //   path: "/center/special-plate",
-    //   icon: "special-plate",
-    //   label: "special-plate",
-    // },
+    {
+      path: "/center/special-plate",
+      icon: "special-plate",
+      label: "special-plate",
+    },
     // {
     //   path: "/center/suspect-people",
     //   icon: "order-detect-person",
@@ -174,81 +173,144 @@ function Nav() {
     dispatch(logout())
   };
 
-  const handleNotificationClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    const isUpdatePage = location.pathname.includes('/manage-checkpoint-cameras');
-    notificationRedux.list.forEach((row) => {
-      const toastId = row.id;
-      if (toast.isActive(toastId)) {
-        toast.dismiss(toastId);
-        return;
-      }
+  const handleNotificationClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-      if (row.type === "newCheckpoint" || row.type === "newCamera") {
-        const style = {
-          minHeight: "108px",
-          maxHeight: "108px",
-        }
+    const nextOpenState = !isNotificationOpen;
+
+    if (!nextOpenState) {
+      // Hide all active toasts
+      notificationRedux.list.forEach(row => {
+        toast.dismiss(`notification-list-toast-${row.messageId}`);
+      });
+
+      setIsNotificationOpen(false);
+      return;
+    }
+
+    setIsNotificationOpen(true);
+
+    notificationRedux.list.forEach(row => {
+      const toastId = `notification-list-toast-${row.messageId}`;
+
+      // Skip if already shown
+      if (toast.isActive(toastId)) return;
+
+      if (row.type === "cameraOnline" || row.type === "cameraOffline") {
         createNotificationToast({
           dispatch,
-          type: row.type,
-          component: UpdateAlertPopup,
-          theme: "dark",
-          title: row.title,
-          content: row.content ?? [],
-          messageId: row.messageId,
-          style,
-          updateAction: () => dispatch(triggerCameraRefresh()),
-          isAddNotification: false,
-        });
-      }
-      else if (row.type === "requestDelete") {
-        const style = {
-          paddingTop: "45px",
-          minHeight: "161px",
-          maxHeight: "161px",
-        }
-        createNotificationToast({
-          dispatch,
-          type: row.type,
-          component: RequestDeleteCameraAlert,
-          theme: "dark",
-          title: row.title,
-          content: row.content ?? [],
-          messageId: row.messageId,
-          style,
-          closeAction: "closeRequestDeleteCameraAlert",
-          updateAction: () => {
-            if (isUpdatePage) dispatch(triggerRequestDeleteCamera());
-            else navigate("/center/manage-checkpoint-cameras", { replace: true });
-          },
-          isAddNotification: false,
-        });
-      }
-      else {
-        const isOnline = row.isOnline;
-        createNotificationToast({
-          dispatch,
-          type: row.type,
           component: CameraStatusPopup,
+          type: row.type,
           theme: "dark",
           title: row.title,
           content: row.content ?? [],
-          isOnline,
+          isOnline: row.isOnline,
           messageId: row.messageId,
-          style: { 
-            minHeight: isOnline ? "220px" : "250px",
-            maxHeight: isOnline ? "220px" : "250px",
+          style: {
+            minHeight: row.isOnline ? "220px" : "250px",
+            maxHeight: row.isOnline ? "220px" : "250px",
           },
           closeAction: "closeCameraStatusAlert",
-          isAddNotification: false,
+          id: row.id,
         });
       }
     });
+  };
+
+  const handleClearAllNotifications = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsLoading(true);
+    await Promise.all(
+      notificationRedux.list.map((row) => {
+        const toastId = `notification-list-toast-${row.messageId}`;
+
+        toast.dismiss(toastId);
+        const updatedData = {
+          updateVisible: false,
+          isSuccess: true,
+          theme: row.theme,
+          style: row.style,
+          type: row.type,
+          title: row.title,
+          content: row.content,
+          variables: row.variables,
+          isOnline: row.isOnline,
+        };
+  
+        toastChannel.postMessage({
+          toastId: toastId,
+          action: row.closeAction,
+          data: updatedData,
+          id: row.id,
+          messageId: row.messageId,
+        });
+
+        confirmNotification(row.id, row.messageId, dispatch);
+      })
+    );
+    toastChannel.postMessage({ action: "clear-all" });
+    await fetchNotification();
+    setIsLoading(false);
+  }
+
+  const fetchNotification = async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    try {
+      const response = await fetchClient<EventNotifyResponse>(combineURL(CENTER_API, "/event-notify/get"), {
+        method: "GET",
+        signal: controller.signal,
+        queryParams: {
+          page: "1",
+          limit: "100",
+          filter: `is_confirm=false,event_timestamp>=${dayjs(authData.userInfo?.created_at).toISOString()}`,
+          orderBy: "id.desc"
+        }
+      })
+
+      if (response.success) {
+        const data = response.data.map((row: EventNotify) => {
+          const isOnline = row.data.current_status.toString().toLowerCase() === "online" ? true : false;
+          const type: NotificationType = isOnline
+              ? "cameraOnline"
+              : "cameraOffline"
+          
+          return {
+            id: row.id,
+            userId: "",
+            type,
+            title: isOnline ? "alert.camera-online" : "alert.camera-offline",
+            content: isOnline
+              ? [row.data.camera_name, row.data.camera_ip]
+              : [
+                  "alert.camera-offline-content-2",
+                  row.data.camera_name,
+                  row.data.camera_ip,
+                ],
+            isOnline,
+            messageId: `${row.id}_${row.event_timestamp}`,
+          }
+        });
+
+        dispatch(
+          addListNotification(data)
+        );
+      }
+    }
+    catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      console.error(errorMessage)
+    }
+    finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-30 min-w-[1300px]">
+      { isLoading && <Loading /> }
       <div className="flex justify-between items-center bg-black">
         {/* Status Section */}
         <div 
@@ -256,11 +318,11 @@ function Nav() {
           style={{ clipPath: "polygon(0% 0%, 98.3% 0%, 95% 100%, 0% 100%)" }}
         >
           <div 
-            className="flex pt-[6px] justify-center bg-black mb-[3px]" 
+            className="flex pt-1.5 justify-center bg-black mb-[3px]" 
             style={{ clipPath: "polygon(0% 0%, 98.1% 0%, 94.9% 100%, 0% 100%)" }}
           >
             <div className="flex w-full">
-              <div className="flex items-center justify-center space-x-1 ml-[10px]">
+              <div className="flex items-center justify-center space-x-1 ml-2.5">
                 {/* Hamburger Icon */}
                 <div 
                   onClick={toggleMenu}
@@ -273,13 +335,13 @@ function Nav() {
                   </button>
                 </div>
                 <div className={`flex justify-center items-center ${NAV_LOGO_BG_WHITE ? "bg-white" : ""}`}>
-                  <img src="/project-logo/sm-logo.png" alt="Logo" className="w-[80px] h-[55px]" />
+                  <img src="/project-logo/sm-logo.png" alt="Logo" className="w-[60px] h-10" />
                 </div>
                 <span className="text-[25px]">{PROJECT_NAME}</span>
               </div>
             </div>
             <div className="flex w-full h-[50px]">
-              <div className="flex flex-cols mb-[4px] items-center justify-center">
+              <div className="flex flex-cols mb-1 items-center justify-center">
                 <p className="text-[15px] h-[25px] text-cyan-300">
                   {currentTime}
                 </p>
@@ -291,27 +353,13 @@ function Nav() {
         {/* User Section */}
         <div className="flex items-center gap-4 mr-[50px] text-white">
           <p className="text-[20px] w-[180px] overflow-hidden text-ellipsis whitespace-nowrap text-center">{authData.userInfo?.username || "User"}</p>
-          <div className="relative flex justify-center items-center">
-            <IconButton
-              className="bell-btn"
-              sx={{
-                borderRadius: "50px !important",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-              }}
-              onClick={handleNotificationClick}
-            >
-              <img src={BellIcon} alt="Bell Icon" className="h-[23px] w-[19px]" />
-              {
-                notificationCount > 0 && (
-                  <div className="absolute top-0 -right-[5px] bg-[#2B9BED] text-white text-xs font-bold rounded-full w-[22px] h-[22px] flex justify-center items-center">
-                    <span className="text-[#071C3B]">{notificationCount}</span>
-                  </div>
-                )
-              }
-            </IconButton>
-          </div>
+          <NotificationBell 
+            notificationCount={notificationCount}
+            onNotificationClick={handleNotificationClick}
+            onClearAllNotifications={handleClearAllNotifications}
+          />
           <div className="relative">
-            <div className="bg-gradient-to-b from-[#0CFCEE] to-[#0B23FC] p-[2px] rounded-full">
+            <div className="flex justify-center items-center bg-linear-to-b from-[#0CFCEE] to-[#0B23FC] p-0.5 rounded-full">
               <img 
                 ref={imgRef}
                 src={
@@ -325,7 +373,7 @@ function Nav() {
             {
               dropdownVisible && (
                 <div
-                  className="flex items-center justify-center absolute right-0 mt-1 w-[130px] bg-gradient-to-b from-[#0CFCEE] to-[#0B23FC] rounded-[5px] p-[2px] shadow-lg z-51"
+                  className="flex items-center justify-center absolute right-0 mt-1 w-[130px] bg-linear-to-b from-[#0CFCEE] to-[#0B23FC] rounded-[5px] p-0.5 shadow-lg z-51"
                   ref={dropdownRef}
                 >
                   <div className="bg-black w-full h-full rounded-[5px]">
@@ -336,7 +384,7 @@ function Nav() {
                       >
                         {t('menu.profile')}
                       </li>
-                      <div className="border-b-[1px] border-[#2B9BED] mx-2"></div>
+                      <div className="border-b border-[#2B9BED] mx-2"></div>
                       <li
                         className={`px-4 py-1 hover:bg-[#CBD3D9] hover:text-black cursor-pointer text-sm text-white text-center`}
                         onClick={handleLogoutClick}
@@ -349,7 +397,7 @@ function Nav() {
               )
             }
           </div>
-          <div className="grid grid-cols-[20px_auto] border border-white rounded-[5px] py-[3px] px-[12px]">
+          <div className="grid grid-cols-[20px_auto] border border-white rounded-[5px] py-[3px] px-3">
             <span className="mr-[5px]">
               {
                 (() => {
@@ -377,7 +425,7 @@ function Nav() {
       </div>
 
       {/* side nav */}
-      <div className={`fixed h-[70vh] w-[80px] bg-black mt-[2rem] border-2 border-[#2B9BED] rounded-xl px-2 py-12 transition-transform duration-300
+      <div className={`fixed h-[70vh] w-20 bg-black mt-8 border-2 border-[#2B9BED] rounded-xl px-2 py-12 transition-transform duration-300
         ${isOpen ? "translate-x-0 translate-y-1 left-3" : "-translate-x-full translate-y-1 left-0"}
         `}>
         <div className="absolute top-3 left-0 w-full flex justify-center">

@@ -126,9 +126,9 @@ const SearchFilter: React.FC<SearchFilterProps> = ({}) => {
   };
 
   return (
-    <div id='search-filter' className='h-screen w-[270px] pt-[20px]'>
+    <div id='search-filter' className='h-screen w-[270px] pt-5'>
       <div 
-        className='h-[91%] bg-[#2B9BED] p-[1px]'
+        className='h-[91%] bg-[#2B9BED] p-px'
         style={{
           clipPath: 'polygon(0 0, 150px 0, 160px 24px, 100% 24px, 100% 100%, 0% 100%, 0 0)',
         }}
@@ -140,7 +140,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({}) => {
           }}
         >
           <div className='flex space-x-2 text-white px-2 pt-1'>
-            <img src={PeopleSearchIcon} alt="Car Search Icon" className='w-[20px] h-[20px]' />
+            <img src={PeopleSearchIcon} alt="Car Search Icon" className='w-5 h-5' />
             <label>เงื่อนไขการค้นหา</label>
           </div>
 

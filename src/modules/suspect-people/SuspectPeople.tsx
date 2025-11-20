@@ -124,7 +124,7 @@ const SuspectPeople: React.FC<SuspectPeopleProps> = ({}) => {
   }
 
   return (
-    <div id='suspect-people' className={`main-content ${isOpen ? "pl-[130px]" : "pl-[10px]"} pr-[10px] transition-all duration-500`}>
+    <div id='suspect-people' className={`main-content ${isOpen ? "pl-[130px]" : "pl-2.5"} pr-2.5 transition-all duration-500`}>
       <div className="grid grid-cols-[1fr_270px] gap-x-4">
         <div>
           {/* Header */}
@@ -233,7 +233,7 @@ const SuspectPeople: React.FC<SuspectPeopleProps> = ({}) => {
                                 const color = data.active === 1 ? "bg-[#4CB64C]" : "bg-[#ADADAD]";
                                 return (
                                   <label
-                                    className={`w-[80px] h-[30px] inline-flex items-center justify-center rounded
+                                    className={`w-20 h-[30px] inline-flex items-center justify-center rounded
                                     ${color}`}
                                   >
                                     { data.active === 1 ? "Active" : "Inactive" }
@@ -273,7 +273,7 @@ const SuspectPeople: React.FC<SuspectPeopleProps> = ({}) => {
                 </Table>
               </TableContainer>
 
-              <div className={`${mockSuspectPeople.length > 0 ? "flex" : "hidden"} items-center justify-between bg-[var(--background-color)] py-3 pl-1 sticky bottom-0`}>
+              <div className={`${mockSuspectPeople.length > 0 ? "flex" : "hidden"} items-center justify-between bg-(--background-color) py-3 pl-1 sticky bottom-0`}>
                 <PaginationComponent 
                   page={page} 
                   onChange={handlePageChange}

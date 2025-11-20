@@ -176,7 +176,7 @@ const ManageUser: React.FC<ManageUserProps> = ({}) => {
       }))
       setStatusOptions([{label: t('dropdown.all-status'), value: 2}, ...options]);
     }
-  }, [sliceDropdown.status, i18n.language]);
+  }, [sliceDropdown.status, i18n.language, i18n.isInitialized]);
 
   const fetchUsers = async (page: number, limit: number, filter?: string) => {
     const controller = new AbortController();
@@ -505,27 +505,36 @@ const ManageUser: React.FC<ManageUserProps> = ({}) => {
       status: t('csv.column.status'),
     };
 
-    const dataRows = data.map((data) => ({
-      [columnLabels.prefix]:
-        sliceDropdown.prefix?.data.find((prefix) => prefix.id === data.title_id)
-          ?.title_th ?? "-",
-      [columnLabels.firstName]: data.firstname,
-      [columnLabels.lastName]: data.lastname,
-      [columnLabels.idCard]: formatThaiID(data.idcard),
-      [columnLabels.dob]: data.dob
-        ? dayjs(data.dob).format("DD/MM/YYYY")
-        : "-",
-      [columnLabels.phone]: formatPhone(data.phone),
-      [columnLabels.email]: data.email,
-      [columnLabels.position]: data.job_position,
-      [columnLabels.agency]: data.agency,
-      [columnLabels.role]: reformatString(
-        sliceDropdown.userGroups?.data.find(
-          (userGroup) => userGroup.id === data.permissions.userRoleId
-        )?.group_name ?? "-"
-      ),
-      [columnLabels.status]: reformatString(data.status),
-    }));
+    const dataRows = data.map((item) => {
+      const prefixItem = sliceDropdown.prefix?.data.find(
+        (p) => p.id === item.title_id
+      );
+
+      const prefixValue = prefixItem
+        ? i18n.language === "th"
+          ? prefixItem.title_th
+          : prefixItem.title_en
+        : "-";
+
+      const userGroup = sliceDropdown.userGroups?.data.find(
+        (group) => group.id === item.permissions?.userRoleId
+      );
+
+      return {
+        [columnLabels.prefix]: prefixValue,
+        [columnLabels.firstName]: item.firstname,
+        [columnLabels.lastName]: item.lastname,
+        [columnLabels.idCard]: formatThaiID(item.idcard),
+        [columnLabels.dob]: item.dob ? dayjs(item.dob).format("DD/MM/YYYY") : "-",
+        [columnLabels.phone]: formatPhone(item.phone),
+        [columnLabels.email]: item.email,
+        [columnLabels.position]: item.job_position,
+        [columnLabels.agency]: item.agency,
+        [columnLabels.role]: reformatString(userGroup?.group_name ?? "-"),
+        [columnLabels.status]: reformatString(item.status),
+      };
+    });
+
 
     const csvString =
       t("csv.user-list") + "\n\n" + 
@@ -562,12 +571,12 @@ const ManageUser: React.FC<ManageUserProps> = ({}) => {
   }
 
   return (
-    <div id='manage-user' className={`main-content ${isOpen ? "pl-[130px]" : "pl-[10px]"} transition-all duration-500`}>
+    <div id='manage-user' className={`main-content ${isOpen ? "pl-[130px]" : "pl-2.5"} transition-all duration-500`}>
       { isLoading && <Loading /> }
       {
         pageLoading && <ProgressBarWithLabel message={progressMessage} value={progress} />
       }
-      <div className='flex flex-col w-full pr-[20px]'>
+      <div className='flex flex-col w-full pr-5'>
         {/* Header */}
         <div className='flex justify-between'>
           <Typography variant="h5" color="white" className="font-bold">{t('screen.manage-user.title')}</Typography>
@@ -644,7 +653,7 @@ const ManageUser: React.FC<ManageUserProps> = ({}) => {
               onClick={exportToCsv}
               disabled={users.length === 0}
             >
-              <img src={CSVIcon} alt='CSV Icon' className='w-[20px] h-[20px]' />
+              <img src={CSVIcon} alt='CSV Icon' className='w-5 h-5' />
             </IconButton>
 
             <Button
@@ -654,7 +663,7 @@ const ManageUser: React.FC<ManageUserProps> = ({}) => {
                 <img 
                   src={UserPermissionIcon} 
                   alt="User Permission Icon"
-                  className="w-[20px] h-[20px]"
+                  className="w-5 h-5"
                 />
               }
               sx={{
@@ -737,7 +746,7 @@ const ManageUser: React.FC<ManageUserProps> = ({}) => {
                             const color = data.status === "active" ? "bg-[#4CB64C]" : "bg-[#ADADAD]";
                             return (
                               <label
-                                className={`w-[80px] h-[30px] inline-flex items-center justify-center rounded
+                                className={`w-20 h-[30px] inline-flex items-center justify-center rounded
                                 ${color}`}
                               >
                                 { reformatString(data.status) }
@@ -775,7 +784,7 @@ const ManageUser: React.FC<ManageUserProps> = ({}) => {
           </TableContainer>
 
           {/* Pagination Part */}
-          <div className={`${users.length > 0 ? "flex" : "hidden"} items-center justify-between bg-[var(--background-color)] py-3 pl-1 sticky bottom-0`}>
+          <div className={`${users.length > 0 ? "flex" : "hidden"} items-center justify-between bg-(--background-color) py-3 pl-1 sticky bottom-0`}>
             <PaginationComponent 
               page={page} 
               onChange={handlePageChange}

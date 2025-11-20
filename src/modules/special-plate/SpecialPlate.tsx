@@ -341,8 +341,13 @@ const SpecialPlatePage: React.FC<SpecialPlateProps> = ({}) => {
     await fetchSpecialPlates(1, rowsPerPage, filterParts.join(','));
   }
 
+  const handleAddSpecialPlateClick = () => {
+    setSelectedRow(null);
+    setOpenManageSpecialPlate(true);
+  }
+
   return (
-    <div id='special-plate' className={`main-content ${isOpen ? "pl-[130px]" : "pl-[10px]"} pr-[10px] transition-all duration-500`}>
+    <div id='special-plate' className={`main-content ${isOpen ? "pl-[130px]" : "pl-2.5"} pr-2.5 transition-all duration-500`}>
       { isLoading && <Loading /> }
       <div className="grid grid-cols-[1fr_270px] gap-x-4">
         <div>
@@ -377,7 +382,7 @@ const SpecialPlatePage: React.FC<SpecialPlateProps> = ({}) => {
                     height: "40px",
                     textTransform: "capitalize",
                   }}
-                  onClick={() => setOpenManageSpecialPlate(true)}
+                  onClick={handleAddSpecialPlateClick}
                 >
                   {t('button.add-new-plate')}
                 </Button>
@@ -474,7 +479,7 @@ const SpecialPlatePage: React.FC<SpecialPlateProps> = ({}) => {
                                 const color = data.active === 1 ? "bg-[#4CB64C]" : "bg-[#ADADAD]";
                                 return (
                                   <label
-                                    className={`w-[80px] h-[30px] inline-flex items-center justify-center rounded
+                                    className={`w-20 h-[30px] inline-flex items-center justify-center rounded
                                     ${color}`}
                                   >
                                     { data.active === 1 ? "Active" : "Inactive" }
@@ -524,7 +529,7 @@ const SpecialPlatePage: React.FC<SpecialPlateProps> = ({}) => {
                       specialPlateList.length === 0 && (
                         <TableRow>
                           <TableCell colSpan={10} align="center" sx={{ backgroundColor: "#393B3A", color: "#FFFFFF", height: "83px" }}>
-                            {t('table.no-data')}
+                            {t('text.no-data')}
                           </TableCell>
                         </TableRow>
                       )
@@ -533,7 +538,7 @@ const SpecialPlatePage: React.FC<SpecialPlateProps> = ({}) => {
                 </Table>
               </TableContainer>
 
-              <div className={`${mockSpecialPlates.length > 0 ? "flex" : "hidden"} items-center justify-between bg-[var(--background-color)] py-3 pl-1 sticky bottom-0`}>
+              <div className={`${mockSpecialPlates.length > 0 ? "flex" : "hidden"} items-center justify-between bg-(--background-color) py-3 pl-1 sticky bottom-0`}>
                 <PaginationComponent 
                   page={page} 
                   onChange={handlePageChange}
@@ -552,7 +557,15 @@ const SpecialPlatePage: React.FC<SpecialPlateProps> = ({}) => {
         
         {/* Modules */}
         <SearchFilter onSearch={handleSearch}/>
-        <ManageSpecialPlate open={openManageSpecialPlate} onClose={handleManageSpecialPlateClose} selectedRow={selectedRow} />
+        {
+          openManageSpecialPlate && (
+            <ManageSpecialPlate 
+              open={openManageSpecialPlate} 
+              onClose={handleManageSpecialPlateClose} 
+              selectedRow={selectedRow} 
+            />
+          )
+        }
         <ImportFile open={isFileImportOpen} onClose={handleFileImportClose} />
       </div>
     </div>

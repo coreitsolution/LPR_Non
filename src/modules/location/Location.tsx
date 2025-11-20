@@ -53,7 +53,7 @@ const UserLocation: React.FC<UserLocationProps> = ({open, onClose, lat, lng, tit
       </DialogTitle>
       <DialogContent className='bg-black'>
         {/* Map Part */}
-        <div className='relative h-[65vh] w-full border-[1px] border-[#2B9BED]'>
+        <div className='relative h-[65vh] w-full border border-[#2B9BED]'>
           <BaseMap 
             onMapLoad={handleMapLoad}
             zoomControl={true}

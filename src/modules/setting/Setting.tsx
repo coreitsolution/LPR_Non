@@ -42,8 +42,7 @@ import { PopupMessage } from '../../utils/popupMessage';
 // Types
 import { 
   Camera, 
-  CameraResponse, 
-  CheckpointResponse,
+  CameraResponse,
 } from "../../features/types";
 
 // Modules
@@ -114,24 +113,7 @@ const Setting: React.FC<SettingProps> = ({}) => {
       })
 
       if (response.success) {
-        const updated = await Promise.all(
-          response.data.map(async (camera: Camera) => {
-            const { 
-              checkpoint_name,
-              organization,
-              serial_number,
-              license_key, 
-            } = await fetchCheckpointInfo(camera.checkpoint_uid);
-            return {
-              ...camera,
-              checkpoint_name,
-              organization,
-              serial_number,
-              license_key,
-            }
-          })
-        );
-        setCameraList(updated);
+        setCameraList(response.data);
         setTotalPages(prev => {
           if (prev > response.pagination.maxPage) {
             return response.pagination.maxPage;
@@ -151,43 +133,6 @@ const Setting: React.FC<SettingProps> = ({}) => {
       setTimeout(() => {
         setIsLoading(false);
       }, 500)
-    }
-  }
-
-  const fetchCheckpointInfo = async (checkpoint_uid: string) => {
-    let checkpoint_name = "";
-    let organization = "";
-    let serial_number = "" as string | null;
-    let license_key = "" as string | null;
-    try {
-      const response = await fetchClient<CheckpointResponse>(combineURL(CENTER_API, "/checkpoints/get"), {
-        method: "GET",
-        queryParams: { 
-          filter: `checkpoint_uid:${checkpoint_uid}`
-        },
-      });
-
-      if (response.data) {
-        checkpoint_name = response.data[0].checkpoint_name;
-        organization = response.data[0].organization;
-        serial_number = response.data[0].serial_number;
-        license_key = response.data[0].license_key;
-      }
-
-      return {
-        checkpoint_name,
-        organization,
-        serial_number,
-        license_key,
-      };
-    } 
-    catch (error) {
-      return {
-        checkpoint_name,
-        organization,
-        serial_number,
-        license_key,
-      };
     }
   }
 
@@ -259,9 +204,9 @@ const Setting: React.FC<SettingProps> = ({}) => {
   }
 
   return (
-    <div id='setting' className={`main-content ${isOpen ? "pl-[130px]" : "pl-[10px]"} transition-all duration-500`}>
+    <div id='setting' className={`main-content ${isOpen ? "pl-[130px]" : "pl-2.5"} transition-all duration-500`}>
       { isLoading && <Loading /> }
-      <div className='flex flex-col w-full gap-3 pr-[20px]'>
+      <div className='flex flex-col w-full gap-3 pr-5'>
         {/* Header */}
         <Typography variant="h5" color="white" className="font-bold">{t('screen.setting.title')}</Typography>
 
@@ -340,7 +285,7 @@ const Setting: React.FC<SettingProps> = ({}) => {
                             const color = data.active === 1 ? "bg-[#4CB64C]" : "bg-[#ADADAD]";
                             return (
                               <label
-                                className={`w-[80px] h-[30px] inline-flex items-center justify-center rounded
+                                className={`w-20 h-[30px] inline-flex items-center justify-center rounded
                                 ${color}`}
                               >
                                 { data.active === 1 ? t('text.active') : t('text.inactive') }
@@ -361,7 +306,7 @@ const Setting: React.FC<SettingProps> = ({}) => {
                       <TableCell sx={{ backgroundColor: "#393B3A", color: "#FFFFFF", height: "83px", textAlign: "center" }}>
                         <Button onClick={() => handleSensorSettingClick(data)}>
                           <img 
-                            src={`/icons/sensor-setting${data.detection_area !== "" ? "-green" : ""}.png`}
+                            src={`/icons/sensor-setting${data.detection_area ? "-green" : ""}.png`}
                             style={{ height: "30px", width: "30px" }} 
                             alt="Sensor Setting" 
                           />
@@ -390,7 +335,7 @@ const Setting: React.FC<SettingProps> = ({}) => {
           </TableContainer>
 
           {/* Pagination Part */}
-          <div className={`flex items-center justify-between bg-[var(--background-color)] py-3 pl-1 sticky bottom-0`}>
+          <div className={`flex items-center justify-between bg-(--background-color) py-3 pl-1 sticky bottom-0`}>
             <PaginationComponent 
               page={page} 
               onChange={handlePageChange}

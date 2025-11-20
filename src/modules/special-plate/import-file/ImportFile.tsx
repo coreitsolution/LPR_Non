@@ -6,6 +6,7 @@ import {
   Typography,
   Button,
 } from '@mui/material';
+import dayjs from 'dayjs';
 
 // Components
 import Loading from "../../../components/loading/Loading";
@@ -111,7 +112,10 @@ const ImportFile: React.FC<ImportFileProps> = ({open, onClose}) => {
       PopupMessage(t('message.success.save-success'), t('message.success.save-success-message'), "success");
     }
     
-    setIsLoading(false)
+    setIsLoading(false);
+
+    clearData();
+    onClose();
   }
 
   const addSpecialPlate = async (data: ImportSpecialPlatesDetail) => {
@@ -121,20 +125,19 @@ const ImportFile: React.FC<ImportFileProps> = ({open, onClose}) => {
         plate_number: data.plate_number,
         region_code: data.region_code,
         plate_class_id: data.plate_class_id,
-        // ...(
-        //   data.case_number && { case_number: data.case_number }
-        // ),
-        // ...(
-        //   data.arrest_date && { arrest_warrant_date: dayjs(data.arrest_date).format('YYYY-MM-DD hh:mm:ss') }
-        // ),
-        // ...(
-        //   data.end_arrest_date && { arrest_warrant_expire_date: dayjs(data.end_arrest_date).format('YYYY-MM-DD hh:mm:ss') }
-        // ),
+        ...(
+          data.case_number && { case_number: data.case_number }
+        ),
+        ...(
+          data.arrest_warrant_date && { arrest_warrant_date: dayjs(data.arrest_warrant_date).format('YYYY-MM-DD hh:mm:ss') }
+        ),
+        ...(
+          data.arrest_warrant_expire_date && { arrest_warrant_expire_date: dayjs(data.arrest_warrant_expire_date).format('YYYY-MM-DD hh:mm:ss') }
+        ),
         ...(
           data.behavior && { behavior: data.behavior }
         ),
         case_owner_name: data.case_owner_name,
-        case_owner_agency: data.case_owner_agency,
         case_owner_phone: data.case_owner_phone.replace("-", ""),
         active: data.active ?? 0,
       })

@@ -74,7 +74,7 @@ const Confirmation: React.FC<ConfirmationProps> = ({setFinalDataList, filesDataL
       )
 
       const provinceName = data.province === "กทม" || data.province === "กทม." ? "กรุงเทพมหานคร" : data.province
-      const region = sliceDropdown.regions?.data?.find((region) => region.name_en.toLowerCase() === provinceName.toLowerCase())
+      const region = sliceDropdown.regions?.data?.find((region) => i18n.language === 'th' ? region.name_th.toLowerCase() === provinceName.toLowerCase() : region.name_en.toLowerCase() === provinceName.toLowerCase())
       const plateType = sliceDropdown.plateTypes?.data?.find((type) => type.title_en.toLowerCase() === data.plate_type.toLowerCase())
       const status = sliceDropdown.status?.data?.find((status) => status.status.toLowerCase() === data.active.toLowerCase())
       
@@ -86,9 +86,9 @@ const Confirmation: React.FC<ConfirmationProps> = ({setFinalDataList, filesDataL
         region_code: region?.region_code || "",
         plate_type: plateType?.title_en || t('text.data-not-found'),
         plate_class_id: plateType?.id || 0,
-        // case_number: data.case_number,
-        // arrest_warrant_date: data.arrest_warrant_date,
-        // arrest_warrant_expire_date: data.arrest_warrant_expire_date,
+        case_number: data.case_number,
+        arrest_warrant_date: data.arrest_warrant_date,
+        arrest_warrant_expire_date: data.arrest_warrant_expire_date,
         behavior: data.behavior,
         case_owner_name: data.case_owner_name,
         case_owner_agency: data.case_owner_agency,
@@ -129,7 +129,7 @@ const Confirmation: React.FC<ConfirmationProps> = ({setFinalDataList, filesDataL
     <div id='text-upload'>
       {isLoading && <Loading />}
       <div className='flex flex-col h-full'>
-        <div className="flex-grow overflow-x-auto">
+        <div className="grow overflow-x-auto">
           <TableContainer component={Paper} className="mt-4 h-[60vh] w-[2500px]"
             sx={{
               backgroundColor: "#000000"
@@ -150,12 +150,11 @@ const Confirmation: React.FC<ConfirmationProps> = ({setFinalDataList, filesDataL
                   <TableCell>{t('table.column.plate-number')}</TableCell>
                   <TableCell>{t('table.column.province')}</TableCell>
                   <TableCell>{t('table.column.plate-type')}</TableCell>
-                  {/* <TableCell>{t('table.column.case-number')}</TableCell>
+                  <TableCell>{t('table.column.case-number')}</TableCell>
                   <TableCell>{t('table.column.date-arrest-warrant')}</TableCell>
-                  <TableCell>{t('table.column.date-expiration-arrest-warrant')}</TableCell> */}
+                  <TableCell>{t('table.column.date-expiration-arrest-warrant')}</TableCell>
                   <TableCell>{t('table.column.behavior')}</TableCell>
                   <TableCell>{t('table.column.owner-name')}</TableCell>
-                  <TableCell>{t('table.column.agency')}</TableCell>
                   <TableCell>{t('table.column.phone')}</TableCell>
                   <TableCell>{t('table.column.vehicle-plate-image')}</TableCell>
                   <TableCell>{t('table.column.file')}</TableCell>
@@ -182,16 +181,15 @@ const Confirmation: React.FC<ConfirmationProps> = ({setFinalDataList, filesDataL
                         <TableCell sx={{ backgroundColor: "#393B3A" }}>{data.plate_number}</TableCell>
                         <TableCell sx={{ backgroundColor: "#48494B" }}>{data.province}</TableCell>
                         <TableCell sx={{ backgroundColor: "#393B3A" }}>{data.plate_type}</TableCell>
-                        {/* <TableCell sx={{ backgroundColor: "#48494B" }}>{data.case_number || "-"}</TableCell>
+                        <TableCell sx={{ backgroundColor: "#48494B" }}>{data.case_number || "-"}</TableCell>
                         <TableCell sx={{ backgroundColor: "#393B3A" }}>
                           {data.arrest_warrant_date ? dayjs(data.arrest_warrant_date).format("DD/MM/YYYY") : "-"}
                         </TableCell>
                         <TableCell sx={{ backgroundColor: "#48494B" }}>
                           {data.arrest_warrant_expire_date ? dayjs(data.arrest_warrant_expire_date).format("DD/MM/YYYY") : "-"}
-                        </TableCell> */}
-                        <TableCell sx={{ backgroundColor: "#48494B" }}>{data.behavior || "-"}</TableCell>
-                        <TableCell sx={{ backgroundColor: "#393B3A" }}>{data.case_owner_name}</TableCell>
-                        <TableCell sx={{ backgroundColor: "#48494B" }}>{data.case_owner_agency}</TableCell>
+                        </TableCell>
+                        <TableCell sx={{ backgroundColor: "#393B3A" }}>{data.behavior || "-"}</TableCell>
+                        <TableCell sx={{ backgroundColor: "#48494B" }}>{data.case_owner_name}</TableCell>
                         <TableCell sx={{ backgroundColor: "#393B3A", textWrap: "nowrap" }}>{data.case_owner_phone}</TableCell>
                         <TableCell sx={{ backgroundColor: "#48494B", textAlign: "center" }}>
                           {imageUrl ? (

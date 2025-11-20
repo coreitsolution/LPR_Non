@@ -185,10 +185,10 @@ const FilesUpload: React.FC<FilesUploadProps> = ({setFilesDataList, filesDataLis
           />
         </div>
         <div className='flex items-center'>
-          <img src="/icons/red-waring.png" alt="Warning" className='w-[20px] h-[20px]' />
+          <img src="/icons/red-waring.png" alt="Warning" className='w-5 h-5' />
           <label className='ml-2 text-white text-[12px] font-bold'>{t('text.import-all-file-if-exist')}</label>
         </div>
-        <div className="flex-grow overflow-x-auto">
+        <div className="grow overflow-x-auto">
           <TableContainer component={Paper} className="mt-4 h-[56vh]"
             sx={{
               backgroundColor: "#000000"

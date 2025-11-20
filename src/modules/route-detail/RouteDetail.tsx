@@ -136,9 +136,9 @@ const RouteDetail: React.FC<RouteDetailProps> = ({open, onClose, plateDetailList
       <DialogContent className='bg-black'>
         <div className='flex flex-col space-y-6'>
           {/* Contents */}
-          <div className='grid grid-cols-[auto_55%] border-[1px] border-[#384043]'>
+          <div className='grid grid-cols-[auto_55%] border border-[#384043]'>
             {/* Map Part */}
-            <div className='relative h-full w-full border-r-[2px] border-[#384043]'>
+            <div className='relative h-full w-full border-r-2 border-[#384043]'>
               <BaseMap 
                 onMapLoad={handleMapLoad}
               />
@@ -156,10 +156,10 @@ const RouteDetail: React.FC<RouteDetailProps> = ({open, onClose, plateDetailList
                       </div>
                       <div className='grid grid-cols-2 py-2'>
                         {/* Column 1 */}
-                        <div className='border-r-[1px] border-[#384043] px-2 space-y-2'>
+                        <div className='border-r border-[#384043] px-2 space-y-2'>
                           {/* Image */}
-                          <div className='flex items-center justify-center h-[160px] bg-black'>
-                            <div className='h-[160px] w-[60%] relative'>
+                          <div className='flex items-center justify-center h-40 bg-black'>
+                            <div className='h-40 w-[60%] relative'>
                               <img src={`${CENTER_FILE_URL}${data.vehicle_image}`} alt="Vehicle Image" className='h-full w-full' />
                               <img src={`${CENTER_FILE_URL}${data.plate_image}`} alt="Plate Image" className='h-[30%] w-[100px] absolute bottom-0 left-0' />
                             </div>
@@ -171,31 +171,31 @@ const RouteDetail: React.FC<RouteDetailProps> = ({open, onClose, plateDetailList
                               <label className='text-[15px]'>{t('text.vehicle-data')}</label>
                             </div>
                             <div className='grid grid-cols-[30%_auto] text-[14px] h-[20vh] overflow-y-auto'>
-                              <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                 {t('text.vehicle-plate')}
                               </div>
-                              <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                 {data.plate}
                               </div>
 
-                              <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                 {t('text.brand')}
                               </div>
-                              <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                 {data.vehicle_make_details && i18n.language === "th" ? data.vehicle_make_details.make_th || "-" : data.vehicle_make_details.make_en || "-"}
                               </div>
 
-                              <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                 {t('text.color')}
                               </div>
-                              <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                 {data.vehicle_color_details && i18n.language === "th" ? data.vehicle_color_details.color_th || "-" : data.vehicle_color_details.color_en || "-"}
                               </div>
 
-                              <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                 {t('text.model')}
                               </div>
-                              <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                 {data.vehicle_model_details && i18n.language === "th" ? data.vehicle_model_details.model_th || "-" : data.vehicle_model_details.model_en || "-"}
                               </div>
 
@@ -214,17 +214,17 @@ const RouteDetail: React.FC<RouteDetailProps> = ({open, onClose, plateDetailList
                               <label className='text-[15px]'>{t('text.owner-info')}</label>
                             </div>
                             <div className='grid grid-cols-[30%_auto] text-[14px] h-[14.2vh] overflow-y-auto'>
-                              <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                 {t('text.owner-name')}
                               </div>
-                              <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                 {data.ownerName || "-"}
                               </div>
 
-                              <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                 {t('text.owner-pid')}
                               </div>
-                              <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                 {data.ownerNationalId || "-"}
                               </div>
 
@@ -243,17 +243,17 @@ const RouteDetail: React.FC<RouteDetailProps> = ({open, onClose, plateDetailList
                               <label className='text-[15px]'>{t('text.ownership-info')}</label>
                             </div>
                             <div className='grid grid-cols-[30%_auto] text-[14px] h-[14.2vh] overflow-y-auto'>
-                              <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                 {t('text.ownership-name')}
                               </div>
-                              <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                 {data.ownershipName || "-"}
                               </div>
 
-                              <div className='bg-[#393B3A] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#393B3A] border-b border-[#ADADAD] border-dashed p-2'>
                                 {t('text.ownership-pid')}
                               </div>
-                              <div className='bg-[#48494B] border-b-[1px] border-[#ADADAD] border-dashed p-2'>
+                              <div className='bg-[#48494B] border-b border-[#ADADAD] border-dashed p-2'>
                                 {data.ownershipNationalId || "-"}
                               </div>
 
@@ -285,7 +285,7 @@ const RouteDetail: React.FC<RouteDetailProps> = ({open, onClose, plateDetailList
                                 <tbody>
                                   {
                                     data.plateRoute && data.plateRoute[0].routes.map((route, index) => (
-                                      <tr key={`data_${index}`} className='h-[40px] text-[14px] border-b-[1px] border-[#ADADAD] border-dashed'>
+                                      <tr key={`data_${index}`} className='h-10 text-[14px] border-b border-[#ADADAD] border-dashed'>
                                         <td className='pl-3 text-start bg-[#393B3A]'>{route.camera_name}</td>
                                         <td className='text-center bg-[#48494B]'>{route.epoch_end}</td>
                                       </tr>

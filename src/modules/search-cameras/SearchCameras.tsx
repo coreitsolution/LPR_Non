@@ -108,7 +108,7 @@ const SearchCameras: React.FC<SearchCamerasProps> = ({open, onClose, selectedCam
       setSelectedSubDistrictObjects([{ label: t('dropdown.all'), value: 0 }]);
       setSelectedCameraObjects([{ label: t('dropdown.all'), value: "0" }]);
     }
-  }, [i18n.language, open])
+  }, [i18n.language, open, i18n.isInitialized])
 
   useEffect(() => {
     if (sliceDropdown.provinces && sliceDropdown.provinces.data) {
@@ -118,7 +118,7 @@ const SearchCameras: React.FC<SearchCamerasProps> = ({open, onClose, selectedCam
       }));
       setProvincesOptions([{ label: t('dropdown.all'), value: 0 }, ...options]);
     }
-  }, [sliceDropdown.provinces, i18n.language]);
+  }, [sliceDropdown.provinces, i18n.language, i18n.isInitialized]);
 
   useEffect(() => {
     if (districtsList) {
@@ -128,7 +128,7 @@ const SearchCameras: React.FC<SearchCamerasProps> = ({open, onClose, selectedCam
       }))
       setDistrictsOptions([{ label: t('dropdown.all'), value: 0 }, ...options])
     }
-  }, [districtsList, i18n.language])
+  }, [districtsList, i18n.language, i18n.isInitialized])
 
   useEffect(() => {
     if (subDistrictsList) {
@@ -138,7 +138,7 @@ const SearchCameras: React.FC<SearchCamerasProps> = ({open, onClose, selectedCam
       }))
       setSubDistrictsOptions([{ label: t('dropdown.all'), value: 0 }, ...options])
     }
-  }, [subDistrictsList, i18n.language])
+  }, [subDistrictsList, i18n.language, i18n.isInitialized])
 
   useEffect(() => {
     if (cameraList) {
@@ -148,7 +148,7 @@ const SearchCameras: React.FC<SearchCamerasProps> = ({open, onClose, selectedCam
       }))
       setCamerasOption([{ label: t('dropdown.all'), value: "0" }, ...options])
     }
-  }, [cameraList, i18n.language])
+  }, [cameraList, i18n.language, i18n.isInitialized])
 
   useEffect(() => {
     if (cameraList.length === 0) {
@@ -386,7 +386,7 @@ const SearchCameras: React.FC<SearchCamerasProps> = ({open, onClose, selectedCam
       <DialogContent className='bg-black'>
         { isLoading && <Loading /> }
         {/* Selection Part */}
-        <div className='grid grid-cols-[20%_20%_auto] gap-x-[100px] gap-y-[20px] pt-2'>
+        <div className='grid grid-cols-[20%_20%_auto] gap-x-[100px] gap-y-5 pt-2'>
           <AutoComplete 
             id="province-select"
             sx={{ marginTop: "15px"}}
@@ -437,7 +437,7 @@ const SearchCameras: React.FC<SearchCamerasProps> = ({open, onClose, selectedCam
         </div>
 
         {/* Map Part */}
-        <div className='relative h-[55vh] w-full mt-[20px] border-[1px] border-[#2B9BED]'>
+        <div className='relative h-[55vh] w-full mt-5 border border-[#2B9BED]'>
           <BaseMap 
             onMapLoad={handleMapLoad}
             zoomControl={true}

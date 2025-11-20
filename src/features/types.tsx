@@ -2,6 +2,7 @@ import { Map as LeafletMap, LatLngExpression } from 'leaflet';
 
 // Types
 import { CenterPermissions } from "./dropdown/dropdownTypes";
+import { Mask } from "../components/drawing-canvas/types";
 
 export interface MapConfig {
   mapId: string
@@ -30,6 +31,7 @@ export interface MapProps {
 }
 
 export interface RealTimeLprData {
+  id: number;
   camera_id: number;
   camera_uid: string;
   checkpoint_id: string;
@@ -58,7 +60,6 @@ export interface RealTimeLprData {
   plate_y2: number;
   plate_y3: number;
   plate_y4: number;
-  ref_id: number;
   region_code: string;
   region_confidence: string;
   source_image_height: number;
@@ -90,6 +91,7 @@ export interface RealTimeLprData {
   title_name: string;
   color: string;
   pin_background_color: string;
+  text_shadow: string;
 }
 
 export interface RealTimeLprDataResponse {
@@ -368,9 +370,9 @@ export interface ImportSpecialPlates {
   plate_number: string
   province: string
   plate_type: string
-  // case_number: string
-  // arrest_warrant_date: string
-  // arrest_warrant_expire_date: string
+  case_number: string
+  arrest_warrant_date: string
+  arrest_warrant_expire_date: string
   behavior: string
   case_owner_name: string
   case_owner_agency: string
@@ -388,9 +390,9 @@ export interface ImportSpecialPlatesDetail {
   province?: string
   plate_class_id: number
   plate_type?: string
-  // case_number: string
-  // arrest_warrant_date: string
-  // arrest_warrant_expire_date: string
+  case_number: string
+  arrest_warrant_date: string
+  arrest_warrant_expire_date: string
   behavior: string
   case_owner_name: string
   case_owner_agency: string
@@ -532,7 +534,7 @@ export interface CameraResponse {
 }
 
 export interface NotificationList {
-  ref_id: string;
+  id: number;
   camera_uid: string;
   camera_name: string;
   plate_number: string;
@@ -540,6 +542,7 @@ export interface NotificationList {
   region_code: string;
   iconColor: string;
   bgColor: string;
+  textShadow: string;
   isLocationWithLabel: boolean;
   isSpecialLocation: boolean;
   detectTime: string;
@@ -558,4 +561,41 @@ export interface CheckpointCamera {
   reason: string
   created_at: string
   updated_at: string
+}
+
+export interface CameraNotify {
+  camera_ip: string;
+  timestamp: string;
+  camera_uid: string;
+  camera_name: string;
+  current_status: string;
+  previous_status: string;
+}
+
+export interface EventNotify {
+  id: number;
+  event: string;
+  source: string;
+  channel: string;
+  data: CameraNotify;
+  notify_status: string;
+  event_timestamp: string;
+  is_confirm: boolean;
+}
+
+export interface EventNotifyResponse {
+  statusCode: number;
+  status: string;
+  success: boolean;
+  message: string;
+  pagination: Pagination;
+  data: EventNotify[];
+}
+
+export interface MaskResponse {
+  statusCode: number;
+  status: string;
+  success: boolean;
+  message: string;
+  data: Mask[];
 }

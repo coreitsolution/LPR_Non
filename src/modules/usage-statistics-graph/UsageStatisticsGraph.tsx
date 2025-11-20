@@ -321,7 +321,7 @@ const UsageStatisticsGraph: React.FC<UsageStatisticsGraphProps> = ({}) => {
   
 
   return (
-    <div id='usage-statistics-graph' className={`main-content ${isOpen ? "pl-[130px]" : "pl-[10px]"} pr-[10px] transition-all duration-500 overflow-y-auto scrollbar-hide`}>
+    <div id='usage-statistics-graph' className={`main-content ${isOpen ? "pl-[130px]" : "pl-2.5"} pr-2.5 transition-all duration-500 overflow-y-auto scrollbar-hide`}>
       <div className='flex flex-col'>
         {/* Header */}
         <Typography variant="h5" color="white" className="font-bold">กราฟสถิติการใช้งาน</Typography>
@@ -443,7 +443,7 @@ const UsageStatisticsGraph: React.FC<UsageStatisticsGraphProps> = ({}) => {
         {/* Content Part */}
         <div className='grid grid-cols-3 gap-2 mt-15'>
           {/* Pie Chart */}
-          <div className='flex flex-col border-[1px] border-[#797979] rounded-[5px] p-2 row-span-3'>
+          <div className='flex flex-col border border-[#797979] rounded-[5px] p-2 row-span-3'>
             <label className='text-[#FDCC0A] text-[16px]'>สถิติการใช้งานระบบ</label>
             <div className='flex items-center justify-center w-full h-full'>
               <ResponsiveContainer width="100%" height="80%">
@@ -468,17 +468,17 @@ const UsageStatisticsGraph: React.FC<UsageStatisticsGraphProps> = ({}) => {
           </div>
           
           {/* Total Count */}
-          <div className='col-span-2 border-[1px] border-[#797979] rounded-[5px] p-2'>
+          <div className='col-span-2 border border-[#797979] rounded-[5px] p-2'>
             <div className='grid grid-cols-[40%_auto_auto_auto]'>
-              <div className='flex flex-col w-full border-r-[1px] border-[#FFFFFF]'>
+              <div className='flex flex-col w-full border-r border-[#FFFFFF]'>
                 <label className='text-[#FDCC0A] text-[16px]'>จำนวนทั้งหมด</label>
                 <p className='text-[53px] text-center'>1,565,660</p>
               </div>
-              <div className='flex flex-col items-center justify-center border-r-[1px] border-[#FFFFFF]'>
+              <div className='flex flex-col items-center justify-center border-r border-[#FFFFFF]'>
                 <p className='text-[38px] text-center'>121,900</p>
                 <label className='text-[#FDCC0A] text-[16px] justify-end'>หน่วยงาน</label>
               </div>
-              <div className='flex flex-col items-center justify-center border-r-[1px] border-[#FFFFFF]'>
+              <div className='flex flex-col items-center justify-center border-r border-[#FFFFFF]'>
                 <p className='text-[38px] text-center'>12,900</p>
                 <label className='text-[#FDCC0A] text-[16px] justify-end'>หน่วยงาน</label>
               </div>
@@ -490,7 +490,7 @@ const UsageStatisticsGraph: React.FC<UsageStatisticsGraphProps> = ({}) => {
           </div>
 
           {/* Agency Chart */}
-          <div className='flex flex-col border-[1px] border-[#797979] rounded-[5px] px-2 pt-3 pb-4 row-span-2'>
+          <div className='flex flex-col border border-[#797979] rounded-[5px] px-2 pt-3 pb-4 row-span-2'>
             <div className='flex justify-between'>
               <label className='text-[#FDCC0A] text-[16px]'>หน่วยงาน</label>
               <IconButton 
@@ -499,7 +499,7 @@ const UsageStatisticsGraph: React.FC<UsageStatisticsGraphProps> = ({}) => {
                   borderRadius: "4px !important",
                 }}
               >
-                <img src={CSVIcon} alt='CSV Icon' className='w-[20px] h-[20px]' />
+                <img src={CSVIcon} alt='CSV Icon' className='w-5 h-5' />
               </IconButton>
             </div>
             <div className='flex flex-col space-y-2 pt-3'>
@@ -520,7 +520,7 @@ const UsageStatisticsGraph: React.FC<UsageStatisticsGraphProps> = ({}) => {
           </div>
 
           {/* All Agency Table */}
-          <div className='col-start-3 row-span-5 flex flex-col border-[1px] border-[#797979] rounded-[5px] px-2 pt-3 pb-4'>
+          <div className='col-start-3 row-span-5 flex flex-col border border-[#797979] rounded-[5px] px-2 pt-3 pb-4'>
             <div className='flex justify-between'>
               <label className='text-[#FDCC0A] text-[16px]'>หน่วยงาน</label>
               <IconButton 
@@ -529,7 +529,7 @@ const UsageStatisticsGraph: React.FC<UsageStatisticsGraphProps> = ({}) => {
                   borderRadius: "4px !important",
                 }}
               >
-                <img src={CSVIcon} alt='CSV Icon' className='w-[20px] h-[20px]' />
+                <img src={CSVIcon} alt='CSV Icon' className='w-5 h-5' />
               </IconButton>
             </div>
             <div className='pt-2'>
@@ -572,7 +572,7 @@ const UsageStatisticsGraph: React.FC<UsageStatisticsGraphProps> = ({}) => {
           </div>
 
           {/* Map Part */}
-          <div className='flex flex-col border-[1px] border-[#797979] rounded-[5px] px-2 py-3 row-span-3'>
+          <div className='flex flex-col border border-[#797979] rounded-[5px] px-2 py-3 row-span-3'>
             <div className='relative h-full w-full'>
               <BaseMap 
                 onMapLoad={handleMapLoad}
@@ -581,7 +581,7 @@ const UsageStatisticsGraph: React.FC<UsageStatisticsGraphProps> = ({}) => {
           </div>
 
           {/* Agency Table */}
-          <div className='row-span-3 flex flex-col border-[1px] border-[#797979] rounded-[5px] px-2 pt-3 pb-4'>
+          <div className='row-span-3 flex flex-col border border-[#797979] rounded-[5px] px-2 pt-3 pb-4'>
             <div className='flex justify-between'>
               <label className='text-[#FDCC0A] text-[16px]'>หน่วยงาน</label>
               <IconButton 
@@ -590,7 +590,7 @@ const UsageStatisticsGraph: React.FC<UsageStatisticsGraphProps> = ({}) => {
                   borderRadius: "4px !important",
                 }}
               >
-                <img src={CSVIcon} alt='CSV Icon' className='w-[20px] h-[20px]' />
+                <img src={CSVIcon} alt='CSV Icon' className='w-5 h-5' />
               </IconButton>
             </div>
             <div className='pt-2'>
@@ -633,7 +633,7 @@ const UsageStatisticsGraph: React.FC<UsageStatisticsGraphProps> = ({}) => {
           </div>
 
           {/* User List Table */}
-          <div className='row-span-3 col-span-3 flex flex-col border-[1px] border-[#797979] rounded-[5px] px-2 pt-3 pb-4'>
+          <div className='row-span-3 col-span-3 flex flex-col border border-[#797979] rounded-[5px] px-2 pt-3 pb-4'>
             <div className='flex justify-between'>
               <label className='text-[#FDCC0A] text-[16px]'>จำนวนรายชื่อ</label>
               <IconButton 
@@ -642,7 +642,7 @@ const UsageStatisticsGraph: React.FC<UsageStatisticsGraphProps> = ({}) => {
                   borderRadius: "4px !important",
                 }}
               >
-                <img src={CSVIcon} alt='CSV Icon' className='w-[20px] h-[20px]' />
+                <img src={CSVIcon} alt='CSV Icon' className='w-5 h-5' />
               </IconButton>
             </div>
             <div className='pt-2'>
@@ -696,7 +696,7 @@ const UsageStatisticsGraph: React.FC<UsageStatisticsGraphProps> = ({}) => {
                 </Table>
               </TableContainer>
 
-              <div className={`${userList.length > 0 ? "flex" : "hidden"} items-center justify-between bg-[var(--background-color)] pt-3 pl-1`}>
+              <div className={`${userList.length > 0 ? "flex" : "hidden"} items-center justify-between bg-(--background-color) pt-3 pl-1`}>
                 <PaginationComponent 
                   page={page} 
                   onChange={handlePageChange}

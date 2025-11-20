@@ -1,33 +1,39 @@
 import { Dispatch } from "@reduxjs/toolkit";
 
 // API
-import { addNotification, removeNotification } from "../features/notification/notificationSlice";
+import { removeNotification, addNotification, NotificationType } from "../features/notification/notificationSlice";
 
 // Utils
 import { showToast } from "./commonFunction";
 import { toastChannel } from "./channel";
+import { fetchClient, combineURL } from "./fetchClient";
+
+// Types
+import { EventNotifyResponse } from "../features/types";
+
+// Config
+import { getUrls } from '../config/runtimeConfig';
 
 type NotificationToastParams = {
   dispatch: Dispatch;
-  type: "newCheckpoint" | "newCamera" | "requestDelete" | "cameraOnline" | "cameraOffline";
   component: React.FC<any>;
   theme?: "dark" | "light";
+  type: NotificationType;
   style?: Record<string, string>;
   title?: string;
   content: string | string[];
   variables?: Record<string, any>;
   isOnline?: boolean;
   messageId: string;
+  id: number;
   updateAction?: () => void;
-  closeAction?: string; // e.g. "closeUpdateAlert"
-  extra?: Record<string, any>;
-  isAddNotification?: boolean;
+  closeAction?: string;
 };
 
 export const createNotificationToast = ({
   dispatch,
-  type,
   component,
+  type,
   theme = "dark",
   style,
   title = "",
@@ -35,28 +41,27 @@ export const createNotificationToast = ({
   variables,
   isOnline,
   messageId,
+  id,
   updateAction,
   closeAction,
-  extra,
-  isAddNotification = true,
 }: NotificationToastParams) => {
   const toastId = `notification-list-toast-${messageId}`;
 
-  if (isAddNotification) {
-    dispatch(
-      addNotification({
-        id: toastId,
-        userId: "",
-        type,
-        title,
-        content: Array.isArray(content) ? content : [content],
-        variables,
-        messageId,
-        isOnline,
-        ...extra,
-      })
-    );
-  }
+  dispatch(
+    addNotification({
+      id,
+      userId: "",
+      type,
+      title,
+      content: Array.isArray(content) ? content : [content],
+      variables,
+      messageId,
+      isOnline,
+      closeAction,
+      theme,
+      style,
+    })
+  );
 
   const data = {
     title,
@@ -64,7 +69,7 @@ export const createNotificationToast = ({
     variables,
     isOnline,
     updateVisible: true,
-    onUpdate: (toastId: string) => {
+    onUpdate: async (toastId: string) => {
       if (updateAction) updateAction();
 
       const updatedData = {
@@ -79,14 +84,44 @@ export const createNotificationToast = ({
       };
 
       toastChannel.postMessage({
-        id: toastId,
+        toastId,
+        id,
+        messageId,
         action: closeAction ?? "closeUpdateAlert",
         data: updatedData,
       });
 
-      dispatch(removeNotification(toastId));
+      await confirmNotification(id, messageId, dispatch);
     },
   };
 
   showToast(component, data, theme, toastId, style);
 };
+
+
+export const confirmNotification = async (id: number, messageId: string, dispatch: Dispatch) => {
+  const { CENTER_API } = getUrls();
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+  dispatch(removeNotification(messageId));
+  try {
+
+    const body = JSON.stringify({
+      id: id,
+      is_confirm: true
+    })
+
+    await fetchClient<EventNotifyResponse>(combineURL(CENTER_API, "/event-notify/update"), {
+      method: "PATCH",
+      signal: controller.signal,
+      body,
+    })
+  }
+  catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error(errorMessage)
+  }
+  finally {
+    clearTimeout(timeoutId);
+  }
+}

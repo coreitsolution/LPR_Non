@@ -6,7 +6,8 @@ import { RootState, AppDispatch } from "../../app/store"
 // API
 import {
   logout,
-  userInfo
+  userInfo,
+  clearError,
 } from "../../features/auth/authSlice"
 
 const AuthListener = () => {
@@ -15,7 +16,10 @@ const AuthListener = () => {
   const { authData } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    if (!authData.isAuthenticated) {
+    if (!authData.isAuthenticated || !localStorage.getItem("token")) {
+      dispatch(clearError())
+      localStorage.removeItem('token');
+      localStorage.removeItem("userId");
       navigate("/login", { replace: true });
     }
     if (authData.token && !authData.userInfo) {

@@ -4,11 +4,9 @@ export interface CustomShape {
   fHeight: number
 }
 
-export interface DetectionArea {
-  frame: {
-    width: number;
-    height: number;
-  };
+export interface Mask {
+  width: number;
+  height: number;
   points: Point[];
 }
 

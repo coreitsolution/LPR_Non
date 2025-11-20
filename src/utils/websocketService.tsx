@@ -109,5 +109,5 @@ class WebSocketService {
   }
 }
 
-export const kafkaWebsocketService = new WebSocketService(false)
+export const websocketService = new WebSocketService(false)
 export const settingWebsocketService = new WebSocketService(true)

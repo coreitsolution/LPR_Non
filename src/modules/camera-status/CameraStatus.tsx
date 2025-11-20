@@ -410,7 +410,7 @@ const CameraStatus: React.FC<CameraStatusProps> = ({}) => {
   };
 
   return (
-    <div id='usage-statistics-graph' className={`main-content ${isOpen ? "pl-[130px]" : "pl-[10px]"} pr-[10px] transition-all duration-500 overflow-y-auto scrollbar-hide`}>
+    <div id='usage-statistics-graph' className={`main-content ${isOpen ? "pl-[130px]" : "pl-2.5"} pr-2.5 transition-all duration-500 overflow-y-auto scrollbar-hide`}>
       <div className='flex flex-col'>
         {/* Header */}
         <Typography variant="h5" color="white" className="font-bold">ค้นหาจุดติดตั้งกล้อง</Typography>
@@ -525,20 +525,20 @@ const CameraStatus: React.FC<CameraStatusProps> = ({}) => {
         {/* Content Part */}
         <div className='grid grid-cols-2 gap-2 mt-10'>          
           {/* Total Count */}
-          <div className='border-[1px] border-[#797979] rounded-[5px] py-2'>
+          <div className='border border-[#797979] rounded-[5px] py-2'>
             <div className='grid grid-cols-4'>
-              <div className='flex flex-col w-full border-r-[1px] border-[#FFFFFF] px-4'>
+              <div className='flex flex-col w-full border-r border-[#FFFFFF] px-4'>
                 <label className='text-white text-[16px]'>Total</label>
                 <p className='text-[53px] text-center'>1550</p>
               </div>
-              <div className='flex flex-col w-full border-r-[1px] border-[#FFFFFF] px-4'>
+              <div className='flex flex-col w-full border-r border-[#FFFFFF] px-4'>
                 <label className='text-white text-[16px]'>Less Then 30 Minutes</label>
                 <div className='flex justify-between items-end text-[#4CB64C]'>
                   <p className='text-[53px]'>1034</p>
                   <p className='text-[20px] pb-2'>{`(${72}%)`}</p>
                 </div>
               </div>
-              <div className='flex flex-col w-full border-r-[1px] border-[#FFFFFF] px-4'>
+              <div className='flex flex-col w-full border-r border-[#FFFFFF] px-4'>
                 <label className='text-white text-[16px]'>Less then 3 Houres</label>
                 <div className='flex justify-between items-end text-[#FDCC0A]'>
                   <p className='text-[53px] text-center'>75</p>
@@ -556,13 +556,13 @@ const CameraStatus: React.FC<CameraStatusProps> = ({}) => {
           </div>
 
           {/* Error Count */}
-          <div className='border-[1px] border-[#797979] rounded-[5px] py-2'>
+          <div className='border border-[#797979] rounded-[5px] py-2'>
             <div className='flex flex-col px-6'>
-              <div className='flex justify-between border-[#797979] border-b-[1px] text-white text-[16px] py-1.5'>
+              <div className='flex justify-between border-[#797979] border-b text-white text-[16px] py-1.5'>
                 <p>อุปกรณ์ชำรุด</p>
                 <p>0 (0.00%)</p>
               </div>
-              <div className='flex justify-between border-[#797979] border-b-[1px] text-white text-[16px] py-1.5'>
+              <div className='flex justify-between border-[#797979] border-b text-white text-[16px] py-1.5'>
                 <p>เครือข่ายขัดข้อง</p>
                 <p>0 (0.00%)</p>
               </div>
@@ -574,7 +574,7 @@ const CameraStatus: React.FC<CameraStatusProps> = ({}) => {
           </div>
 
           {/* Map Part */}
-          <div className='flex flex-col border-[1px] border-[#797979] rounded-[5px] px-2 py-3 row-span-6'>
+          <div className='flex flex-col border border-[#797979] rounded-[5px] px-2 py-3 row-span-6'>
             <label className='text-[#FDCC0A] text-[16px]'>Map Status</label>
             <div className='relative h-full w-full mt-2'>
               <BaseMap 
@@ -584,7 +584,7 @@ const CameraStatus: React.FC<CameraStatusProps> = ({}) => {
           </div>
 
           {/* Camera Installation Table */}
-          <div className='row-span-6 flex flex-col border-[1px] border-[#797979] rounded-[5px] px-2 pt-3 pb-4'>
+          <div className='row-span-6 flex flex-col border border-[#797979] rounded-[5px] px-2 pt-3 pb-4'>
             <label className='text-[#FDCC0A] text-[16px]'>ข้อมูลเชื่อมต่อ</label>
             <div className='pt-4'>
               <TableContainer
@@ -622,7 +622,7 @@ const CameraStatus: React.FC<CameraStatusProps> = ({}) => {
                   </TableBody>
                 </Table>
               </TableContainer>
-              <div className={`${cameraStatusList.length > 0 ? "flex" : "hidden"} items-center justify-between bg-[var(--background-color)] pt-3 pl-1`}>
+              <div className={`${cameraStatusList.length > 0 ? "flex" : "hidden"} items-center justify-between bg-(--background-color) pt-3 pl-1`}>
                 <PaginationComponent 
                   page={page} 
                   onChange={handlePageChange}

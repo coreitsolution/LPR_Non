@@ -10,7 +10,7 @@ import { RootState } from "./app/store";
 // import { useSelector } from "react-redux";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useLocation } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 // Screen
 import Login from './modules/login/Login';
@@ -20,7 +20,7 @@ import SearchPlateWithCondition from './modules/search-plate-with-condition/Sear
 // import SearchSuspectPerson from './modules/search-suspect-person/SearchSuspectPerson';
 import ManageUser from './modules/manage-user/ManageUser';
 import AddEditUser from './modules/add-edit-user/AddEditUser';
-// import SpecialPlateScreen from './modules/special-plate/SpecialPlate';
+import SpecialPlateScreen from './modules/special-plate/SpecialPlate';
 import UserInfo from './modules/user-info/UserInfo';
 import Setting from './modules/setting/Setting';
 // import SuspectPeople from './modules/suspect-people/SuspectPeople';
@@ -60,13 +60,10 @@ import {
   upsertRealtimeData,
   addToastMessage,
 } from './features/realtime-data/realtimeDataSlice';
-import { triggerCameraRefresh, triggerRequestDeleteCamera } from './features/refresh/refreshSlice';
-import { removeNotification } from "./features/notification/notificationSlice";
+import { addListNotification, NotificationType, removeNotification } from "./features/notification/notificationSlice";
 
 // Components
 import AuthListener from './components/auth-listener/AuthListener';
-import UpdateAlertPopup from './components/update-alert-popup/UpdateAlertPopup';
-import RequestDeleteCameraAlert from './components/request-delete-camera-alert/RequestDeleteCameraAlert';
 import ProtectedRoute from './components/protected-route/ProtectedRoute';
 import CameraStatusPopup from './components/camera-status-popup/CameraStatusPopup';
 
@@ -74,58 +71,28 @@ import CameraStatusPopup from './components/camera-status-popup/CameraStatusPopu
 import { getUrls } from './config/runtimeConfig';
 
 // utils
-import { settingWebsocketService, kafkaWebsocketService } from './utils/websocketService';
 import { getPlateTypeColor } from './utils/commonFunction'
 import { toastChannel } from "./utils/channel";
+import { useSse } from "./utils/useSse";
 import { createNotificationToast } from "./utils/notification";
-
+import { fetchClient, combineURL } from "./utils/fetchClient";
 // Types
-import { Checkpoint, SpecialPlate } from "./features/types";
+import { SpecialPlate, EventNotifyResponse, EventNotify } from "./features/types";
 
-const PrivateRoute = ({ children }: { children: React.JSX.Element }) => {
+const PrivateRouteWrapper = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { CENTER_SERVER_SENT_EVENTS_URL, CENTER_SERVER_SENT_EVENTS_TOKEN, CENTER_API } = getUrls();
+
   const { authData } = useSelector((state: RootState) => state.auth);
 
-  const sliceSpecialPlate = useSelector(
-    (state: RootState) => state.specialPlateData
-  )
-
-  const sliceDropdown = useSelector(
-    (state: RootState) => state.dropdownData
-  )
-
-  const { CENTER_KAFKA_URL, CENTER_SETTING_WEBSOCKET_URL, CENTER_SETTING_WEBSOCKET_TOKEN } = getUrls();
-
-  const location = useLocation();
-
+  const sliceSpecialPlate = useSelector((state: RootState) => state.specialPlateData);
+  const sliceDropdown = useSelector((state: RootState) => state.dropdownData);
+  
   toastChannel.onmessage = ({data}) => {
-    const { id, action, data: updatedData } = data;
-    if (action === "closeUpdateAlert" && id) {
-      toast.update(id, {
-        render: (props) => <UpdateAlertPopup {...props} data={updatedData} />,
-        autoClose: 3000,
-        progressClassName: "success-progress-bar",
-        containerId: "notification-list-toast",
-        toastId: id,
-        hideProgressBar: false,
-        theme: updatedData.theme,
-        style: updatedData.style,
-      });
-    } else if (action === "closeRequestDeleteCameraAlert" && id) {
-      toast.update(id, {
-        render: (props) => <RequestDeleteCameraAlert {...props} data={updatedData} />,
-        autoClose: 3000,
-        progressClassName: "success-progress-bar",
-        containerId: "notification-list-toast",
-        toastId: id,
-        hideProgressBar: false,
-        theme: updatedData.theme,
-        style: updatedData.style,
-      });
-    }
-    else if (action === "closeCameraStatusAlert" && id) {
-      toast.update(id, {
+    const { id, toastId, messageId, action, data: updatedData } = data;
+    if (action === "closeCameraStatusAlert" && toastId) {
+      toast.update(toastId, {
         render: (props) => <CameraStatusPopup {...props} data={updatedData} />,
         autoClose: 3000,
         progressClassName: "success-progress-bar",
@@ -136,9 +103,11 @@ const PrivateRoute = ({ children }: { children: React.JSX.Element }) => {
         style: updatedData.style,
       });
     }
-    dispatch(
-      removeNotification(id)
-    );
+    if (action === "clear-all") {
+      dispatch(addListNotification([]));
+      return;
+    }
+    dispatch(removeNotification(messageId));
   };
 
   useEffect(() => {
@@ -218,38 +187,9 @@ const PrivateRoute = ({ children }: { children: React.JSX.Element }) => {
       dispatch(fetchCheckpointsThunk({
         limit: "100"
       }));
-
-      // [
-      // {
-      //   id: 1,
-      //   camera_name: "Front Door Camera",
-      //   ip: "192.168.1.1",
-      //   isOnline: true,
-      // },
-      // {
-      //   id: 2,
-      //   camera_name: "Back Door Camera",
-      //   ip: "192.168.1.2",
-      //   isOnline: false,
-      // }
-      // ].map(createCameraNotification);
-
-      kafkaWebsocketService.connect(CENTER_KAFKA_URL);
-      kafkaWebsocketService.subscribe("lpr-data", handleRealtimeMessage);
-      kafkaWebsocketService.subscribe("checkpoint-data", handleCheckpointDataMessage);
-      kafkaWebsocketService.subscribe("camera-data", handleCameraDataMessage);
-
-      settingWebsocketService.connect(CENTER_SETTING_WEBSOCKET_URL, CENTER_SETTING_WEBSOCKET_TOKEN);
-
-      settingWebsocketService.onMessage(listener);
-
-      return () => {
-        kafkaWebsocketService.unsubscribe("lpr-data", handleRealtimeMessage);
-        kafkaWebsocketService.unsubscribe("checkpoint-data", handleCheckpointDataMessage);
-        kafkaWebsocketService.unsubscribe("camera-data", handleCameraDataMessage);
-      };
+      fetchNotification();
     }
-  }, [dispatch, navigate, authData])
+  }, [dispatch, navigate, authData]);
 
   useEffect(() => {
     const bc = new BroadcastChannel("specialPlateChannel");
@@ -261,47 +201,49 @@ const PrivateRoute = ({ children }: { children: React.JSX.Element }) => {
     return () => bc.close();
   }, [dispatch]);
 
-  // const createCameraNotification = (cameraData: any) => {
-  //   const isOnline = cameraData.isOnline;
-  //   createNotificationToast({
-  //     dispatch,
-  //     type: isOnline
-  //       ? "cameraOnline"
-  //       : "cameraOffline",
-  //     component: CameraStatusPopup,
-  //     theme: "dark",
-  //     title: isOnline ? "alert.camera-online" : "alert.camera-offline",
-  //     content: isOnline
-  //       ? [cameraData.camera_name, cameraData.ip]
-  //       : [
-  //           "alert.camera-offline-content-2",
-  //           cameraData.camera_name,
-  //           cameraData.ip,
-  //         ],
-  //     isOnline,
-  //     messageId: cameraData.id,
-  //     style: { 
-  //       minHeight: isOnline ? "220px" : "250px",
-  //       maxHeight: isOnline ? "220px" : "250px",
-  //     },
-  //     closeAction: "closeCameraStatusAlert",
-  //   });
-  // };
+  const createCameraNotification = async (cameraData: any) => {
+    const isOnline = cameraData.current_status.toString().toLowerCase() === "online" ? true : false;
+    const type: NotificationType = isOnline
+      ? "cameraOnline"
+      : "cameraOffline"
 
-  const handleRealtimeMessage = async (message: string) => {
-    const data = JSON.parse(message);
-    dispatch(upsertRealtimeData(JSON.parse(message)));
+    createNotificationToast({
+      dispatch,
+      component: CameraStatusPopup,
+      theme: "dark",
+      type,
+      title: isOnline ? "alert.camera-online" : "alert.camera-offline",
+      content: isOnline
+        ? [cameraData.camera_name, cameraData.camera_ip]
+        : [
+            "alert.camera-offline-content-2",
+            cameraData.camera_name,
+            cameraData.camera_ip,
+          ],
+      isOnline,
+      messageId: `${cameraData.event_id}_${cameraData.timestamp}`,
+      style: { 
+        minHeight: isOnline ? "220px" : "250px",
+        maxHeight: isOnline ? "220px" : "250px",
+      },
+      closeAction: "closeCameraStatusAlert",
+      id: cameraData.event_id
+    });
+  };
 
-    const specialPlateData = await checkSpecialPlate(data.plate_prefix, data.plate_number, data.region_code);
+  const handleRealtimeMessage = async (message: any) => {   
+    dispatch(upsertRealtimeData(message));
+
+    const specialPlateData = await checkSpecialPlate(message.plate_prefix, message.plate_number, message.region_code);
     
     if (!specialPlateData) return;
     
-    const { backgroundColor, title, pinBackgroundColor, showAlert } = await getPlateTypeColor(specialPlateData.plate_class_id);
+    const { backgroundColor, title, pinBackgroundColor, showAlert, textShadow } = await getPlateTypeColor(specialPlateData.plate_class_id);
     
     if (!showAlert) return; 
 
     const updatedData = {
-      ...data,
+      ...message,
       plate_class_name: getPlateClassName(specialPlateData.plate_class_id),
       special_plate_remark: specialPlateData.behavior,
       special_plate_owner_name: specialPlateData.case_owner_name,
@@ -309,62 +251,9 @@ const PrivateRoute = ({ children }: { children: React.JSX.Element }) => {
       title_name: title,
       color: backgroundColor,
       pin_background_color: pinBackgroundColor,
+      text_shadow: textShadow,
     }
     dispatch(addToastMessage(updatedData));
-  };
-
-  const handleCheckpointDataMessage = (message: Checkpoint) => {
-    createNotificationToast({
-      dispatch,
-      type: "newCheckpoint",
-      component: UpdateAlertPopup,
-      title: "alert.new-checkpoint-update",
-      content: "alert.new-checkpoint-update-content",
-      variables: { checkpointName: message.checkpoint_name || "-" },
-      messageId: message.created_at,
-      style: { minHeight: "108px", maxHeight: "108px" },
-      updateAction: () => dispatch(triggerCameraRefresh()),
-    });
-  };
-
-  const handleCameraDataMessage = (message: any) => {
-    createNotificationToast({
-      dispatch,
-      type: "newCamera",
-      component: UpdateAlertPopup,
-      title: "alert.new-camera-update",
-      content: "alert.new-camera-update-content",
-      variables: { cameraName: message.camera_name || "-" },
-      messageId: message.timestampUtc,
-      style: { minHeight: "108px", maxHeight: "108px" },
-      updateAction: () => dispatch(triggerCameraRefresh()),
-    });
-  };
-
-  const listener = (message: any) => {
-    if (message.event !== "delete-camera-request") return;
-
-    const isUpdatePage = location.pathname.includes('/manage-checkpoint-cameras');
-
-    createNotificationToast({
-      dispatch,
-      type: "requestDelete",
-      component: RequestDeleteCameraAlert,
-      theme: "light",
-      content: "alert.request-delete-camera-content",
-      variables: { number: message.data.all_request_count + 1 },
-      messageId: message.timestampUtc,
-      style: {
-        paddingTop: "45px",
-        minHeight: "161px",
-        maxHeight: "161px",
-      },
-      updateAction: () => {
-        if (isUpdatePage) dispatch(triggerRequestDeleteCamera());
-        else navigate("/center/manage-checkpoint-cameras", { replace: true });
-      },
-      closeAction: "closeRequestDeleteCameraAlert",
-    });
   };
 
   const checkSpecialPlate = (platePrefix: string, plateNumber: string, region: string): SpecialPlate | undefined => {
@@ -377,7 +266,87 @@ const PrivateRoute = ({ children }: { children: React.JSX.Element }) => {
     return plateType?.title_en || "-";
   }
 
-  return children
+  const fetchNotification = async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    try {
+      const response = await fetchClient<EventNotifyResponse>(combineURL(CENTER_API, "/event-notify/get"), {
+        method: "GET",
+        signal: controller.signal,
+        queryParams: {
+          page: "1",
+          limit: "100",
+          filter: `is_confirm=false,event_timestamp>=${dayjs(authData.userInfo?.created_at).toISOString()}`,
+          orderBy: "id.desc"
+        }
+      })
+
+      if (response.success) {
+        const data = response.data.map((row: EventNotify) => {
+          const isOnline = row.data.current_status.toString().toLowerCase() === "online" ? true : false;
+          const type: NotificationType = isOnline
+              ? "cameraOnline"
+              : "cameraOffline"
+          
+          return {
+            id: row.id,
+            theme: "dark" as "dark",
+            userId: "",
+            type,
+            title: isOnline ? "alert.camera-online" : "alert.camera-offline",
+            content: isOnline
+              ? [row.data.camera_name, row.data.camera_ip]
+              : [
+                  "alert.camera-offline-content-2",
+                  row.data.camera_name,
+                  row.data.camera_ip,
+                ],
+            isOnline,
+            messageId: `${row.id}_${row.event_timestamp}`,
+            closeAction: "closeCameraStatusAlert",
+            style: { 
+              minHeight: isOnline ? "220px" : "250px",
+              maxHeight: isOnline ? "220px" : "250px",
+            },
+          }
+        });
+
+        dispatch(
+          addListNotification(data)
+        );
+      }
+    }
+    catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      console.error(errorMessage)
+    }
+    finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  {
+    authData.token && 
+    useSse(
+      CENTER_SERVER_SENT_EVENTS_URL,
+      CENTER_SERVER_SENT_EVENTS_TOKEN,
+      "lpr_data_event",
+      handleRealtimeMessage,
+    );
+  }
+
+  {
+    authData.token && 
+    useSse(
+      CENTER_SERVER_SENT_EVENTS_URL,
+      CENTER_SERVER_SENT_EVENTS_TOKEN,
+      "camera_status_event",
+      createCameraNotification,
+      false
+    );
+  }
+
+  return <>{children}</>;
 }
 
 function Layout() {
@@ -407,9 +376,8 @@ function Layout() {
 
 function App() {
   const constraintsRef = useRef<HTMLDivElement>(null)
-
   const { authData } = useSelector((state: RootState) => state.auth);
-
+  
   return (
     <div ref={constraintsRef} className='min-h-screen min-w-screen'>
       <AuthListener />
@@ -418,29 +386,58 @@ function App() {
         <Route
           path="/*"
           element={
-          <PrivateRoute>
+          <PrivateRouteWrapper>
             <Layout />
-          </PrivateRoute>
+          </PrivateRouteWrapper>
           }
         >
           <Route path='center/real-time-monitor' element={
-            <ProtectedRoute permission={authData?.userInfo?.permissions?.center?.realtime?.select ?? false}>
+            <ProtectedRoute 
+              permission={authData?.userInfo?.permissions
+              ? authData.userInfo.permissions.center.realtime.select
+              : undefined
+              }
+            >
               <RealTimeMonitor />
             </ProtectedRoute>
           } />
           <Route path='center/search-plate-with-condition' element={
-            <ProtectedRoute permission={authData?.userInfo?.permissions?.center?.conditionSearch?.select ?? false}>
+            <ProtectedRoute 
+              permission={authData?.userInfo?.permissions
+                ? authData.userInfo.permissions.center.conditionSearch.select
+                : undefined
+              }
+            >
               <SearchPlateWithCondition />
             </ProtectedRoute>
           }></Route>
           <Route path='center/manage-user' element={
-            <ProtectedRoute permission={authData?.userInfo?.permissions?.center?.manageUser?.select ?? false}>
+            <ProtectedRoute 
+              permission={authData?.userInfo?.permissions
+                ? authData.userInfo.permissions.center.manageUser.select
+                : undefined
+              }
+            >
               <ManageUser />
             </ProtectedRoute>
           }></Route>
-          {/* <Route path='center/special-plate' element={<SpecialPlateScreen />}></Route> */}
+          <Route path='center/special-plate' element={
+            <ProtectedRoute 
+              permission={authData?.userInfo?.permissions
+                ? authData.userInfo.permissions.center.specialPlateManage.select
+                : undefined
+              }
+            >
+              <SpecialPlateScreen />
+            </ProtectedRoute>
+          }></Route>
           <Route path='center/manage-user/add-edit-user' element={
-            <ProtectedRoute permission={authData?.userInfo?.permissions?.center?.manageUser?.select ?? false}>
+            <ProtectedRoute 
+              permission={authData?.userInfo?.permissions
+                ? authData.userInfo.permissions.center.manageUser.select
+                : undefined
+              }
+            >
               <AddEditUser />
             </ProtectedRoute>
           }></Route>
@@ -448,7 +445,12 @@ function App() {
             <UserInfo />
           }></Route>
           <Route path='center/setting' element={
-            <ProtectedRoute permission={authData?.userInfo?.permissions?.center?.setting?.select ?? false}>
+            <ProtectedRoute 
+              permission={authData?.userInfo?.permissions
+                ? authData.userInfo.permissions.center.setting.select
+                : undefined
+              }
+            >
               <Setting />
             </ProtectedRoute>
           }></Route>

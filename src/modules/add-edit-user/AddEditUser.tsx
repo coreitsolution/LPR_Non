@@ -199,10 +199,12 @@ const AddEditUser = () => {
   
   const handleTextChange = (key: keyof typeof formData, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
+    setValue(key, value);
   };
 
   const handleDropdownChange = (key: keyof typeof formData, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
+    setValue(key, value);
   };
 
   const handlePrefixChange = (
@@ -226,31 +228,27 @@ const AddEditUser = () => {
   };
 
   const handleNationalIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const input = event.target.value;
-    const cleaned = input.replace(/\D/g, '');
-    
-    if (cleaned.length <= 13) {
-      const formatted = formatThaiID(cleaned)
-      handleTextChange("nationalId", formatted);
-      handleTextChange("username", cleaned);
-      setValue("username", cleaned);
-    }
-    return cleaned;
+    let input = event.target.value.replace(/\D/g, '');
+
+    input = input.slice(0, 13);
+
+    const formatted = formatThaiID(input);
+
+    handleTextChange("nationalId", formatted);
+    handleTextChange("username", input);
   }
 
   const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const input = event.target.value;
-    const cleaned = input.replace(/\D/g, '');
-    
-    if (cleaned.length <= 10) {
-      const formatted = formatPhone(cleaned)
-      handleTextChange("phone", formatted)
-      if (!isEdit) {
-        handleTextChange("password", cleaned);
-        setValue("password", cleaned);
-      }
+    let input = event.target.value.replace(/\D/g, '');
+
+    input = input.slice(0, 10);
+
+    const formatted = formatPhone(input);
+
+    handleTextChange("phone", formatted);
+    if (!isEdit) {
+      handleTextChange("password", input);
     }
-    return cleaned
   };
 
   const handleStatusChange = (status: number) => {
@@ -281,11 +279,11 @@ const AddEditUser = () => {
         user_group_id: formData.permission?.userRoleId ?? 2,
         username: data.username,
         password: data.password,
-        idcard: data.nationalId.replaceAll("-", ""),
+        idcard: data.nationalId.replaceAll("-", "").slice(0, 13),
         dob: dayjs(data.dateOfBirth).format("YYYY-MM-DD HH:mm:ss"),
         firstname: data.firstName,
         lastname: data.lastName,
-        phone: data.phone.replaceAll("-", ""),
+        phone: data.phone.replaceAll("-", "").slice(0, 10),
         email: data.email,
         image_url: formData.imageUrl,
         permissions: formData.permission,
@@ -329,8 +327,8 @@ const AddEditUser = () => {
 
       if (!confirmed) return;
 
-      const pid = formData.nationalId.replaceAll("-", "");
-      const phone = formData.phone.replaceAll("-", "");
+      const pid = formData.nationalId.replaceAll("-", "").slice(0, 13);
+      const phone = formData.phone.replaceAll("-", "").slice(0, 10);
       const dob = formData.dateOfBirth ? dayjs(formData.dateOfBirth).format("YYYY-MM-DD") : "";
       
       const body = JSON.stringify({
@@ -516,7 +514,7 @@ const AddEditUser = () => {
   }
 
   return (
-    <div id='manage-user' className={`main-content ${isOpen ? "pl-[130px]" : "pl-[10px]"} pr-[10px] transition-all duration-500`}>
+    <div id='manage-user' className={`main-content ${isOpen ? "pl-[130px]" : "pl-2.5"} pr-2.5 transition-all duration-500`}>
       <HeaderName 
         header={t('screen.manage-user.title')}
         breadcrumbPaths={ isEdit ? t('screen.add-edit-user.edit') : t('screen.add-edit-user.add') }
@@ -532,7 +530,7 @@ const AddEditUser = () => {
                     <img src={`${CENTER_FILE_URL}${formData.imageUrl}`} alt="User Image" className="object-contain w-full h-full" />
                     <button
                       type="button"
-                      className="absolute z-[52] top-2 right-2 text-white bg-red-500 rounded-full w-[30px] h-[30px] flex items-center justify-center hover:cursor-pointer"
+                      className="absolute z-52 top-2 right-2 text-white bg-red-500 rounded-full w-[30px] h-[30px] flex items-center justify-center hover:cursor-pointer"
                       onClick={() => handleDeleteImage(formData.imageUrl)}
                     >
                       &times;
@@ -540,11 +538,11 @@ const AddEditUser = () => {
                   </div>
                 ) :
                 (
-                  <div className='flex border-[1px] border-white border-dashed w-full h-full'>
+                  <div className='flex border border-white border-dashed w-full h-full'>
                     {/* No Images */}
                     <div className="flex flex-col justify-center items-center w-full h-full">
                       <Icon icon={Download} size={80} color="#999999" />
-                      <span className="text-[18px] text-nobel mt-[20px]">
+                      <span className="text-[18px] text-nobel mt-5">
                         {t('button.upload-image')}
                       </span>
                     </div>                    
@@ -762,7 +760,7 @@ const AddEditUser = () => {
               </div>
             </div>
 
-            <div className='col-start-2 col-span-3 border-b-[1px] border-white mt-5'></div>
+            <div className='col-start-2 col-span-3 border-b border-white mt-5'></div>
 
             <div className='col-start-2'>
               <TextBox
@@ -815,7 +813,7 @@ const AddEditUser = () => {
               </Button>
             </div>
 
-            <div className='col-start-3 flex items-start mt-[-10px]'>
+            <div className='col-start-3 flex items-start -mt-2.5'>
               <label className='text-[#9F0C0C] text-xs'>{t('text.default-password')}</label>
             </div>
           </div>
@@ -829,7 +827,7 @@ const AddEditUser = () => {
                 <img 
                   src={UserPermissionIcon} 
                   alt="User Permission Icon"
-                  className="w-[20px] h-[20px]"
+                  className="w-5 h-5"
                 />
               }
               sx={{
@@ -841,6 +839,7 @@ const AddEditUser = () => {
                 } 
               }}
               onClick={handleClickManageUserGroup}
+              disabled={isEdit && !isAdmin}
             >
               {t('button.manage-user-group')}
             </Button>

@@ -42,7 +42,7 @@ const SearchLogResult: React.FC<SearchLogResultProps> = ({open, onClose}) => {
     <Dialog id='search-log-result' open={open} maxWidth="xl" fullWidth>
       <DialogTitle className='flex items-center justify-between bg-black'>
         <div className='flex space-x-1 items-center justify-start'>
-          <img src="/svg/sm-logo.svg" alt="Logo" className="w-[60px] h-[40px] mb-[5px]" />
+          <img src="/svg/sm-logo.svg" alt="Logo" className="w-[60px] h-10 mb-[5px]" />
           <Typography variant="h5" color="white" className="font-bold">License Plate Recognition</Typography>
         </div>
         <button
@@ -56,12 +56,12 @@ const SearchLogResult: React.FC<SearchLogResultProps> = ({open, onClose}) => {
           <div className='bg-[#393B3A] w-full p-1 text-center'>
             <label className='text-white text-[16px]'>รายงานผลการค้นหา</label>
           </div>
-          <div className='grid grid-cols-[40%_auto] border-[1px] border-[#384043] text-white'>
+          <div className='grid grid-cols-[40%_auto] border border-[#384043] text-white'>
             {/* Column 1 */}
             <div className='p-2'>
-              <div className='w-full text-center border-[1px] border-[#384043]'>
+              <div className='w-full text-center border border-[#384043]'>
                 {/* User Name */}
-                <div className='w-full py-2 border-[1px] border-[#384043]'>
+                <div className='w-full py-2 border border-[#384043]'>
                   <label>ส.ต.อ. อนุชา เวียงทองทรัพย์</label>
                 </div>
                 {/* User Image */}
@@ -107,7 +107,7 @@ const SearchLogResult: React.FC<SearchLogResultProps> = ({open, onClose}) => {
             <div className='h-full p-2'>
               <TableContainer className='h-full'>
                 <Table className='h-full'>
-                  <TableBody className='h-full border-[1px] border-[#384043]'>
+                  <TableBody className='h-full border border-[#384043]'>
                     <TableRow sx={{ height: "70px" }}>
                       <TableCell sx={{ color: "#FFFFFF", borderBottom: "1px solid #384043", padding: "2px 0px 2px 2px" }}>
                         <div className='flex flex-col px-4 justify-between space-y-3'>

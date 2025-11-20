@@ -29,8 +29,6 @@ import {
   SpecialPlateFilesResponse,
   SpecialPlateCreateResponse,
   Option,
-  UserResponse,
-  User,
 } from "../../../features/types";
 
 // Icons
@@ -77,12 +75,6 @@ interface ManageSpecialPlateProps {
 const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, selectedRow}) => {
   const { CENTER_API, CENTER_FILE_URL } = getUrls();
 
-  // State
-  const [isBlacklist, setIsBlackList] = useState(false);
-
-  // Data
-  const [userInfo, setUserInfo] = useState<User | null>(null);
-  
   // Elements
   const hiddenFileInput = useRef<HTMLInputElement | null>(null)
 
@@ -125,13 +117,12 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
     (state: RootState) => state.dropdownData
   );
 
-  useEffect(() => {
-    if (open) {
-      fetchUsers(14);
-    }
-  }, [open])
+  const { authData } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
+    const prefix = sliceDropdown.prefix?.data.find((prefix) => prefix.id === authData?.userInfo?.title_id)
+    const ownerName = authData.userInfo ? `${prefix ? i18n.language === "th" ? prefix.title_th : prefix.title_en : ""}${authData?.userInfo?.firstname} ${authData?.userInfo?.lastname}` : "-";
+    const ownerPhone = authData.userInfo ? formatPhone(authData?.userInfo?.phone) : "-";
     if (selectedRow) {
       setFormData({
         id: selectedRow.id,
@@ -143,8 +134,8 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
         arrest_date: selectedRow.arrest_warrant_date ? new Date(selectedRow.arrest_warrant_date) : null,
         end_arrest_date: selectedRow.arrest_warrant_expire_date ? new Date(selectedRow.arrest_warrant_expire_date) : null,
         behavior: selectedRow.behavior,
-        case_owner_name: selectedRow.case_owner_name,
-        case_owner_phone: selectedRow.case_owner_phone,
+        case_owner_name: ownerName,
+        case_owner_phone: ownerPhone,
         imagesData: {},
         filesData: [],
         active_status: selectedRow.active,
@@ -154,32 +145,46 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
       setValue("region_code", selectedRow.region_code);
       setValue("plate_type", selectedRow.plate_class_id);
       setValue("behavior", selectedRow.behavior);
-      setValue("case_owner_name", selectedRow.case_owner_name);
-      setValue("case_owner_phone", selectedRow.case_owner_phone);
+      setValue("case_owner_name", ownerName);
+      setValue("case_owner_phone", ownerPhone);
       setValue("case_number", selectedRow.case_number);
       setValue("arrest_date", selectedRow.arrest_warrant_date);
       setValue("end_arrest_date", selectedRow.arrest_warrant_expire_date);
       setValue("active_status", selectedRow.active);
-      setIsBlackList(isBlacklistPlate(selectedRow.plate_class_id));
       fetchSpecialPlateImages();
       fetchSpecialPlateFiles();
     }
     else {
+      setFormData({
+        id: undefined,
+        plate_group: "",
+        plate_number: "",
+        region_code: "",
+        plate_type: 0,
+        case_number: "",
+        arrest_date: null,
+        end_arrest_date: null,
+        behavior: "",
+        case_owner_name: ownerName,
+        case_owner_phone: ownerPhone,
+        imagesData: {},
+        filesData: [],
+        active_status: 0,
+      });
       setValue("plate_group", "");
       setValue("plate_number", "");
       setValue("region_code", "");
       setValue("plate_type", "");
       setValue("behavior", "");
-      setValue("case_owner_name", "");
-      setValue("case_owner_phone", "");
+      setValue("case_owner_name", ownerName);
+      setValue("case_owner_phone", ownerPhone);
       setValue("case_number", "");
       setValue("arrest_date", "");
       setValue("end_arrest_date", "");
       setValue("active_status", "");
       setValue("active_status", 0);
-      setIsBlackList(false);
     }
-  }, [selectedRow])
+  }, [selectedRow, authData.userInfo])
 
   useEffect(() => {
     if (sliceDropdown.regions && sliceDropdown.regions.data) {
@@ -189,7 +194,7 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
       }));
       setProvinceOptions(options);
     }
-  }, [sliceDropdown.regions, i18n.language]);
+  }, [sliceDropdown.regions, i18n.language, i18n.isInitialized]);
 
   useEffect(() => {
     if (sliceDropdown.plateTypes && sliceDropdown.plateTypes.data) {
@@ -199,23 +204,7 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
       }));
       setPlateTypesOptions(options);
     }
-  }, [sliceDropdown.plateTypes, i18n.language]);
-
-  useEffect(() => {
-    if (userInfo) {
-      const name = `${userInfo.firstname} ${userInfo.lastname}`;
-      const phone = formatPhone(userInfo.phone);
-
-      setFormData((prevData) => ({
-        ...prevData,
-        case_owner_name: name,
-        case_owner_phone: phone
-      }));
-
-      setValue("case_owner_name", name);
-      setValue("case_owner_phone", phone);
-    }
-  }, [userInfo])
+  }, [sliceDropdown.plateTypes, i18n.language, i18n.isInitialized]);
 
   const fetchSpecialPlateImages = async () => {
     const controller = new AbortController();
@@ -273,31 +262,6 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
     }
   }
 
-  const fetchUsers = async (id: number) => {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-    try {
-      const response = await fetchClient<UserResponse>(combineURL(CENTER_API, "/users/get"), {
-        method: "GET",
-        signal: controller.signal,
-        queryParams: {
-          "filter": `id=${id}`,
-        }
-      })
-
-      if (response.success) {
-        setUserInfo(response.data[0]);
-      }
-    }
-    catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error)
-      PopupMessage(t('message.error.error-while-fetching-data'), errorMessage, "error");
-    }
-    finally {
-      clearTimeout(timeoutId);
-    }
-  }
-
   const handleCancelClick = () => {
     clearData();
     onClose();
@@ -328,28 +292,26 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
     event.preventDefault();
     if (value) {
       handleDropdownChange("plate_type", value.value);
-      setIsBlackList(isBlacklistPlate(value.value));
     }
     else {
       handleDropdownChange("plate_type", '');
-      setIsBlackList(false);
     }
   };
 
   const handleTextChange = (key: keyof typeof formData, value: string) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
-    setValue(key, value);
+    const trimValue = value.trim();
+    setFormData((prev) => ({ ...prev, [key]: trimValue }));
+    setValue(key, trimValue);
   };
 
   const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const input = event.target.value;
-    const cleaned = input.replace(/\D/g, '');
+    let input = event.target.value.replace(/\D/g, '');
     
-    if (cleaned.length <= 10) {
-      const formatted = formatPhone(cleaned)
-      handleTextChange("case_owner_phone", formatted)
-    }
-    return cleaned
+    input = input.slice(0, 10);
+
+    const formatted = formatPhone(input);
+
+    handleTextChange("case_owner_phone", formatted);
   };
 
   const handleStatusChange = (status: number) => {
@@ -608,7 +570,7 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
           data.behavior && { behavior: data.behavior }
         ),
         case_owner_name: data.case_owner_name,
-        case_owner_phone: data.case_owner_phone ? data.case_owner_phone.replaceAll("-", "") : "",
+        case_owner_phone: data.case_owner_phone ? data.case_owner_phone.replaceAll("-", "").slice(0, 10) : "",
         active: data.active_status,
       })
 
@@ -744,7 +706,7 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
           data.case_owner_name !== selectedRow.case_owner_name && { case_owner_name: data.case_owner_name }
         ),
         ...(
-          data.case_owner_phone && data.case_owner_phone !== selectedRow.case_owner_phone && { case_owner_phone: data.case_owner_phone.replaceAll("-", "") }
+          data.case_owner_phone && data.case_owner_phone.replaceAll("-", "").slice(0, 10) !== selectedRow.case_owner_phone && { case_owner_phone: data.case_owner_phone.replaceAll("-", "").slice(0, 10) }
         ),
         ...(
           data.active_status !== selectedRow.active && { active: data.active_status }
@@ -875,9 +837,7 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
       formData.plate_number !== selectedRow?.plate_number ||
       getStringId(formData.region_code) !== selectedRow?.region_code ||
       getId(formData.plate_type) !== selectedRow?.plate_class_id ||
-      formData.behavior !== selectedRow?.behavior ||
-      formData.case_owner_name !== selectedRow?.case_owner_name ||
-      formData.case_owner_phone !== selectedRow?.case_owner_phone;
+      formData.behavior !== selectedRow?.behavior
 
     const statusChangeOnly = isOnlyStatusChanged && isImageChanged && isFileChanged && !isOtherDataChanged;
 
@@ -885,6 +845,8 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
   };
 
   const clearData = () => {
+    const ownerName = authData.userInfo ? `${authData?.userInfo?.firstname} ${authData?.userInfo?.lastname}` : "-";
+    const ownerPhone = authData.userInfo ? formatPhone(authData?.userInfo?.phone) : "-";
     setFormData({
       plate_group: "",
       plate_number: "",
@@ -894,8 +856,8 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
       arrest_date: null,
       end_arrest_date: null,
       behavior: "",
-      case_owner_name: "",
-      case_owner_phone: "",
+      case_owner_name: ownerName,
+      case_owner_phone: ownerPhone,
       imagesData: {},
       filesData: [],
       active_status: 0,
@@ -905,28 +867,10 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
     setValue("region_code", "");
     setValue("plate_type", "");
     setValue("behavior", "");
-    setValue("case_owner_name", "");
-    setValue("case_owner_phone", "");
+    setValue("case_owner_name", ownerName);
+    setValue("case_owner_phone", ownerPhone);
     setValue("active_status", 0);
     clearErrors();
-    setIsBlackList(false);
-  }
-
-  const isBlacklistPlate = (plateClassId: number) => {
-    const plateTypesData = sliceDropdown.plateTypes?.data.find((type) => type.id === plateClassId);
-
-    if (!plateTypesData) return false;
-
-    if (plateTypesData.title_en === "Blacklist") {
-      return true;
-    }
-    else {
-      clearErrors("behavior");
-      clearErrors("case_number");
-      clearErrors("arrest_date");
-      clearErrors("end_arrest_date");
-      return false;
-    }
   }
 
   return (
@@ -938,10 +882,10 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
         </div>
       </DialogTitle>
       <DialogContent className='bg-black'>
-        <form className='border-[1px] border-[#2B9BED]' onSubmit={handleSubmit(onSubmit)}>
+        <form className='border border-[#2B9BED]' onSubmit={handleSubmit(onSubmit)}>
           <div className='grid grid-cols-[auto_25%] py-3'>
             {/* Column 1 */}
-            <div className='grid grid-cols-3 gap-5 p-4 border-r-[1px] border-[#999999]'>
+            <div className='grid grid-cols-3 gap-5 p-4 border-r border-[#999999]'>
               <div>
                 <div className='flex gap-3 items-center'>
                   <div className='flex flex-col w-[150px]'>
@@ -1031,22 +975,16 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
                   }
                   placeholder={t('placeholder.case-number')}
                   register={register("case_number", { 
-                    required: isBlacklist,
+                    required: false,
                   })}
-                  required={isBlacklist}
+                  required={false}
                   error={!!errors.case_number}
-                  disabled={!isBlacklist}
                 />
               </div>
 
               <div>
                 <Typography sx={{ fontSize: "15px"}} variant='subtitle1' color='white'>
                   {t('component.date-arrest-warrant')}
-                  {
-                    isBlacklist && (
-                      <span className="text-red-500"> *</span>
-                    )
-                  }
                 </Typography>
                 <DatePickerBuddhist
                   value={formData.arrest_date}
@@ -1061,9 +999,8 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
                   onChange={(value) => handleArrestDateChange(value)}
                   error={!!errors.arrest_date}
                   register={register("arrest_date", { 
-                    required: isBlacklist,
+                    required: false,
                   })}
-                  disabled={!isBlacklist}
                 >
                 </DatePickerBuddhist>
               </div>
@@ -1071,11 +1008,6 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
               <div>
                 <Typography sx={{ fontSize: "15px"}} variant='subtitle1' color='white'>
                   {t('component.date-expiration-arrest-warrant')}
-                  {
-                    isBlacklist && (
-                      <span className="text-red-500"> *</span>
-                    )
-                  }
                 </Typography>
                 <DatePickerBuddhist
                   value={formData.end_arrest_date}
@@ -1090,9 +1022,8 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
                   onChange={(value) => handleEndArrestDateChange(value)}
                   error={!!errors.end_arrest_date}
                   register={register("end_arrest_date", { 
-                    required: isBlacklist,
+                    required: false,
                   })}
-                  disabled={!isBlacklist}
                 >
                 </DatePickerBuddhist>
               </div>
@@ -1110,9 +1041,9 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
                   rows={4}
                   placeholder={t('placeholder.remark-behavior')}
                   register={register("behavior", { 
-                    required: isBlacklist,
+                    required: false,
                   })}
-                  required={isBlacklist}
+                  required={false}
                   error={!!errors.behavior}
                 />
               </div>
@@ -1226,7 +1157,7 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
             {/* Column 2 */}
             <div
               id="file-import-container"
-              className="h-full border-l-[2px] border-nobel px-[25px] py-2"
+              className="h-full border-l-2 border-nobel px-[25px] py-2"
             >
               <div className="h-full text-white">
                 {/* Image Upload Section */}
@@ -1246,7 +1177,7 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
                             />
                             <button
                               type="button"
-                              className="absolute z-[52] top-2 right-2 text-white bg-red-500 rounded-full w-[30px] h-[30px] flex items-center justify-center hover:cursor-pointer"
+                              className="absolute z-52 top-2 right-2 text-white bg-red-500 rounded-full w-[30px] h-[30px] flex items-center justify-center hover:cursor-pointer"
                               onClick={() => handleDeleteImage(0, formData.imagesData[0])}
                             >
                               &times;
@@ -1261,7 +1192,7 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
                               formData.imagesData[position] && (
                                 <div
                                   key={position}
-                                  className="relative w-[80px] h-[60px] border border-white bg-tuna"
+                                  className="relative w-20 h-[60px] border border-white bg-tuna"
                                 >
                                   <img
                                     src={`${CENTER_FILE_URL}${formData.imagesData[position].url}`}
@@ -1270,7 +1201,7 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
                                   />
                                   <button
                                     type="button"
-                                    className="absolute z-[52] top-[-5px] right-[-5px] text-white bg-red-500 rounded-full w-[20px] h-[20px] flex items-center justify-center hover:cursor-pointer"
+                                    className="absolute z-52 top-[-5px] right-[-5px] text-white bg-red-500 rounded-full w-5 h-5 flex items-center justify-center hover:cursor-pointer"
                                     onClick={() => handleDeleteImage(position, formData.imagesData[position])}
                                   >
                                     &times;
@@ -1284,7 +1215,7 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
                       /* No Images */
                       <div className="flex flex-col justify-center items-center">
                         <Icon icon={Download} size={80} color="#999999" />
-                        <span className="text-[18px] text-nobel mt-[20px]">
+                        <span className="text-[18px] text-nobel mt-5">
                           {t('button.upload-image')}
                         </span>
                       </div>
@@ -1339,12 +1270,12 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
                         formData.filesData.map((file, index) => (
                           <tr
                             key={`${file.title}-${index}`}
-                            className={`h-[40px] ${
+                            className={`h-10 ${
                               index % 2 === 0 ? "bg-swamp" : "bg-celtic"
                             } ${
                               index === formData.filesData.length - 1
                                 ? "border-b border-white"
-                                : "border-b-[1px] border-dashed border-gray-300"
+                                : "border-b border-dashed border-gray-300"
                             }`}
                           >
                             <td className="font-medium text-center">
@@ -1365,8 +1296,8 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
                           </tr>
                         ))
                       ) : (
-                        <tr className="font-medium h-[40px] bg-swamp border-b border-white">
-                          <td className="text-start pl-[10px]">{t('text.no-data')}</td>
+                        <tr className="font-medium h-10 bg-swamp border-b border-white">
+                          <td className="text-start pl-2.5">{t('text.no-data')}</td>
                         </tr>
                       )}
                     </tbody>

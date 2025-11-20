@@ -390,16 +390,16 @@
 //   }
 
 //   return (
-//     <div id='search-suspect-person' className={`main-content ${isOpen ? "pl-[130px]" : "pl-[10px]"} transition-all duration-500`}>
+//     <div id='search-suspect-person' className={`main-content ${isOpen ? "pl-[130px]" : "pl-2.5"} transition-all duration-500`}>
 //       { isLoading && <Loading /> }
 //       <div className='flex flex-col w-full'>
 //         {/* Header */}
 //         <Typography variant="h5" color="white" className="font-bold">ตรวจหาบุคคลต้องสงสัย</Typography>
 
 //         {/* Filter Part */}
-//         <div className='grid grid-cols-2 pt-[10px]'>
+//         <div className='grid grid-cols-2 pt-2.5'>
 //           {/* Column 1 */}
-//           <div className='grid grid-cols-2 border-r-[1px] border-[#4A4A4A] gap-y-3 gap-x-[13%] pr-[60px]'>
+//           <div className='grid grid-cols-2 border-r border-[#4A4A4A] gap-y-3 gap-x-[13%] pr-[60px]'>
 //             <div className='row-span-3'>
 //               <Typography sx={{ fontSize: "15px" }} variant='subtitle1' color='white'>
 //                 ค้นหาจากรูปภาพ
@@ -422,7 +422,7 @@
 //                           />
 //                           <button
 //                             type="button"
-//                             className="absolute z-[52] top-2 right-2 text-white bg-red-500 rounded-full w-[30px] h-[30px] flex items-center justify-center hover:cursor-pointer"
+//                             className="absolute z-52 top-2 right-2 text-white bg-red-500 rounded-full w-[30px] h-[30px] flex items-center justify-center hover:cursor-pointer"
 //                             onClick={() => handleDeleteImage(0, formData.imagesData[0].url)}
 //                           >
 //                             &times;
@@ -437,7 +437,7 @@
 //                             formData.imagesData[position] && (
 //                               <div
 //                                 key={position}
-//                                 className="relative w-[80px] h-[60px] border border-white bg-tuna"
+//                                 className="relative w-20 h-[60px] border border-white bg-tuna"
 //                               >
 //                                 <img
 //                                   src={`${formData.imagesData[position].url}`}
@@ -446,7 +446,7 @@
 //                                 />
 //                                 <button
 //                                   type="button"
-//                                   className="absolute z-[52] top-[-5px] right-[-5px] text-white bg-red-500 rounded-full w-[20px] h-[20px] flex items-center justify-center hover:cursor-pointer"
+//                                   className="absolute z-52 top-[-5px] right-[-5px] text-white bg-red-500 rounded-full w-5 h-5 flex items-center justify-center hover:cursor-pointer"
 //                                   onClick={() => handleDeleteImage(position, formData.imagesData[position].url)}
 //                                 >
 //                                   &times;
@@ -460,7 +460,7 @@
 //                     /* No Images */
 //                     <div className="flex flex-col justify-center items-center">
 //                       <UserRoundPlus size={70} color='#2B9BED' />
-//                       <span className="text-[18px] text-nobel mt-[20px]">
+//                       <span className="text-[18px] text-nobel mt-5">
 //                         เพิ่มรูปภาพบุคคล
 //                       </span>
 //                     </div>
@@ -596,7 +596,7 @@
 
 //             <div className='col-span-2'>
 //               <Typography sx={{ fontSize: "15px" }} variant='subtitle1' color='white'>{"จุดตรวจ/ชื่อด่าน"}</Typography>
-//               <div className='flex gap-3 mt-[10px]'>
+//               <div className='flex gap-3 mt-2.5'>
 //                 <div className='flex-1'>
 //                   <MultiSelectCameras 
 //                     limitTags={3} 
@@ -606,7 +606,7 @@
 //                   />
 //                 </div>
 //                 <button 
-//                   className="flex items-center justify-center bg-[#797979] hover:bg-[#898989] transition-colors w-[60px] h-[40px] rounded-[5px] cursor-pointer"
+//                   className="flex items-center justify-center bg-[#797979] hover:bg-[#898989] transition-colors w-[60px] h-10 rounded-[5px] cursor-pointer"
 //                   onClick={() => setSearchCheckpointsVisible(true)}
 //                 >
 //                   <img src={PinGoogleMap} alt="Pin Google map" className='w-[25px] h-[25px]' />
@@ -682,7 +682,7 @@
 //                   borderRadius: "4px !important",
 //                 }}
 //               >
-//                 <img src={CSVIcon} alt='CSV Icon' className='w-[20px] h-[20px]' />
+//                 <img src={CSVIcon} alt='CSV Icon' className='w-5 h-5' />
 //               </IconButton>
 
 //               <IconButton 
@@ -691,7 +691,7 @@
 //                   borderRadius: "4px !important",
 //                 }}
 //               >
-//                 <img src={PDFIcon} alt='PDF Icon' className='w-[20px] h-[20px]' />
+//                 <img src={PDFIcon} alt='PDF Icon' className='w-5 h-5' />
 //               </IconButton>
 //             </div>
 //           </div>
@@ -727,7 +727,7 @@
 //                       </TableCell>
 //                       <TableCell sx={{ backgroundColor: data.person_class_id === 1 ? "#EC313140" : "#48494B", color: "#FFFFFF", borderBottom: "1px dashed #ADADAD" }}>{data.name}</TableCell>
 //                       <TableCell sx={{ backgroundColor: data.person_class_id === 1 ? "#EC313161" : "#393B3A", color: "#FFFFFF", borderBottom: "1px dashed #ADADAD" }}>
-//                         <div className='flex items-center justify-center space-x-1 h-[40px]'>
+//                         <div className='flex items-center justify-center space-x-1 h-10'>
 //                           {
 //                             isHideImage ? 
 //                             "--" : 
@@ -761,7 +761,7 @@
 //             </Table>
 //           </TableContainer>
 
-//           <div className={`${suspectPersonSearchList.length > 0 ? "flex" : "hidden"} items-center justify-between bg-[var(--background-color)] py-3 pl-1 sticky bottom-0`}>
+//           <div className={`${suspectPersonSearchList.length > 0 ? "flex" : "hidden"} items-center justify-between bg-(--background-color) py-3 pl-1 sticky bottom-0`}>
 //             <PaginationComponent 
 //               page={page} 
 //               onChange={handlePageChange}

@@ -386,7 +386,7 @@
 //   }
 
 //   return (
-//     <div id='search-plate-before-after' className={`${isEditClick ? "pt-[80px] h-screen w-[73%]" : "main-content"} ${isOpen ? "pl-[130px]" : "pl-[10px]"} transition-all duration-500`}>
+//     <div id='search-plate-before-after' className={`${isEditClick ? "pt-20 h-screen w-[73%]" : "main-content"} ${isOpen ? "pl-[130px]" : "pl-2.5"} transition-all duration-500`}>
 //       { isLoading && <Loading /> }
 //       <div className='w-full h-full overflow-x-auto'>
 //         <div className='flex flex-col w-full h-full overflow-auto min-w-[1200px]'>
@@ -395,7 +395,7 @@
 
 //           {/* Filter Part */}
 //           <div className='flex-none'>
-//             <div className={`grid grid-cols-[20%_20%_20%_25%] gap-y-3 ${isEditClick ? "pr-[20px] gap-x-[5%]" : "pr-[10px] gap-x-[5%]"}`}>
+//             <div className={`grid grid-cols-[20%_20%_20%_25%] gap-y-3 ${isEditClick ? "pr-5 gap-x-[5%]" : "pr-2.5 gap-x-[5%]"}`}>
 //               <AutoComplete 
 //                 id="area-select"
 //                 sx={{ marginTop: "10px"}}
@@ -431,7 +431,7 @@
 
 //               <div>
 //                 <Typography sx={{ fontSize: "15px" }} variant='subtitle1' color='white'>{"จุดตรวจ/ชื่อด่าน"}</Typography>
-//                 <div className={`flex mt-[10px] gap-2`}>
+//                 <div className={`flex mt-2.5 gap-2`}>
 //                   <div className='w-[80%]'>
 //                     <div className='flex-1'>
 //                       <MultiSelectCheckpoints 
@@ -443,7 +443,7 @@
 //                     </div>
 //                   </div>
 //                   <button 
-//                     className="flex items-center justify-center bg-[#797979] hover:bg-[#898989] transition-colors w-[60px] h-[40px] rounded-[5px] cursor-pointer"
+//                     className="flex items-center justify-center bg-[#797979] hover:bg-[#898989] transition-colors w-[60px] h-10 rounded-[5px] cursor-pointer"
 //                     onClick={() => setSearchCheckpointsVisible(true)}
 //                   >
 //                     <img src={PinGoogleMap} alt="Pin Google map" className='w-[25px] h-[25px]' />
@@ -513,7 +513,7 @@
 //                 </DatePickerBuddhist>
 //               </div>
 
-//               <div className='col-span-4 flex justify-between items-center mt-4 pr-[20px]'>
+//               <div className='col-span-4 flex justify-between items-center mt-4 pr-5'>
 //                 <FormGroup>
 //                   <FormControlLabel 
 //                     control={
@@ -549,7 +549,7 @@
 //           </div>
 
 //           {/* Footer Part */}
-//           <div className={`flex justify-between mt-5 ${isEditClick ? "pr-[20px]" : "pr-[30px]"}`}>
+//           <div className={`flex justify-between mt-5 ${isEditClick ? "pr-5" : "pr-[30px]"}`}>
 //             <div className='flex items-end'>
 //               <label>{`จำนวน ${plateList.length} รายการ`}</label>
 //             </div>
@@ -613,7 +613,7 @@
 //                     borderRadius: "4px !important",
 //                   }}
 //                 >
-//                   <img src={CSVIcon} alt='CSV Icon' className='w-[20px] h-[20px]' />
+//                   <img src={CSVIcon} alt='CSV Icon' className='w-5 h-5' />
 //                 </IconButton>
 
 //                 <IconButton 
@@ -622,14 +622,14 @@
 //                     borderRadius: "4px !important",
 //                   }}
 //                 >
-//                   <img src={PDFIcon} alt='PDF Icon' className='w-[20px] h-[20px]' />
+//                   <img src={PDFIcon} alt='PDF Icon' className='w-5 h-5' />
 //                 </IconButton>
 //               </div>
 //             </div>
 //           </div>
 
 //           {/* Result Table */}
-//           <div className={`${isEditClick ? "pr-[20px]" : "pr-[30px]"}`}>
+//           <div className={`${isEditClick ? "pr-5" : "pr-[30px]"}`}>
 //             <TableContainer 
 //               component={Paper} 
 //               className='mt-1'
@@ -783,7 +783,7 @@
 //               </Table>
 //             </TableContainer>
 
-//             <div className={`${plateList.length > 0 ? "flex" : "hidden"} items-center justify-between bg-[var(--background-color)] py-3 pl-1 sticky bottom-0`}>
+//             <div className={`${plateList.length > 0 ? "flex" : "hidden"} items-center justify-between bg-(--background-color) py-3 pl-1 sticky bottom-0`}>
 //               <PaginationComponent 
 //                 page={page} 
 //                 onChange={handlePageChange}

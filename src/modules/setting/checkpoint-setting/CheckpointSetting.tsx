@@ -439,7 +439,7 @@ const CheckpointSetting: React.FC<CheckpointSettingProps> = ({
       </DialogTitle>
       <DialogContent className='bg-black'>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="bg-black text-white p-[30px] border-[1px] border-[#2B9BED] w-full">
+          <div className="bg-black text-white p-[30px] border border-[#2B9BED] w-full">
             {/* Checkpoint Information */}
             <div>
               <div className="flex mb-[15px]">
@@ -448,7 +448,7 @@ const CheckpointSetting: React.FC<CheckpointSettingProps> = ({
               <div className="grid grid-cols-2 lt1443:grid-cols-1 gap-[60px]">
                 {/* First Column */}
                 <div>
-                  <div className="my-[10px]">
+                  <div className="my-2.5">
                     <TextBox
                       id="checkpoint-name"
                       label={t('component.checkpoint-name')}
@@ -464,7 +464,7 @@ const CheckpointSetting: React.FC<CheckpointSettingProps> = ({
                       error={!!errors.checkpoint_name}
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-5 my-[10px]">
+                  <div className="grid grid-cols-2 gap-5 my-2.5">
                     <AutoComplete 
                       id="province-select"
                       sx={{ marginTop: "10px"}}
@@ -495,7 +495,7 @@ const CheckpointSetting: React.FC<CheckpointSettingProps> = ({
                       error={!!errors.district_id}
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-5 my-[10px]">
+                  <div className="grid grid-cols-2 gap-5 my-2.5">
                     <TextBox
                       id="latitude"
                       label={t('component.location-latitude')}
@@ -528,7 +528,7 @@ const CheckpointSetting: React.FC<CheckpointSettingProps> = ({
                 </div>
                 {/* Seconds Column */}
                 <div>
-                  <div className="my-[10px]">
+                  <div className="my-2.5">
                     <TextBox
                       id="organization"
                       label={t('component.organization-name')}
@@ -544,7 +544,7 @@ const CheckpointSetting: React.FC<CheckpointSettingProps> = ({
                       error={!!errors.organization}
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-5 my-[10px]">
+                  <div className="grid grid-cols-2 gap-5 my-2.5">
                     <AutoComplete 
                       id="subdistrict-select"
                       sx={{ marginTop: "10px"}}
@@ -575,7 +575,7 @@ const CheckpointSetting: React.FC<CheckpointSettingProps> = ({
                       error={!!errors.route}
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-5 my-[10px]">
+                  <div className="grid grid-cols-2 gap-5 my-2.5">
                     <TextBox
                       id="serial-number"
                       label={t('component.pc-serial-number')}
@@ -618,7 +618,7 @@ const CheckpointSetting: React.FC<CheckpointSettingProps> = ({
               <div className="grid grid-cols-2 lt1443:grid-cols-1 gap-[60px]">
                 {/* First Column */}
                 <div>
-                  <div className="grid grid-cols-2 gap-5 my-[10px]">
+                  <div className="grid grid-cols-2 gap-5 my-2.5">
                     <AutoComplete 
                       id="prefix-select"
                       sx={{ marginTop: "10px"}}
@@ -640,7 +640,7 @@ const CheckpointSetting: React.FC<CheckpointSettingProps> = ({
                       sx={{ marginTop: "10px", fontSize: "15px" }}
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-5 my-[10px]">
+                  <div className="grid grid-cols-2 gap-5 my-2.5">
                     <TextBox
                       id="phone"
                       label={t('component.officer-phone')}
@@ -653,7 +653,7 @@ const CheckpointSetting: React.FC<CheckpointSettingProps> = ({
                 </div>
                 {/* Seconds Column */}
                 <div>
-                  <div className="grid grid-cols-2 gap-5 my-[10px]">
+                  <div className="grid grid-cols-2 gap-5 my-2.5">
                     <TextBox
                       id="lastname"
                       label={t('component.officer-lastname')}

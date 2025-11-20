@@ -26,7 +26,7 @@ const realtimeDataSlice = createSlice({
   reducers: {
     upsertRealtimeData: (state, action: PayloadAction<RealTimeLprData>) => {
       const exists = state.realtimeData.some(
-        (d) => d.ref_id === action.payload.ref_id
+        (d) => d.id === action.payload.id
       );
       if (!exists) {
         state.realtimeData.unshift(action.payload);
@@ -34,7 +34,7 @@ const realtimeDataSlice = createSlice({
       }
     },
     addToastMessage: (state, action: PayloadAction<RealTimeLprData>) => {
-      const exists = state.toastNotification.some(t => t.ref_id === action.payload.ref_id);
+      const exists = state.toastNotification.some(t => t.id === action.payload.id);
       if (!exists) {
         state.toastNotification.push(action.payload);
       }

@@ -4,7 +4,7 @@ import { Id } from 'react-toastify';
 export type NotificationType = "newCheckpoint" | "newCamera" | "requestDelete" | "cameraOnline" | "cameraOffline";
 
 export interface NotificationData {
-  id: string;
+  id: number;
   userId: string;
   type: NotificationType;
   messageId: string;
@@ -12,11 +12,16 @@ export interface NotificationData {
   content?: string | string[];
   variables?: Record<string, any>;
   isOnline?: boolean;
+  theme?: "dark" | "light";
+  style?: Record<string, string>;
+  closeAction?: string;
 }
 
 interface NotificationState {
   list: NotificationData[];
 }
+
+const MAX_ITEMS = 100;
 
 const initialState: NotificationState = {
   list: [],
@@ -27,10 +32,23 @@ const notificationSlice = createSlice({
   initialState,
   reducers: {
     addNotification: (state, action: PayloadAction<NotificationData>) => {
-      state.list.push(action.payload);
+      const exists = state.list.some(
+        (n) => n.messageId === action.payload.messageId
+      );
+
+      if (!exists) {
+        state.list.unshift(action.payload);
+
+        if (state.list.length > MAX_ITEMS) {
+          state.list = state.list.slice(0, MAX_ITEMS);
+        }
+      }
+    },
+    addListNotification: (state, action: PayloadAction<NotificationData[]>) => {
+      state.list = action.payload.slice(0, MAX_ITEMS);
     },
     removeNotification: (state, action: PayloadAction<Id>) => {
-      state.list = state.list.filter((n) => n.id !== action.payload);
+      state.list = state.list.filter((n) => n.messageId !== action.payload);
     },
     clearNotificationsByUser: (state, action: PayloadAction<string>) => {
       state.list = state.list.filter((n) => n.userId !== action.payload);
@@ -39,7 +57,8 @@ const notificationSlice = createSlice({
 });
 
 export const { 
-  addNotification, 
+  addNotification,
+  addListNotification,
   removeNotification, 
   clearNotificationsByUser 
 } = notificationSlice.actions;

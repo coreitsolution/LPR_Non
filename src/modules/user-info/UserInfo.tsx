@@ -402,7 +402,7 @@ const UserInfo = () => {
   };
 
   return (
-    <div id='user-info' className={`main-content ${isOpen ? "pl-[130px]" : "pl-[10px]"} pr-[10px] transition-all duration-500`}>
+    <div id='user-info' className={`main-content ${isOpen ? "pl-[130px]" : "pl-2.5"} pr-2.5 transition-all duration-500`}>
       {/* Header */}
       <Typography variant="h5" color="white" className="font-bold">{t('screen.user-info.title')}</Typography>
       <form onSubmit={handleSubmit(onSubmit)} className='h-full'>
@@ -416,7 +416,7 @@ const UserInfo = () => {
                     <img src={`${CENTER_FILE_URL}${formData.imageUrl}`} alt="User Image" className="object-contain w-full h-full" />
                     <button
                       type="button"
-                      className="absolute z-[52] top-2 right-2 text-white bg-red-500 rounded-full w-[30px] h-[30px] flex items-center justify-center hover:cursor-pointer"
+                      className="absolute z-52 top-2 right-2 text-white bg-red-500 rounded-full w-[30px] h-[30px] flex items-center justify-center hover:cursor-pointer"
                       onClick={() => handleDeleteImage(formData.imageUrl)}
                     >
                       &times;
@@ -424,11 +424,11 @@ const UserInfo = () => {
                   </div>
                 ) :
                 (
-                  <div className='flex border-[1px] border-white border-dashed w-full h-full'>
+                  <div className='flex border border-white border-dashed w-full h-full'>
                     {/* No Images */}
                     <div className="flex flex-col justify-center items-center w-full h-full">
                       <Icon icon={Download} size={80} color="#999999" />
-                      <span className="text-[18px] text-nobel mt-[20px]">
+                      <span className="text-[18px] text-nobel mt-5">
                         {t('button.upload-image')}
                       </span>
                     </div>                    
@@ -607,7 +607,7 @@ const UserInfo = () => {
               </div>
             </div>
 
-            <div className='col-start-2 col-span-3 border-b-[1px] border-white mt-5'></div>
+            <div className='col-start-2 col-span-3 border-b border-white mt-5'></div>
 
             <div className='col-start-2'>
               <TextBox

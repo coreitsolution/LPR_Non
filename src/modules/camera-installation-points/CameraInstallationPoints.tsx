@@ -269,7 +269,7 @@ const CameraInstallationPoints: React.FC<CameraInstallationPointsProps> = ({}) =
   
 
   return (
-    <div id='usage-statistics-graph' className={`main-content ${isOpen ? "pl-[130px]" : "pl-[10px]"} pr-[10px] transition-all duration-500 overflow-y-auto scrollbar-hide`}>
+    <div id='usage-statistics-graph' className={`main-content ${isOpen ? "pl-[130px]" : "pl-2.5"} pr-2.5 transition-all duration-500 overflow-y-auto scrollbar-hide`}>
       <div className='flex flex-col'>
         {/* Header */}
         <Typography variant="h5" color="white" className="font-bold">ค้นหาจุดติดตั้งกล้อง</Typography>
@@ -344,21 +344,21 @@ const CameraInstallationPoints: React.FC<CameraInstallationPointsProps> = ({}) =
         {/* Content Part */}
         <div className='grid grid-cols-2 gap-2 mt-10'>          
           {/* Total Count */}
-          <div className='col-span-2 border-[1px] border-[#797979] rounded-[5px] py-2'>
+          <div className='col-span-2 border border-[#797979] rounded-[5px] py-2'>
             <div className='grid grid-cols-[auto_40%_auto_auto_auto]'>
-              <div className='flex flex-col w-full border-r-[1px] border-[#FFFFFF] px-4'>
+              <div className='flex flex-col w-full border-r border-[#FFFFFF] px-4'>
                 <label className='text-[#FDCC0A] text-[16px]'>โครงการ</label>
                 <p className='text-[53px]'>12</p>
               </div>
-              <div className='flex flex-col w-full border-r-[1px] border-[#FFFFFF] px-4'>
+              <div className='flex flex-col w-full border-r border-[#FFFFFF] px-4'>
                 <label className='text-[#FDCC0A] text-[16px]'>พื้นที่/ภาค</label>
                 <p className='text-[53px]'>1,2,3,4,5,6,7,8,9,0</p>
               </div>
-              <div className='flex flex-col w-full border-r-[1px] border-[#FFFFFF] px-4'>
+              <div className='flex flex-col w-full border-r border-[#FFFFFF] px-4'>
                 <label className='text-[#FDCC0A] text-[16px]'>จังหวัด</label>
                 <p className='text-[53px] text-center'>75</p>
               </div>
-              <div className='flex flex-col w-full border-r-[1px] border-[#FFFFFF] px-4'>
+              <div className='flex flex-col w-full border-r border-[#FFFFFF] px-4'>
                 <label className='text-[#FDCC0A] text-[16px]'>จุดขาเข้า</label>
                 <p className='text-[53px] text-center'>770</p>
               </div>
@@ -370,7 +370,7 @@ const CameraInstallationPoints: React.FC<CameraInstallationPointsProps> = ({}) =
           </div>
 
           {/* Map Part */}
-          <div className='flex flex-col border-[1px] border-[#797979] rounded-[5px] px-2 py-3 row-span-6'>
+          <div className='flex flex-col border border-[#797979] rounded-[5px] px-2 py-3 row-span-6'>
             <label className='text-[#FDCC0A] text-[16px]'>จำนวนผู้โดยตัดรหัส</label>
             <div className='relative h-full w-full mt-2'>
               <BaseMap 
@@ -380,7 +380,7 @@ const CameraInstallationPoints: React.FC<CameraInstallationPointsProps> = ({}) =
           </div>
 
           {/* Camera Installation Table */}
-          <div className='row-span-6 flex flex-col border-[1px] border-[#797979] rounded-[5px] px-2 pt-3 pb-4'>
+          <div className='row-span-6 flex flex-col border border-[#797979] rounded-[5px] px-2 pt-3 pb-4'>
             <label className='text-[#FDCC0A] text-[16px]'>จำนวนจุดติดตั้ง</label>
             <div className='pt-4'>
               <TableContainer
@@ -498,7 +498,7 @@ const CameraInstallationPoints: React.FC<CameraInstallationPointsProps> = ({}) =
                   </TableBody>
                 </Table>
               </TableContainer>
-              <div className={`${cameraInstallationPoints.length > 0 ? "flex" : "hidden"} items-center justify-between bg-[var(--background-color)] pt-3 pl-1`}>
+              <div className={`${cameraInstallationPoints.length > 0 ? "flex" : "hidden"} items-center justify-between bg-(--background-color) pt-3 pl-1`}>
                 <PaginationComponent 
                   page={page} 
                   onChange={handlePageChange}

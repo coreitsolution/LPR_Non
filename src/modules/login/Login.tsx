@@ -9,9 +9,6 @@ import { useNavigate } from 'react-router-dom'
 // API
 import { login, clearError, userInfo } from '../../features/auth/authSlice'
 
-// Image
-import LogoImage from '/project-logo/logo.png'
-
 // Icons
 import { FaEye, FaEyeSlash } from "react-icons/fa"
 
@@ -93,7 +90,7 @@ const LoginPage = () => {
 
   return (
     <div id='login' className="flex items-center justify-center min-h-screen relative">
-      <div className="absolute top-2 right-5 grid grid-cols-[20px_auto] border border-white rounded-[5px] py-[3px] px-[12px]">
+      <div className="absolute top-2 right-5 grid grid-cols-[20px_auto] border border-white rounded-[5px] py-[3px] px-3">
         <span className="mr-[5px]">
           {
             (() => {
@@ -118,7 +115,7 @@ const LoginPage = () => {
         </select>
       </div>
       <motion.div
-        className="w-full max-w-md p-8 bg-white rounded-xl shadow-lg border-[#2B9BED] border-[1px]"
+        className="flex flex-col gap-2 w-full max-w-md p-8 bg-white rounded-xl shadow-lg border-[#2B9BED] border"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -133,7 +130,7 @@ const LoginPage = () => {
         >
           <div 
             className="bg-center bg-no-repeat bg-contain w-full min-h-[250px]" 
-            style={{ backgroundImage: `url(${LogoImage})` }}
+            style={{ backgroundImage: `url("/project-logo/logo.png")` }}
           >
           </div>
         </motion.div>
@@ -174,7 +171,7 @@ const LoginPage = () => {
             <div className='mt-[50px] text-center w-full'>
               <motion.button
                 type="submit"
-                className={`mr-[10px] h-[50px] w-full text-white rounded-lg shadow transition ${
+                className={`mr-2.5 h-[50px] w-full text-white rounded-lg shadow transition ${
                   authStatus === 'loading' ? 'bg-gray-400' : 'bg-[#2B9BED] hover:bg-blue-700'
                 }`}
                 whileHover={authStatus === 'loading' ? {} : { scale: 1.05 }}
@@ -189,7 +186,7 @@ const LoginPage = () => {
 
         {/* Footer */}
         <motion.div
-          className="mt-[8px] text-start text-sm text-gray-500"
+          className="mt-2 text-start text-sm text-gray-500"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
@@ -203,7 +200,7 @@ const LoginPage = () => {
         </motion.div>
 
         <div className='flex justify-center mt-[50px]'>
-          <div className='w-[230px] text-center border-x-[1px] border-[#CBD3D9]'>
+          <div className='w-[230px] text-center border-x border-[#CBD3D9]'>
             <label
               className="text-[#2B9BED]"
             >
@@ -212,7 +209,7 @@ const LoginPage = () => {
           </div>
         </div>
 
-        <div className='flex justify-center mt-[10px]'>
+        <div className='flex justify-center mt-2.5'>
           <label
             className="text-[#A0A6AA]"
           >

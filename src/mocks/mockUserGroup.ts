@@ -23,9 +23,6 @@ export const mockUserGroups: UserGroup[] = [
         setting: {
           select: true,
         },
-        manageCheckpointCameras: {
-          select: true,
-        },
       },
       checkpoint: {
         realtime: {
@@ -69,9 +66,6 @@ export const mockUserGroups: UserGroup[] = [
         setting: {
           select: true,
         },
-        manageCheckpointCameras: {
-          select: true,
-        },
       },
       checkpoint: {
         realtime: {
@@ -113,9 +107,6 @@ export const mockUserGroups: UserGroup[] = [
           select: true,
         },
         setting: {
-          select: true,
-        },
-        manageCheckpointCameras: {
           select: true,
         },
       },

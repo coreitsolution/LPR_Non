@@ -25,15 +25,15 @@ body {
 }
 
 body .swal2-container {
-  z-index: 9999 !important;
+  z-index: 99999 !important;
 }
 
 body .swal2-popup {
-  z-index: 9999 !important;
+  z-index: 99999 !important;
 }
 
 body .swal2-backdrop-show {
-  z-index: 9998 !important;
+  z-index: 99998 !important;
 }
 
 .primary-btn {
@@ -219,6 +219,10 @@ body .swal2-backdrop-show {
 
 .bell-btn:hover {
   background-color: rgba(43, 155, 237, 0.5) !important;
+}
+
+.clear-all-btn:hover {
+  background-color: rgba(14, 50, 78, 0.5) !important;
 }
 
 .success-progress-bar {

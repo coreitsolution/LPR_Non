@@ -494,7 +494,11 @@
       "export-all-confirmation": "Confirm export of all data",
       "export-all-confirmation-message": "Total number of data {{totalNumber}} items</br>This may result in a delay in data export.</br>Do you want to confirm the data export?",
       "data-incomplete": "Data incomplete",
-      "please-input-sensor-data": "Please input sensor data"
+      "please-input-sensor-data": "Please input sensor data",
+      "please-input-username": "Please input username",
+      "please-input-password": "Please input password",
+      "confirm-all-notification": "Confirm all notification",
+      "confirm-all-notification-message": "Do you want to continue?"
     },
     "camera": {
       "delete-approve": "Approve deletion of camera",
@@ -562,5 +566,10 @@
     "zip-file-creating": "Creating a ZIP file ... Please wait a moment",
     "file-download-complete": "File downloaded successfully",
     "map-capture-preparing": "Preparing map images"
+  },
+  "title": {
+    "show-notification": "Show Notification",
+    "hide-notification": "Hide Notification",
+    "confirm-all-notification": "Confirm All Notification"
   }
 }

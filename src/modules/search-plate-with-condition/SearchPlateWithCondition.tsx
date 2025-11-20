@@ -224,7 +224,7 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
     setSubDistrictsOptions([{ label: t('dropdown.all'), value: 0 }]);
     setSelectedSubDistrictObjects([{ label: t('dropdown.all'), value: 0 }]);
     setSelectedCameraObjects([{ label: t('dropdown.all'), value: "0" }]);
-  }, [i18n.language])
+  }, [i18n.language, i18n.isInitialized])
 
   useEffect(() => {
     if (searchPlateConditionList) {
@@ -244,7 +244,7 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
       }));
       setProvincesOptions([{ label: t('dropdown.all'), value: 0 }, ...options]);
     }
-  }, [sliceDropdown.provinces, i18n.language]);
+  }, [sliceDropdown.provinces, i18n.language, i18n.isInitialized]);
 
   useEffect(() => {
     if (sliceDropdown.regions && sliceDropdown.regions.data) {
@@ -254,7 +254,7 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
       }));
       setGroupProvincesOptions([{ label: t('dropdown.all'), value: "0" }, ...options]);
     }
-  }, [sliceDropdown.regions, i18n.language]);
+  }, [sliceDropdown.regions, i18n.language, i18n.isInitialized]);
 
   useEffect(() => {
     if (districtsList) {
@@ -264,7 +264,7 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
       }))
       setDistrictsOptions([{ label: t('dropdown.all'), value: 0 }, ...options])
     }
-  }, [districtsList, i18n.language])
+  }, [districtsList, i18n.language, i18n.isInitialized])
 
   useEffect(() => {
     if (subDistrictsList) {
@@ -274,7 +274,7 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
       }))
       setSubDistrictsOptions([{ label: t('dropdown.all'), value: 0 }, ...options])
     }
-  }, [subDistrictsList, i18n.language])
+  }, [subDistrictsList, i18n.language, i18n.isInitialized])
 
   useEffect(() => {
     if (cameraList) {
@@ -284,7 +284,7 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
       }))
       setCamerasOption([{ label: t('dropdown.all'), value: "0" }, ...options])
     }
-  }, [cameraList, i18n.language])
+  }, [cameraList, i18n.language, i18n.isInitialized])
 
   useEffect(() => {
     if (sliceDropdown.vehicleColors && sliceDropdown.vehicleColors.data) {
@@ -294,7 +294,7 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
       }));
       setCarColorsOptions(options);
     }
-  }, [sliceDropdown.vehicleColors, i18n.language]);
+  }, [sliceDropdown.vehicleColors, i18n.language, i18n.isInitialized]);
 
   useEffect(() => {
     if (sliceDropdown.vehicleMakes && sliceDropdown.vehicleMakes.data) {
@@ -898,7 +898,7 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
   }
 
   const handleSearchClick = async () => {
-    await fetchSearchData();
+    await fetchSearchData(1, rowsPerPage);
   }
 
   const fetchSearchData = async (currentPage: number = page, limit: number = rowsPerPage) => {
@@ -1313,7 +1313,7 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
   }));
 
   return (
-    <div id='search-plate-with-condition' className={`${isEditClick.status ? "pt-[80px] h-screen w-[73%]" : "main-content"} ${isOpen ? "pl-[130px]" : "pl-[10px]"} transition-all duration-500`}>
+    <div id='search-plate-with-condition' className={`${isEditClick.status ? "pt-20 h-screen w-[73%]" : "main-content"} ${isOpen ? "pl-[130px]" : "pl-2.5"} transition-all duration-500`}>
       { isLoading && <Loading /> }
       {
         pageLoading && <ProgressBarWithLabel message={progressMessage} value={progress} />
@@ -1354,9 +1354,9 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
               }}
             >
               <form onSubmit={handleSubmit(handleSearchClick)} className='flex-none'>
-                <div className='grid grid-cols-2 pt-[10px]'>
+                <div className='grid grid-cols-2 pt-2.5'>
                   {/* Column 1 */}
-                  <div className='grid grid-cols-2 border-r-[1px] border-[#4A4A4A] gap-y-3 gap-x-[13%] pr-[60px]'>
+                  <div className='grid grid-cols-2 border-r border-[#4A4A4A] gap-y-3 gap-x-[13%] pr-[60px]'>
                     <div className='flex gap-3 items-center'>
                       <div className='flex flex-col w-[150px]'>
                         <Typography sx={{ fontSize: "15px" }} variant='subtitle1' color='white'>
@@ -1517,7 +1517,7 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
 
                     <div className='flex flex-col w-full'>
                       <Typography sx={{ fontSize: "15px" }} variant='subtitle1' color='white'>{t('component.sub-district')}</Typography>
-                      <div className='w-full items-center justify-center mt-[10px]'>
+                      <div className='w-full items-center justify-center mt-2.5'>
                         <MultiSelect 
                           limitTags={1} 
                           selectedValues={selectedSubDistrictObjects}
@@ -1531,7 +1531,7 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
 
                     <div className='flex flex-col w-full'>
                       <Typography sx={{ fontSize: "15px" }} variant='subtitle1' color='white'>{t('component.checkpoint-2')}</Typography>
-                      <div className='w-full items-center justify-center mt-[10px]'>
+                      <div className='w-full items-center justify-center mt-2.5'>
                         <div className='flex-1'>
                           <MultiSelectCameras 
                             limitTags={1} 
@@ -1587,7 +1587,7 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
                           )}
                         </div>
 
-                        <div className='flex gap-2 justify-end h-[40px]'>
+                        <div className='flex gap-2 justify-end h-10'>
                           <Button
                             type='submit'
                             variant="contained"
@@ -1624,7 +1624,7 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
           </Accordion>
 
           {/* Footer Part */}
-          <div className={`flex justify-between mt-5 ${isEditClick.status ? "pr-[20px]" : "pr-[30px]"}`}>
+          <div className={`flex justify-between mt-5 ${isEditClick.status ? "pr-5" : "pr-[30px]"}`}>
             <div className='flex items-end'>
               <label>{`${t('table.amount')} ${formatNumber(totalData)} ${t('table.list')}`}</label>
             </div>
@@ -1693,7 +1693,7 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
                   onClick={exportToCsv}
                   disabled={searchPlateConditionList.length === 0}
                 >
-                  <img src={CSVIcon} alt='CSV Icon' className='w-[20px] h-[20px]' />
+                  <img src={CSVIcon} alt='CSV Icon' className='w-5 h-5' />
                 </IconButton>
 
                 <IconButton 
@@ -1704,14 +1704,14 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
                   onClick={exportToPdf}
                   disabled={searchPlateConditionList.length === 0}
                 >
-                  <img src={PDFIcon} alt='PDF Icon' className='w-[20px] h-[20px]' />
+                  <img src={PDFIcon} alt='PDF Icon' className='w-5 h-5' />
                 </IconButton>
               </div>
             </div>
           </div>
 
           {/* Result Table */}
-          <div className={`${isEditClick.status ? "pr-[20px]" : "pr-[30px]"}`}>
+          <div className={`${isEditClick.status ? "pr-5" : "pr-[30px]"}`}>
             <TableContainer 
               component={Paper} 
               className='mt-1'
@@ -1819,7 +1819,7 @@ const SearchPlateWithCondition: React.FC<SearchPlateWithConditionProps> = ({}) =
               </Table>
             </TableContainer>
 
-            <div className={`${searchPlateConditionList.length > 0 ? "flex" : "hidden"} items-center justify-between bg-[var(--background-color)] py-3 pl-1 sticky bottom-0`}>
+            <div className={`${searchPlateConditionList.length > 0 ? "flex" : "hidden"} items-center justify-between bg-(--background-color) py-3 pl-1 sticky bottom-0`}>
               <PaginationComponent 
                 page={page} 
                 onChange={handlePageChange}

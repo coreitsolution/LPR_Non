@@ -185,9 +185,9 @@ const ImagesUpload: React.FC<ImagesUploadProps> = ({setImagesDataList, imagesDat
             onChange={handleImageUpload}
           />
         </div>
-        <div className='flex justify-between items-center mt-[10px]'>
+        <div className='flex justify-between items-center mt-2.5'>
           <div className='flex items-center'>
-            <img src="/icons/red-waring.png" alt="Warning" className='w-[20px] h-[20px]' />
+            <img src="/icons/red-waring.png" alt="Warning" className='w-5 h-5' />
             <label className='ml-2 text-white text-[12px] font-bold'>{t('text.import-all-file-if-exist')}</label>
           </div>
           <div className='flex items-center space-x-2'>
@@ -202,7 +202,7 @@ const ImagesUpload: React.FC<ImagesUploadProps> = ({setImagesDataList, imagesDat
         {
           !isSimpleMode ? 
           (
-            <div className="flex-grow overflow-x-auto">
+            <div className="grow overflow-x-auto">
               <TableContainer component={Paper} className="mt-4 h-[55vh]"
                 sx={{
                   backgroundColor: "#000000"
@@ -267,7 +267,7 @@ const ImagesUpload: React.FC<ImagesUploadProps> = ({setImagesDataList, imagesDat
                     <p title={`${index + 1}.${data.originalName}`} className='truncate'>{`${index + 1}.${data.originalName}`}</p>
                     <button
                       type="button"
-                      className="absolute z-[52] top-[-5px] right-[-5px] text-center text-white bg-red-500 rounded-full w-[20px] h-[20px] flex items-center justify-center hover:cursor-pointer"
+                      className="absolute z-52 top-[-5px] right-[-5px] text-center text-white bg-red-500 rounded-full w-5 h-5 flex items-center justify-center hover:cursor-pointer"
                       onClick={() => handleDeleteImage(index, data.url)}
                     >
                       &times;

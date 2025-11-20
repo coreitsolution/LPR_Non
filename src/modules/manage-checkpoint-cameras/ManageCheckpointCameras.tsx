@@ -567,10 +567,10 @@ const ManageCheckpointCameras: React.FC<ManageCheckpointCamerasProps> = ({}) => 
   }
 
   return (
-    <div id='manage-checkpoint-cameras' className={`main-content ${isOpen ? "pl-[130px]" : "pl-[10px]"} pr-[10px] transition-all duration-500`}>
+    <div id='manage-checkpoint-cameras' className={`main-content ${isOpen ? "pl-[130px]" : "pl-2.5"} pr-2.5 transition-all duration-500`}>
       { isLoading && <Loading /> }
 
-      <div className='flex flex-col w-full gap-3 pr-[20px]'>
+      <div className='flex flex-col w-full gap-3 pr-5'>
         {/* Header */}
         <Typography variant="h5" color="white" className="font-bold">{t('screen.manage-checkpoint-camera.title')}</Typography>
 
@@ -610,7 +610,7 @@ const ManageCheckpointCameras: React.FC<ManageCheckpointCamerasProps> = ({}) => 
             <Tabs 
               value={tabValue} 
               onChange={handleChange} 
-              className="h-full bg-black border-[1px] border-[#2B9BED] rounded-t-[5px]"
+              className="h-full bg-black border border-[#2B9BED] rounded-t-[5px]"
               sx={{
                 "& .MuiTabs-indicator": {
                   backgroundColor: "transparent !important",
@@ -666,7 +666,7 @@ const ManageCheckpointCameras: React.FC<ManageCheckpointCamerasProps> = ({}) => 
           {/* Delete Camera Approve */}
           {
             tabValue === 0 && (
-              <div className='flex flex-col gap-3 p-3 border-[#2B9BED] border-[1px]'>
+              <div className='flex flex-col gap-3 p-3 border-[#2B9BED] border'>
                 <Typography variant="h5" color="white" className="font-bold">{t('text.delete-camera-approve-list')}</Typography>
               
                 <div className='flex justify-between'>
@@ -785,7 +785,7 @@ const ManageCheckpointCameras: React.FC<ManageCheckpointCamerasProps> = ({}) => 
                                   const color = data.active === 1 ? "bg-[#4CB64C]" : "bg-[#ADADAD]";
                                   return (
                                     <label
-                                      className={`w-[80px] h-[30px] inline-flex items-center justify-center rounded
+                                      className={`w-20 h-[30px] inline-flex items-center justify-center rounded
                                       ${color}`}
                                     >
                                       { data.active === 1 ? t('text.on') : t('text.off') }
@@ -844,7 +844,7 @@ const ManageCheckpointCameras: React.FC<ManageCheckpointCamerasProps> = ({}) => 
           {
             tabValue === 1 && (
               <>
-                <div className='flex flex-col gap-3 p-3 border-[#2B9BED] border-[1px]'>
+                <div className='flex flex-col gap-3 p-3 border-[#2B9BED] border'>
                   <Typography variant="h5" color="white" className="font-bold">{t('text.deleted-camera-list')}</Typography>
                 
                   <div className='flex justify-between'>
@@ -949,7 +949,7 @@ const ManageCheckpointCameras: React.FC<ManageCheckpointCamerasProps> = ({}) => 
                                     const color = data.active === 1 ? "bg-[#4CB64C]" : "bg-[#ADADAD]";
                                     return (
                                       <label
-                                        className={`w-[80px] h-[30px] inline-flex items-center justify-center rounded
+                                        className={`w-20 h-[30px] inline-flex items-center justify-center rounded
                                         ${color}`}
                                       >
                                         { data.active === 1 ? t('text.on') : t('text.off') }
@@ -986,7 +986,7 @@ const ManageCheckpointCameras: React.FC<ManageCheckpointCamerasProps> = ({}) => 
                   </TableContainer>
                 </div>
 
-                <div className={`${mockCheckpointCameras.length > 0 ? "flex" : "hidden"} items-center justify-between bg-[var(--background-color)] py-3 pl-1 sticky bottom-0`}>
+                <div className={`${mockCheckpointCameras.length > 0 ? "flex" : "hidden"} items-center justify-between bg-(--background-color) py-3 pl-1 sticky bottom-0`}>
                   <PaginationComponent 
                     page={page} 
                     onChange={handlePageChange}

@@ -131,7 +131,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
 
   useEffect(() => {
     setSelectedCameraObjects([{ label: t('dropdown.all'), value: "0" }]);
-  }, [i18n.language])
+  }, [i18n.language, i18n.isInitialized])
 
   useEffect(() => {
     if (cameraList) {
@@ -153,7 +153,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
       }))
       setCamerasOption([{ label: t('dropdown.all'), value: "0" }, ...options])
     }
-  }, [cameraList, i18n.language])
+  }, [cameraList, i18n.language, i18n.isInitialized])
 
   useEffect(() => {
     if (!toastNotification || toastNotification.length === 0) return;
@@ -190,7 +190,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
       } else {
         // Pin only
         await searchSpecialCheckpoint([{
-          ref_id: "",
+          id: 0,
           camera_uid: camera.camera_uid,
           camera_name: "",
           plate_number: "",
@@ -198,6 +198,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
           region_code: "",
           iconColor,
           bgColor: iconColor,
+          textShadow: "",
           isLocationWithLabel,
           isSpecialLocation: false, // Dialog OFF
           detectTime: "",
@@ -268,7 +269,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
         newMap.set(key, [
           ...existing,
           {
-            ref_id: data.ref_id.toString(),
+            id: data.id,
             camera_uid: data.camera_uid,
             camera_name: updatedData.camera_name,
             plate_number: data.plate_number,
@@ -276,6 +277,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
             region_code: data.region_code,
             iconColor: data.color,
             bgColor: data.pin_background_color,
+            textShadow: data.text_shadow,
             isLocationWithLabel: true,
             isSpecialLocation: true,
             detectTime: newEpochEnd,
@@ -299,7 +301,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
                 const newMap = new Map(prev);
                 newMap.forEach((list, key) => {
                   const filtered = list.filter(
-                    (item) => item.ref_id !== updatedData.ref_id.toString()
+                    (item) => item.id !== updatedData.id
                   );
                   if (filtered.length > 0) newMap.set(key, filtered);
                   else newMap.delete(key);
@@ -307,7 +309,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
                 return newMap;
               });
               const newData = toastNotification.filter(
-                (item) => item.ref_id !== updatedData.ref_id
+                (item) => item.id !== updatedData.id
               );
               dispatch(updateToastMessage(newData));
               closeToast();
@@ -316,7 +318,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
           />
         ),
         {
-          toastId: `realtime-toast-${updatedData.ref_id}`,
+          toastId: `realtime-toast-${updatedData.id}`,
           containerId: "realtime-toast",
           position: "bottom-left",
           hideProgressBar: true,
@@ -358,7 +360,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
         newMap.set(key, [
           ...existing,
           {
-            ref_id: data.ref_id.toString(),
+            id: data.id,
             camera_uid: data.camera_uid,
             camera_name: updatedData.camera_name,
             plate_number: data.plate_number,
@@ -366,6 +368,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
             region_code: data.region_code,
             iconColor: data.color,
             bgColor: data.pin_background_color,
+            textShadow: data.text_shadow,
             isLocationWithLabel: true,
             isSpecialLocation: true,
             detectTime: newEpochEnd,
@@ -427,7 +430,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
       let isSpecialLocation = false;
 
       await searchSpecialCheckpoint([{
-        ref_id: "",
+        id: 0,
         camera_uid: camera.camera_uid,
         camera_name: camera.camera_name,
         plate_number: "",
@@ -435,6 +438,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
         region_code: "",
         iconColor,
         bgColor: iconColor,
+        textShadow: "",
         isLocationWithLabel,
         isSpecialLocation,
         detectTime: "",
@@ -469,7 +473,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
   };
 
   return (
-    <div id="real-time-monitor" className={`main-content ${isOpen ? "pl-[130px]" : "pl-[10px]"} pr-[10px] transition-all duration-500`}>
+    <div id="real-time-monitor" className={`main-content ${isOpen ? "pl-[130px]" : "pl-2.5"} pr-2.5 transition-all duration-500`}>
       <div className='flex flex-col w-full'>
         {/* Header */}
         <Typography variant="h5" color="white" className="font-bold">{t('screen.real-time.title')}</Typography>
@@ -493,7 +497,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
               <div className='flex items-end'>
                 <button 
                   type="button"
-                  className="flex items-center justify-center bg-[#797979] w-[60px] h-[40px] rounded-[5px] cursor-pointer"
+                  className="flex items-center justify-center bg-[#797979] w-[60px] h-10 rounded-[5px] cursor-pointer"
                   onClick={() => setSearchCheckpointsVisible(true)}>
                   <img src={PinGoogleMap} alt="Pin Google map" className='w-[25px] h-[25px]' />
                 </button>
@@ -534,7 +538,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
         </form>
 
         {/* Content Part */}
-        <div className='grid grid-cols-[70%_30%] mt-8 border-[1px] border-[#2B9BED]'>
+        <div className='grid grid-cols-[70%_30%] mt-8 border border-[#2B9BED]'>
           {/* Map Part */}
           <div id="realtime-map-container" className='relative h-[75.5vh] w-full'>
             <BaseMap 
@@ -583,15 +587,15 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
                 
                 return (
                   <motion.div
-                    key={`data_${data.ref_id}_${index}`}
-                    className='flex flex-col border-[1px] border-[#CCD0CF]'
+                    key={`data_${data.id}_${index}`}
+                    className='flex flex-col border border-[#CCD0CF]'
                   >
                     <div className='grid grid-cols-[55%_45%]'>
                       {/* Plate Header */}
                       {
                         (() => {
                           const specialPlateData = checkSpecialPlate(data.plate_prefix, data.plate_number, data.region_code);
-                          const { color, feedBackgroundColor } = getPlateTypeColor(specialPlateData ? specialPlateData.plate_class_id : 0);
+                          const { color, feedBackgroundColor  } = getPlateTypeColor(specialPlateData ? specialPlateData.plate_class_id : 0);
                           const provinceName = getProvinceName(data.region_code);
                           return (
                             <p
