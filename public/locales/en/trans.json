@@ -132,7 +132,8 @@
     "district": "District",
     "plate-type-group": "Plate Type",
     "remark-behavior": "Remark/Behavior",
-    "sub-district": "Sub District"
+    "sub-district": "Sub District",
+    "search-camera-id": "Search Camera (ID)"
   },
   "placeholder": {
     "checkpoint-station": "Find the checkpoint name",
@@ -198,7 +199,8 @@
     "remark-behavior": "Please input the remark/behavior",
     "checkpoint-all": "All",
     "add-checkpoint-data": "Add Checkpoint Data",
-    "sub-district": "Please select the sub district"
+    "sub-district": "Please select the sub district",
+    "search-camera-id": "Search"
   },
   "screen": {
     "real-time": {

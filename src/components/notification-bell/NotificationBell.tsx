@@ -15,7 +15,7 @@ import { PopupMessageWithCancel } from '../../utils/popupMessage';
 
 interface NotificationBellProps {
   notificationCount: number;
-  onNotificationClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onNotificationClick: (event: React.MouseEvent<HTMLButtonElement>, isOpen: boolean) => void;
   onClearAllNotifications?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
@@ -26,8 +26,9 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ notificationCount, 
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
   const handleNotificationClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setIsNotificationOpen((prev) => !prev);
-    onNotificationClick(event);
+    const nextOpenState = !isNotificationOpen;
+    setIsNotificationOpen(nextOpenState);
+    onNotificationClick(event, nextOpenState);
   };
 
   const handleClearAllNotifications = async (event: React.MouseEvent<HTMLButtonElement>) => {

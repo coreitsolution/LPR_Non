@@ -58,7 +58,6 @@ function Nav() {
   // State
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [_, setBarChartOpen] = useState(false);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // Data
@@ -173,23 +172,18 @@ function Nav() {
     dispatch(logout())
   };
 
-  const handleNotificationClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleNotificationClick = async (e: React.MouseEvent<HTMLButtonElement>, isOpen: boolean) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const nextOpenState = !isNotificationOpen;
-
-    if (!nextOpenState) {
+    if (!isOpen) {
       // Hide all active toasts
       notificationRedux.list.forEach(row => {
         toast.dismiss(`notification-list-toast-${row.messageId}`);
       });
 
-      setIsNotificationOpen(false);
       return;
     }
-
-    setIsNotificationOpen(true);
 
     notificationRedux.list.forEach(row => {
       const toastId = `notification-list-toast-${row.messageId}`;

@@ -335,7 +335,7 @@ const Setting: React.FC<SettingProps> = ({}) => {
           </TableContainer>
 
           {/* Pagination Part */}
-          <div className={`flex items-center justify-between bg-(--background-color) py-3 pl-1 sticky bottom-0`}>
+          <div className={`${cameraList.length > 0 ? "flex" : "hidden"} items-center justify-between bg-(--background-color) py-3 pl-1 sticky bottom-0`}>
             <PaginationComponent 
               page={page} 
               onChange={handlePageChange}
