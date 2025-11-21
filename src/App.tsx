@@ -395,7 +395,7 @@ function App() {
             <ProtectedRoute 
               permission={authData?.userInfo?.permissions
               ? authData.userInfo.permissions.center.realtime.select
-              : undefined
+              : true
               }
             >
               <RealTimeMonitor />

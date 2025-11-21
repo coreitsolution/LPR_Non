@@ -372,25 +372,43 @@ export const useMapSearch = (map: LeafletMap | null, ableToClick = false) => {
     try {
       const coordinatesList: CheckpointOnMap[] = [];
 
+      const bounds = new LatLngBounds([]);
+
       for (const nl of NotificationList) {
         const coordinates = parseCoordinates(`${nl.camera_latitude}, ${nl.camera_longitude}`);
 
-        if (coordinates) {
-          const checkpointData: CheckpointOnMap = {
-            cameraUid: nl.camera_uid,
-            location: coordinates,
-            color: nl.iconColor || "#DD2025",
-            bgColor: nl.bgColor || "#DD2025",
-            isLocationWithLabel: nl.isLocationWithLabel ?? false,
-            isSpecialLocation: nl.isSpecialLocation ?? false,
-            checkpointName: nl.camera_name || "",
-            detectTime: nl.detectTime || ""
-          };
+        if (!coordinates) continue;
 
-          coordinatesList.push(checkpointData);
+        const checkpointData: CheckpointOnMap = {
+          cameraUid: nl.camera_uid,
+          location: coordinates,
+          color: nl.iconColor || "#DD2025",
+          bgColor: nl.bgColor || "#DD2025",
+          isLocationWithLabel: nl.isLocationWithLabel ?? false,
+          isSpecialLocation: nl.isSpecialLocation ?? false,
+          checkpointName: nl.camera_name || "",
+          detectTime: nl.detectTime || "",
+        };
 
-          await markerManager.createCheckpointMarker(checkpointData);
-        }
+        coordinatesList.push(checkpointData);
+        bounds.extend(coordinates);
+      }
+
+      for (const cp of coordinatesList) {
+        await markerManager.createCheckpointMarker(cp);
+      }
+
+      if (coordinatesList.length > 1) {
+        map.flyToBounds(bounds, {
+          padding: [80, 80],
+          maxZoom: 14,
+          duration: 1.2
+        });
+      } 
+      else if (coordinatesList.length === 1) {
+        map.flyTo(coordinatesList[0].location, 17, {
+          duration: 1.0
+        });
       }
 
       const result: SearchResult[] = coordinatesList.map(c => ({

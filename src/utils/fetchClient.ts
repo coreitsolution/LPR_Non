@@ -7,6 +7,7 @@ export interface FetchOptions extends RequestInit {
   isFormData?: boolean;
   isService1?: boolean;
   isStream?: boolean;
+  retryCount?: number;
 }
 
 let isRefreshing = false;
@@ -16,136 +17,155 @@ let failedQueue: Array<{
 }> = [];
 
 const processQueue = (error: any, token?: string) => {
-  failedQueue.forEach((promise) => {
-    if (error) {
-      promise.reject(error);
-    } 
-    else if (token) {
-      promise.resolve(token);
-    }
+  failedQueue.forEach(p => {
+    error ? p.reject(error) : p.resolve(token!);
   });
   failedQueue = [];
 };
 
-// Separate refresh token API call
-const refreshTokenRequest = async (): Promise<{ accessToken: string }> => {
+// ------------------------------------------
+// Refresh Token API
+// ------------------------------------------
+const refreshTokenRequest = async () => {
   const { CENTER_API } = getUrls();
-  try {
-    const response = await fetch(`${CENTER_API}/users/refresh`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      },
-      credentials: 'include',
-      mode: 'cors',
-    });
+  const refreshToken = localStorage.getItem("token");
 
-    if (!response.ok) {
-      const errorDetails = await response.text();
-      throw new Error(`Failed to refresh token: ${errorDetails}`);
-    }
+  if (!refreshToken) throw new Error("refresh token missing");
 
-    return response.json();
-  } 
-  catch (error) {
-    console.error('Token refresh failed:', error);
-    localStorage.removeItem('token');
-    localStorage.removeItem("userId");
-    throw error;
+  const res = await fetch(`${CENTER_API}/users/refresh`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${refreshToken}`,
+    },
+    credentials: "include"
+  });
+
+  if (!res.ok) {
+    throw new Error("cannot refresh token");
   }
+
+  return res.json();
 };
 
-// Helper function to handle authentication errors
+// ------------------------------------------
+// Get new token or wait if refresh
+// ------------------------------------------
 const handleAuthError = async () => {
   if (!isRefreshing) {
     isRefreshing = true;
+
     try {
       const result = await refreshTokenRequest();
       const newToken = result.accessToken;
-      localStorage.setItem('token', newToken);
-      
-      isRefreshing = false;
+
+      localStorage.setItem("token", newToken);
+
       processQueue(null, newToken);
       return newToken;
     } 
-    catch (error) {
-      processQueue(error, undefined);
+    catch (err) {
+      processQueue(err);
+      throw err;
+    } 
+    finally {
       isRefreshing = false;
-      throw error;
     }
   } 
   else {
     return new Promise<string>((resolve, reject) => {
-      failedQueue.push({
-        resolve,
-        reject,
-      });
+      failedQueue.push({ resolve, reject });
     });
   }
 };
 
+// ------------------------------------------
+// Main fetchClient
+// ------------------------------------------
 export const fetchClient = async <T>(
   endpoint: string,
   options: FetchOptions = {}
 ): Promise<T> => {
   const { queryParams, ...fetchOptions } = options;
 
-  const executeRequest = async (token?: string): Promise<T> => {
+  const makeRequest = async (token?: string): Promise<T> => {
+    const headers: HeadersInit = {
+      ...(options.isFormData ? {} : { "Content-Type": "application/json" }),
+      ...(token && !options.skipAuth ? { Authorization: `Bearer ${token}` } : {}),
+      ...options.headers,
+    };
+
+    const queryString = queryParams
+      ? "?" + new URLSearchParams(queryParams).toString()
+      : "";
+
+    let response: Response;
+
     try {
-      const headers: HeadersInit = {
-        ...(options.isFormData ? {} : { 'Content-Type': 'application/json' }),
-        ...(token && !options.skipAuth ? { Authorization: `Bearer ${token}` } : {}),
-        ...options.headers,
-      };
-
-      const queryString = queryParams
-        ? "?" + new URLSearchParams(queryParams).toString()
-        : "";
-
-      const response = await fetch(`${endpoint}${queryString}`, {
+      response = await fetch(`${endpoint}${queryString}`, {
         ...fetchOptions,
-        headers,
         credentials: "include",
+        headers,
       });
+    } catch (err) {
+      console.error("Network error:", err);
 
-      if (!response.ok) {
-        if ((response.status === 401 || response.status === 403) && !endpoint.includes("login")) {
-          // Try to refresh the token and retry the request
-          const newToken = await handleAuthError();
-          return executeRequest(newToken);
-        }
-        const errorText = await response.text();
-        const error = new Error(errorText || response.statusText);
-        (error as any).status = response.status;
-        throw error;
+      // Network error -> logout only if authenticated
+      if (!options.skipAuth && localStorage.getItem("token")) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        window.location.href = "/login";
       }
 
-      return response.json();
-    } 
-    catch (error) {
-      console.error('Fetch error:', error);
-      
-      // Check if it's a CORS error (TypeError or NetworkError)
-      if (error instanceof TypeError || 
-          (error instanceof Error && error.message.includes('NetworkError'))) {
-
-        if (!options.skipAuth && localStorage.getItem('token')) {
-          console.warn('Network error on authenticated request - redirecting to login');
-          localStorage.removeItem('token');
-          localStorage.removeItem("userId");
-          window.location.href = '/login';
-        }
-      }
-      
-      throw error;
+      throw err;
     }
+
+    // ------------------------------------------
+    // Handle Unauthorized
+    // ------------------------------------------
+    if (response.status === 401 || response.status === 403) {
+      if (endpoint.includes("login")) {
+        const t = await response.text();
+        const err = new Error(t || response.statusText);
+        (err as any).status = response.status;
+        throw err;
+      }
+
+      // Prevent infinite recursion
+      if (options.retryCount && options.retryCount > 1) {
+        throw new Error("Too many retries");
+      }
+
+      try {
+        const newToken = await handleAuthError();
+
+        return makeRequest(newToken);
+      } 
+      catch (err) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+
+        // Redirect ONLY IF NOT already on login
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login";
+        }
+
+        throw err;
+      }
+    }
+
+    if (!response.ok) {
+      const t = await response.text();
+      const err = new Error(t || response.statusText);
+      (err as any).status = response.status;
+      throw err;
+    }
+
+    return response.json();
   };
 
-  const initialToken = localStorage.getItem('token') || undefined;
-  return executeRequest(initialToken);
+  const token = localStorage.getItem("token") || undefined;
+  return makeRequest(token);
 };
 
-export const combineURL = (url: string, endpoint: string) => {
-  return `${url}${endpoint}`;
-};
+export const combineURL = (url: string, endpoint: string) => `${url}${endpoint}`;

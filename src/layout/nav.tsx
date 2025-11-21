@@ -329,7 +329,7 @@ function Nav() {
                   </button>
                 </div>
                 <div className={`flex justify-center items-center ${NAV_LOGO_BG_WHITE ? "bg-white" : ""}`}>
-                  <img src="/project-logo/sm-logo.png" alt="Logo" className="w-[60px] h-10" />
+                  <img src="/project-logo/sm-logo.png" alt="Logo" className="w-[46px] h-10" />
                 </div>
                 <span className="text-[25px]">{PROJECT_NAME}</span>
               </div>

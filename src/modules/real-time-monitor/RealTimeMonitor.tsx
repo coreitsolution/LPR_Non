@@ -168,46 +168,65 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
   useEffect(() => { 
     if (!notificationList || !isSearchClicked) return;
 
-    prevCameraIds.forEach(async (camera) => {
-      const listForKey = notificationList.get(camera.camera_uid) || [];
+    const runSearch = async () => {
+      const tasks: Promise<void>[] = [];
 
-      const sortedList = listForKey.length > 0
-        ? listForKey.sort((a, b) => new Date(a.detectTime).getTime() - new Date(b.detectTime).getTime())
-        : [];
+      for (const camera of prevCameraIds) {
+        const listForKey = notificationList.get(camera.camera_uid) || [];
 
-      let iconColor = "#FDCC0A";
-      let isLocationWithLabel = true;
+        const sortedList = [...listForKey].sort(
+          (a, b) => new Date(a.detectTime).getTime() - new Date(b.detectTime).getTime()
+        );
 
-      if (sortedList.length > 0) {
-        // Pin + dialog
-        await searchSpecialCheckpoint(sortedList.map(item => ({
-          ...item,
-          iconColor: item.iconColor || "#DD2025",
-          bgColor: item.bgColor || "#DD2025",
-          isLocationWithLabel,
-          isSpecialLocation: true // Dialog ON
-        })));
-      } else {
-        // Pin only
-        await searchSpecialCheckpoint([{
-          id: 0,
-          camera_uid: camera.camera_uid,
-          camera_name: "",
-          plate_number: "",
-          plate_prefix: "",
-          region_code: "",
-          iconColor,
-          bgColor: iconColor,
-          textShadow: "",
-          isLocationWithLabel,
-          isSpecialLocation: false, // Dialog OFF
-          detectTime: "",
-          camera_latitude: camera.latitude,
-          camera_longitude: camera.longitude,
-        }]);
+        const isLocationWithLabel = true;
+        const defaultColor = "#FDCC0A";
+
+        if (sortedList.length > 0) {
+          // Multiple notifications → show pins + dialog
+          const enhancedList = sortedList.map(item => ({
+            ...item,
+            iconColor: item.iconColor || "#DD2025",
+            bgColor: item.bgColor || "#DD2025",
+            isLocationWithLabel,
+            isSpecialLocation: true
+          }));
+
+          tasks.push(searchSpecialCheckpoint(enhancedList));
+        } 
+        else {
+          // No notifications → single pin only
+          const fallbackItem = [{
+            id: camera.id,
+            camera_uid: camera.camera_uid,
+            camera_name: "",
+            plate_number: "",
+            plate_prefix: "",
+            region_code: "",
+            iconColor: defaultColor,
+            bgColor: defaultColor,
+            textShadow: "",
+            isLocationWithLabel,
+            isSpecialLocation: false,
+            detectTime: "",
+            camera_latitude: camera.latitude,
+            camera_longitude: camera.longitude,
+          }];
+
+          tasks.push(searchSpecialCheckpoint(fallbackItem));
+        }
       }
-    });
+
+      await Promise.all(tasks);
+    };
+
+    runSearch();
   }, [notificationList]);
+
+  useEffect(() => {
+    if (!map && selectedCameraIds.length > 0) return;
+
+    handleSearch();
+  }, [map, selectedCameraIds])
 
   const fetchData = async () => {
     try {
@@ -424,13 +443,13 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
 
     setPrevCameraIds(selectedCameraIds);
 
-    selectedCameraIds.forEach(async (camera) => {
+    const data = selectedCameraIds.map((camera) => {
       let iconColor = "#FDCC0A";
       let isLocationWithLabel = true;
       let isSpecialLocation = false;
 
-      await searchSpecialCheckpoint([{
-        id: 0,
+      return {
+        id: camera.id,
         camera_uid: camera.camera_uid,
         camera_name: camera.camera_name,
         plate_number: "",
@@ -444,8 +463,10 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
         detectTime: "",
         camera_latitude: camera.latitude,
         camera_longitude: camera.longitude,
-      }]);
-    });
+      }
+    })
+
+    await searchSpecialCheckpoint(data);
 
     showMapPin();
   };
