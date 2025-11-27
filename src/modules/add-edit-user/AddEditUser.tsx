@@ -37,7 +37,7 @@ import { PopupMessage, PopupMessageWithCancel, PopupMessageWithConfirmButton } f
 import ManageUserGroup from '../manage-user-group/ManageUserGroup';
 
 // Types
-import { FileUploadResponse, UserPermission, UserResponse } from "../../features/types";
+import { FileUploadResponse, UserPermission, UserResponse, FileUpload } from "../../features/types";
 
 // i18n
 import { useTranslation } from 'react-i18next';
@@ -80,6 +80,9 @@ const AddEditUser = () => {
 
   // Options
   const [prefixOptions, setPrefixOptions] = useState<{ label: string ,value: number }[]>([]);
+
+  // Data
+  const [imageImportDataList, setImageImportDataList] = useState<FileUpload[]>([]);
 
   const isEdit = location.state?.isEdit || false;
   const isAllowed = location.state?.allowed || false;
@@ -259,8 +262,26 @@ const AddEditUser = () => {
     setValue("status", status);
   };
 
-  const handleCancelClick = () => {
+  const handleCancelClick = async () => {
+    if (imageImportDataList.length > 0) {
+      await deleteImportData(imageImportDataList);
+    }
     navigate("/center/manage-user");
+  }
+
+  const deleteImportData = async (list: FileUpload[]) => {
+    await Promise.all(
+      list.map(async (data) => {
+        const body = JSON.stringify({
+          urls: [data.url]
+        })
+
+        await fetchClient<FileUploadResponse>(combineURL(CENTER_API, `/upload/remove`), {
+          method: "POST",
+          body,
+        })
+      })
+    )
   }
 
   const onSubmit = (data: any) => {
@@ -301,6 +322,11 @@ const AddEditUser = () => {
       })
 
       if (response.success) {
+        const unusedImages = imageImportDataList.filter((image) => formData.imageUrl !== image.url);
+        if (unusedImages.length > 0) {
+          await deleteImportData(unusedImages);
+        }
+
         PopupMessage(t('message.success.save-success'), "", "success");
         navigate(`/center/manage-user`, { state: { allowed: true } });
       }
@@ -388,6 +414,10 @@ const AddEditUser = () => {
       })
 
       if (response.success) {
+        const unusedImages = imageImportDataList.filter((image) => formData.imageUrl !== image.url);
+        if (unusedImages.length > 0) {
+          await deleteImportData(unusedImages);
+        }
         if (user?.id === authData?.userInfo?.id) {
           if (data.username !== user?.username || formData.password) {
             await PopupMessageWithConfirmButton(t('message.success.save-success'), t('message.success.please-re-login'),  t('button.confirm'), 'info');
@@ -431,6 +461,7 @@ const AddEditUser = () => {
           ...prev,
           imageUrl: response.data[0].url,
         }))
+        setImageImportDataList((prev) => ([...prev, ...response.data]));
       }
     }
     catch (error) {

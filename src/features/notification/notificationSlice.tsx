@@ -19,12 +19,14 @@ export interface NotificationData {
 
 interface NotificationState {
   list: NotificationData[];
+  countAll: number;
 }
 
 const MAX_ITEMS = 100;
 
 const initialState: NotificationState = {
   list: [],
+  countAll: 0,
 };
 
 const notificationSlice = createSlice({
@@ -38,14 +40,16 @@ const notificationSlice = createSlice({
 
       if (!exists) {
         state.list.unshift(action.payload);
+        state.countAll += 1;
 
         if (state.list.length > MAX_ITEMS) {
           state.list = state.list.slice(0, MAX_ITEMS);
         }
       }
     },
-    addListNotification: (state, action: PayloadAction<NotificationData[]>) => {
-      state.list = action.payload.slice(0, MAX_ITEMS);
+    addListNotification: (state, action: PayloadAction<NotificationState>) => {
+      state.list = action.payload.list.slice(0, MAX_ITEMS);
+      state.countAll = action.payload.countAll;
     },
     removeNotification: (state, action: PayloadAction<Id>) => {
       state.list = state.list.filter((n) => n.messageId !== action.payload);

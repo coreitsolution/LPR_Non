@@ -176,3 +176,16 @@ export const showToast = (Component: any, data: any, theme: 'light' | 'dark', to
 
   return toastId;
 };
+
+export const getFilesDiff = (newArray: any[], oldFileArray: any[]) => {
+  const currentURLs = newArray.map(data => data.url);
+  const oldURLs = oldFileArray.map(data => data.url);
+
+  // Find removed: in old but not in current
+  const removed = oldFileArray.filter(data => !currentURLs.includes(data.url));
+
+  // Find added: in current but not in old
+  const added = newArray.filter(data => !oldURLs.includes(data.url));
+
+  return { added, removed };
+};

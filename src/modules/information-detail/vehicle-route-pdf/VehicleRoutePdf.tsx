@@ -47,7 +47,7 @@ export const generateVehicleRoutePdfBlob = async (
 
   // Page Header
   const addHeader = (pageNum: number, totalPages: number) => {
-    doc.addImage("/project-logo/pdf-logo.png", "JPEG", 8, 3, 55, 12);
+    doc.addImage("/project-logo/pdf-logo.png", "JPEG", 8, 3, 18, 15);
     doc.setFont("NotoSansThai", "normal");
     doc.setTextColor("#2A2C2E");
     doc.setFontSize(12);
@@ -279,7 +279,7 @@ export const generateVehicleRoutePdfBlob = async (
     })
 
     // Page break
-    if (y > 270 && index < data.length - 1) {
+    if (index < data.length - 1) {
       doc.addPage();
       currentPage++;
       y = 35;

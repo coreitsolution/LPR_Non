@@ -216,37 +216,117 @@ function Nav() {
     e.preventDefault();
     e.stopPropagation();
     setIsLoading(true);
-    await Promise.all(
-      notificationRedux.list.map((row) => {
-        const toastId = `notification-list-toast-${row.messageId}`;
+    const res = await fetchAllNotification(notificationRedux.countAll);
+    if (!res) {
+      setIsLoading(false);
+      return;
+    }
 
-        toast.dismiss(toastId);
+    await Promise.all(
+      res.map(async (row) => {
+        const toastId = `notification-list-toast-${row.id}_${row.event_timestamp}`;
+        const messageId = `${row.id}_${row.event_timestamp}`;
+      
+        if (toast.isActive(toastId)) {
+          toast.dismiss(toastId);
+        };
+
+        const isOnline = row.data.current_status.toString().toLowerCase() === "online" ? true : false;
+        const type: NotificationType = isOnline
+            ? "cameraOnline"
+            : "cameraOffline"
+
         const updatedData = {
           updateVisible: false,
           isSuccess: true,
-          theme: row.theme,
-          style: row.style,
-          type: row.type,
-          title: row.title,
-          content: row.content,
-          variables: row.variables,
-          isOnline: row.isOnline,
+          theme: "dark",
+          style: {
+            minHeight: isOnline ? "220px" : "250px",
+            maxHeight: isOnline ? "220px" : "250px",
+          },
+          type: type,
+          title: isOnline ? "alert.camera-online" : "alert.camera-offline",
+          content: isOnline
+            ? [row.data.camera_name, row.data.camera_ip]
+            : [
+                "alert.camera-offline-content-2",
+                row.data.camera_name,
+                row.data.camera_ip,
+              ],
+          isOnline: isOnline,
         };
   
         toastChannel.postMessage({
           toastId: toastId,
-          action: row.closeAction,
+          action: "closeCameraStatusAlert",
           data: updatedData,
           id: row.id,
-          messageId: row.messageId,
+          messageId: messageId,
         });
 
-        confirmNotification(row.id, row.messageId, dispatch);
+        confirmNotification(row.id, messageId, dispatch);
       })
     );
+
+    // await Promise.all(
+    //   notificationRedux.list.map((row) => {
+    //     const toastId = `notification-list-toast-${row.messageId}`;
+
+    //     toast.dismiss(toastId);
+    //     const updatedData = {
+    //       updateVisible: false,
+    //       isSuccess: true,
+    //       theme: row.theme,
+    //       style: row.style,
+    //       type: row.type,
+    //       title: row.title,
+    //       content: row.content,
+    //       variables: row.variables,
+    //       isOnline: row.isOnline,
+    //     };
+  
+    //     toastChannel.postMessage({
+    //       toastId: toastId,
+    //       action: row.closeAction,
+    //       data: updatedData,
+    //       id: row.id,
+    //       messageId: row.messageId,
+    //     });
+
+    //     confirmNotification(row.id, row.messageId, dispatch);
+    //   })
+    // );
     toastChannel.postMessage({ action: "clear-all" });
     await fetchNotification();
     setIsLoading(false);
+  }
+
+  const fetchAllNotification = async (limit: number = 100) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    try {
+      const response = await fetchClient<EventNotifyResponse>(combineURL(CENTER_API, "/event-notify/get"), {
+        method: "GET",
+        signal: controller.signal,
+        queryParams: {
+          page: "1",
+          limit: limit.toString(),
+          filter: `is_confirm=false,event_timestamp>=${dayjs(authData.userInfo?.created_at).toISOString()}`,
+          orderBy: "id.desc"
+        }
+      })
+
+      if (response.success) {
+        return response.data
+      }
+    }
+    catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      console.error(errorMessage)
+    }
+    finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   const fetchNotification = async () => {
@@ -289,7 +369,7 @@ function Nav() {
         });
 
         dispatch(
-          addListNotification(data)
+          addListNotification(({ list: data, countAll: response.pagination.countAll }))
         );
       }
     }

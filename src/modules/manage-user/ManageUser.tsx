@@ -307,13 +307,13 @@ const ManageUser: React.FC<ManageUserProps> = ({}) => {
   const handleRowsPerPageChange = async (event: SelectChangeEvent) => {
     const limit = parseInt(event.target.value);
     setRowsPerPage(limit);
-    fetchUsers(page, limit);
+    await fetchSearchData(page, limit);
   };
 
   const handlePageChange = async (event: React.ChangeEvent<unknown>, value: number) => {
     event.preventDefault();
     setPage(value);
-    fetchUsers(value, rowsPerPage);
+    await fetchSearchData(value, rowsPerPage);
   };
 
   const handlePageInputKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -321,6 +321,7 @@ const ManageUser: React.FC<ManageUserProps> = ({}) => {
       event.preventDefault();
   
       setPage(pageInput);
+      await fetchSearchData(pageInput, rowsPerPage);
     }
   };
 
@@ -554,6 +555,10 @@ const ManageUser: React.FC<ManageUserProps> = ({}) => {
   }
 
   const handleSearch = async () => {
+    await fetchSearchData(1, rowsPerPage);
+  }
+
+  const fetchSearchData = async (currentPage: number = page, limit: number = rowsPerPage) => {
     const filterParts = [];
 
     if (formData.name.trim() !== "") {
@@ -567,7 +572,7 @@ const ManageUser: React.FC<ManageUserProps> = ({}) => {
       filterParts.push(`status=${statusOptions.find(status => status.value === formData.statusId)?.label.toLowerCase()}`);
     }
 
-    await fetchUsers(1, rowsPerPage, filterParts.join(","));
+    await fetchUsers(currentPage, limit, filterParts.join(","));
   }
 
   return (

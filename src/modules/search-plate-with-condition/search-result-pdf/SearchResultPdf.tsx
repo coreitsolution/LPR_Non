@@ -44,7 +44,7 @@ export const generateSearchResultPdfBlob = async (
 
   // Page Header
   const addHeader = (pageNum: number, totalPages: number) => {
-    doc.addImage("/project-logo/pdf-logo.png", "JPEG", 8, 3, 55, 12);
+    doc.addImage("/project-logo/pdf-logo.png", "JPEG", 10, 3, 18, 15);
     doc.setFont("NotoSansThai", "semi-bold");
     doc.setTextColor("#2A2C2E");
     doc.setFontSize(12);

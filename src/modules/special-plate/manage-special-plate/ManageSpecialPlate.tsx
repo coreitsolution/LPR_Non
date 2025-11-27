@@ -29,6 +29,7 @@ import {
   SpecialPlateFilesResponse,
   SpecialPlateCreateResponse,
   Option,
+  SpecialPlateFileData,
 } from "../../../features/types";
 
 // Icons
@@ -39,7 +40,7 @@ import { Icon } from "../../../components/icons/Icon";
 import { useTranslation } from 'react-i18next';
 
 // Utils
-import { formatPhone, getStringId, getId } from '../../../utils/commonFunction';
+import { formatPhone, getStringId, getId, getFilesDiff } from '../../../utils/commonFunction';
 import { PopupMessage, PopupMessageWithCancel } from '../../../utils/popupMessage';
 import { fetchClient, combineURL } from "../../../utils/fetchClient";
 
@@ -81,6 +82,10 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
   // Options
   const [provinceOptions, setProvinceOptions] = useState<{ label: string ,value: string }[]>([]);
   const [plateTypesOptions, setPlateTypesOptions] = useState<{ label: string ,value: number }[]>([]);
+
+  // Data
+  const [imageImportDataList, setImageImportDataList] = useState<SpecialPlateFileData[]>([]);
+  const [fileImportDataList, setFileImportDataList] = useState<SpecialPlateFileData[]>([]);
 
   // i18n
   const { t, i18n } = useTranslation();
@@ -262,7 +267,13 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
     }
   }
 
-  const handleCancelClick = () => {
+  const handleCancelClick = async () => {
+    if (imageImportDataList.length > 0) {
+      await deleteImportData(imageImportDataList);
+    }
+    if (fileImportDataList.length > 0) {
+      await deleteImportData(fileImportDataList);
+    }
     clearData();
     onClose();
   };
@@ -423,6 +434,7 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
             ...imagesDataUpdates,
           },
         }))
+        setImageImportDataList((prev) => ([...prev, ...response.data]));
       }
     } 
     catch (error) {
@@ -469,6 +481,7 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
             ...prev,
             filesData: [...prev.filesData, ...uploadedFiles],
           }))
+          setFileImportDataList((prev) => ([...prev, ...response.data]));
         }
       }
       catch (error) {
@@ -601,6 +614,11 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
               })
             })
           )
+
+          const unusedImages = imageImportDataList.filter((image) => !imageArray.find((img) => img.url === image.url));
+          if (unusedImages.length > 0) {
+            await deleteImportData(unusedImages);
+          }
         }
 
         if (formData.filesData && formData.filesData.length > 0) {
@@ -621,6 +639,12 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
             })
           )
         }
+
+        const unusedFiles = fileImportDataList.filter((file) => !formData.filesData.find((f) => f.url === file.url));
+        if (unusedFiles.length > 0) {
+          await deleteImportData(unusedFiles);
+        }
+
         PopupMessage(t('message.success.save-success'), t('message.success.save-success-message'), "success");
         bc.postMessage("reload");
         clearData();
@@ -807,19 +831,6 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
       PopupMessage(t('message.error.error-while-saving'), errorMessage, "error");
     }
   };
-
-  const getFilesDiff = (newArray: any[], oldFileArray: any[]) => {
-    const currentURLs = newArray.map(data => data.url);
-    const oldURLs = oldFileArray.map(data => data.url);
-
-    // Find removed: in old but not in current
-    const removed = oldFileArray.filter(data => !currentURLs.includes(data.url));
-
-    // Find added: in current but not in old
-    const added = newArray.filter(data => !oldURLs.includes(data.url));
-
-    return { added, removed };
-  };
   
   const isDataChanged = () => {
     const isOnlyStatusChanged = formData.active_status !== selectedRow?.active;
@@ -843,6 +854,21 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
 
     return { all: statusChangeOnly || isOtherDataChanged || isImageChanged || isFileChanged, onlyStatus: statusChangeOnly, isImageChanged, isFileChanged };
   };
+
+  const deleteImportData = async (list: SpecialPlateFileData[]) => {
+    await Promise.all(
+      list.map(async (data) => {
+        const body = JSON.stringify({
+          urls: [data.url]
+        })
+
+        await fetchClient<SpecialPlateFilesResponse>(combineURL(CENTER_API, `/upload/remove`), {
+          method: "POST",
+          body,
+        })
+      })
+    )
+  }
 
   const clearData = () => {
     const ownerName = authData.userInfo ? `${authData?.userInfo?.firstname} ${authData?.userInfo?.lastname}` : "-";

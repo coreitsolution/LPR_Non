@@ -104,7 +104,7 @@ const PrivateRouteWrapper = ({ children }: { children: React.ReactNode }) => {
       });
     }
     if (action === "clear-all") {
-      dispatch(addListNotification([]));
+      dispatch(addListNotification({ list: [], countAll: 0 }));
       return;
     }
     dispatch(removeNotification(messageId));
@@ -312,7 +312,7 @@ const PrivateRouteWrapper = ({ children }: { children: React.ReactNode }) => {
         });
 
         dispatch(
-          addListNotification(data)
+          addListNotification(({ list: data, countAll: response.pagination.countAll }))
         );
       }
     }
@@ -395,7 +395,7 @@ function App() {
             <ProtectedRoute 
               permission={authData?.userInfo?.permissions
               ? authData.userInfo.permissions.center.realtime.select
-              : true
+              : undefined
               }
             >
               <RealTimeMonitor />
