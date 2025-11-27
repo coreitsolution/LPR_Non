@@ -283,6 +283,7 @@ const SpecialPlatePage: React.FC<SpecialPlateProps> = ({}) => {
       event.preventDefault();
   
       setPage(pageInput);
+      await fetchSpecialPlates(pageInput, rowsPerPage);
     }
   };
 

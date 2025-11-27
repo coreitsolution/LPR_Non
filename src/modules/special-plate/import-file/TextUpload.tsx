@@ -27,7 +27,7 @@ import {
 
 // Utils
 import { PopupMessage } from "../../../utils/popupMessage"
-import { getFileNameWithoutExtension, formatPhone } from "../../../utils/commonFunction"
+import { getFileNameWithoutExtension, formatPhone, parseExcelDate } from "../../../utils/commonFunction"
 
 // Component
 import Loading from "../../../components/loading/Loading"
@@ -196,29 +196,6 @@ const TextUpload: React.FC<TextUploadProps> = ({setTextsDataList, textsDataList}
   const handleDeleteData = (indexToDelete: number) => {
     setTextsData(prevData => prevData.filter((_, index) => index !== indexToDelete));
   };
-
-  const parseExcelDate = (dateValue: any) => {
-    if (!dateValue) {
-      return ""
-    }
-    if (typeof dateValue === "number") {
-      const date = new Date((dateValue - 25569) * 86400 * 1000);
-      const year = date.getFullYear();
-      const correctedYear = year >= 2500 ? year - 543 : year;
-
-      return `${correctedYear}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-    }
-    if (typeof dateValue === "string") {
-      const [day, month, year] = dateValue.split("/");
-      let numericYear = parseInt(year, 10);
-      // Check if the year is in BE (Assume any year >= 2500 is BE)
-      if (numericYear >= 2500) {
-          numericYear -= 543;
-      }
-
-      return `${numericYear}-${month}-${day}`;
-    }
-  }
 
   return (
     <div id='text-upload'>

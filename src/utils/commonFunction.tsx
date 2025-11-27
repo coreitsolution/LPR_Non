@@ -189,3 +189,50 @@ export const getFilesDiff = (newArray: any[], oldFileArray: any[]) => {
 
   return { added, removed };
 };
+
+export const parseExcelDate = (dateValue: any) => {
+  if (!dateValue) {
+    return ""
+  }
+  if (typeof dateValue === "number") {
+    const date = new Date((dateValue - 25569) * 86400 * 1000);
+    const year = date.getFullYear();
+    const correctedYear = year >= 2500 ? year - 543 : year;
+
+    return `${correctedYear}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  }
+
+  if (dateValue instanceof Date && !isNaN(dateValue.getTime())) {
+    let year = dateValue.getFullYear();
+    if (year >= 2500) year -= 543;
+
+    return `${year}-${String(dateValue.getMonth() + 1).padStart(2, "0")}-${String(dateValue.getDate()).padStart(2, "0")}`;
+  }
+
+  if (typeof dateValue === "string" && dateValue.includes("T")) {
+    const date = new Date(dateValue);
+
+    let year = date.getFullYear();
+    if (year >= 2500) year -= 543;
+
+    return `${year}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  }
+
+  if (typeof dateValue === "string") {
+    const clean = dateValue.trim().replace(/[-.]/g, "/");
+
+    const parts = clean.split("/");
+    if (parts.length !== 3) return "";
+
+    let [day, month, year] = parts;
+
+    if (!day || !month || !year) return "";
+
+    let numericYear = parseInt(year, 10);
+
+    if (numericYear >= 2500) numericYear -= 543;
+
+    return `${numericYear}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  }
+  return "";
+}
