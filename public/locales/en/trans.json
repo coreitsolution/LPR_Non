@@ -54,7 +54,8 @@
     "submit": "Submit",
     "forget-password": "Forgot your password?",
     "logging-in": "Logging in...",
-    "login": "Login"
+    "login": "Login",
+    "download-template": "Download Template"
   },
   "accordion": {
     "search-condition": "Search Conditions"

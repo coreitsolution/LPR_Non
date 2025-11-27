@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { 
-  Button,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  SelectChangeEvent
-} from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import dayjs from 'dayjs'
 import buddhistEra from 'dayjs/plugin/buddhistEra'
+
+// Material UI
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { SelectChangeEvent } from '@mui/material';
 
 // Components
 import Loading from "../../components/loading/Loading";
@@ -67,6 +69,8 @@ const SpecialPlatePage: React.FC<SpecialPlateProps> = ({}) => {
   const [isFileImportOpen, setIsFileImportOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openManageSpecialPlate, setOpenManageSpecialPlate] = useState(false);
+  const [importMenu, setImportMenu] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(importMenu);
 
   // Data
   const [specialPlateList, setSpecialPlateList] = useState<SpecialPlate[]>([]);
@@ -190,6 +194,13 @@ const SpecialPlatePage: React.FC<SpecialPlateProps> = ({}) => {
     }
   }
 
+  const handleImportMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setImportMenu(event.currentTarget);
+  };
+  const handleImportMenuClose = () => {
+    setImportMenu(null);
+  };
+
   const handleEdit = (data: SpecialPlate) => {
     setSelectedRow(data);
     setOpenManageSpecialPlate(true);
@@ -304,7 +315,8 @@ const SpecialPlatePage: React.FC<SpecialPlateProps> = ({}) => {
   }
 
   const handleFileImportOpen = () => {
-    setIsFileImportOpen(true)
+    setImportMenu(null);
+    setIsFileImportOpen(true);
   }
 
   const handleManageSpecialPlateClose = async () => {
@@ -347,6 +359,16 @@ const SpecialPlatePage: React.FC<SpecialPlateProps> = ({}) => {
     setOpenManageSpecialPlate(true);
   }
 
+  const handleDownloadTemplateClick = () => {
+    setImportMenu(null);
+    const link = document.createElement("a");
+    link.href = "/template/import_special_plates_template.xlsx";
+    link.setAttribute("download", "import_special_plates_template.xlsx");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   return (
     <div id='special-plate' className={`main-content ${isOpen ? "pl-[130px]" : "pl-2.5"} pr-2.5 transition-all duration-500`}>
       { isLoading && <Loading /> }
@@ -369,10 +391,36 @@ const SpecialPlatePage: React.FC<SpecialPlateProps> = ({}) => {
                     height: "40px",
                     textTransform: "capitalize",
                   }}
-                  onClick={handleFileImportOpen}
+                  onClick={handleImportMenuClick}
                 >
                   {t('button.import')}
                 </Button>
+                <Menu
+                  id="import-menu"
+                  anchorEl={importMenu}
+                  open={open}
+                  onClose={handleImportMenuClose}
+                  
+                >
+                  <MenuItem 
+                    onClick={handleDownloadTemplateClick}
+                    sx={{
+                      color: "#2B9BED",
+                      fontSize: "14px",
+                    }}
+                  >
+                    {t('button.download-template')}
+                  </MenuItem>
+                  <MenuItem 
+                    onClick={handleFileImportOpen}
+                    sx={{
+                      color: "#2B9BED",
+                      fontSize: "14px",
+                    }}
+                  >
+                    {t('button.import')}
+                  </MenuItem>
+                </Menu>
 
                 <Button
                   variant="contained"

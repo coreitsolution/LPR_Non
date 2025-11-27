@@ -54,7 +54,8 @@
     "submit": "Submit",
     "forget-password": "ลืมรหัสผ่านหรือไม่?",
     "logging-in": "Logging in...",
-    "login": "Login"
+    "login": "Login",
+    "download-template": "ดาวน์โหลด Template"
   },
   "accordion": {
     "search-condition": "เงื่อนไขการค้นหา"
