@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
+
+// Material UI
 import Chip from "@mui/material/Chip";
-import { TextField, Autocomplete, IconButton } from "@mui/material";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import IconButton from "@mui/material/IconButton";
 
 // Images
 import PinGoogleMap from "../../assets/icons/pin_google-maps.png";

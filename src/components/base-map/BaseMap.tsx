@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, forwardRef, useImperativeHandle } from "react"
-import { 
-  IconButton,
-} from "@mui/material";
+
+// Material UI
+import IconButton from "@mui/material/IconButton";
 
 // Types
 import { MapProps } from "../../features/types";

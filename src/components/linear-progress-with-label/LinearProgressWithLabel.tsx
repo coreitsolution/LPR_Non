@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Box } from '@mui/material'
 import { motion } from 'framer-motion'
+
+// Material UI
+import Box from '@mui/material/Box';
 
 interface LinearProgressWithLabelProps {
   value: number;

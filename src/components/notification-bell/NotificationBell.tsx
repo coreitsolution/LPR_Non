@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { IconButton } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
+
+// Material UI
+import IconButton from "@mui/material/IconButton";
 
 // i18n
 import { useTranslation } from 'react-i18next';

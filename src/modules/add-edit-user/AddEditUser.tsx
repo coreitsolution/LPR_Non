@@ -3,15 +3,15 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useForm, Controller } from "react-hook-form";
-import { 
-  Typography,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
-  Button,
-} from "@mui/material";
 import dayjs from "dayjs";
 import { useAppDispatch } from '../../app/hooks';
+
+// Material UI
+import Typography from "@mui/material/Typography";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Button from "@mui/material/Button";
 
 // Icons
 import ReplayIcon from '@mui/icons-material/Replay';
@@ -125,7 +125,7 @@ const AddEditUser = () => {
 
   useEffect(() => {
     if (!isAllowed) {
-      navigate("/center/manage-user");
+      navigate("/center/manage-user", { state: { refresh: true } });
     }
   }, [isAllowed, navigate]);
 
@@ -266,7 +266,7 @@ const AddEditUser = () => {
     if (imageImportDataList.length > 0) {
       await deleteImportData(imageImportDataList);
     }
-    navigate("/center/manage-user");
+    navigate("/center/manage-user", { state: { refresh: true } });
   }
 
   const deleteImportData = async (list: FileUpload[]) => {
@@ -301,7 +301,7 @@ const AddEditUser = () => {
         username: data.username,
         password: data.password,
         idcard: data.nationalId.replaceAll("-", "").slice(0, 13),
-        dob: dayjs(data.dateOfBirth).format("YYYY-MM-DD HH:mm:ss"),
+        dob: data.dateOfBirth ? dayjs(data.dateOfBirth).format("YYYY-MM-DD HH:mm:ss") : null,
         firstname: data.firstName,
         lastname: data.lastName,
         phone: data.phone.replaceAll("-", "").slice(0, 10),
@@ -328,7 +328,7 @@ const AddEditUser = () => {
         }
 
         PopupMessage(t('message.success.save-success'), "", "success");
-        navigate(`/center/manage-user`, { state: { allowed: true } });
+        navigate(`/center/manage-user`, { state: { refresh: true } });
       }
     }
     catch (error) {
@@ -355,7 +355,7 @@ const AddEditUser = () => {
 
       const pid = formData.nationalId.replaceAll("-", "").slice(0, 13);
       const phone = formData.phone.replaceAll("-", "").slice(0, 10);
-      const dob = formData.dateOfBirth ? dayjs(formData.dateOfBirth).format("YYYY-MM-DD") : "";
+      const dob = formData.dateOfBirth ? dayjs(formData.dateOfBirth).format("YYYY-MM-DD") : null;
       
       const body = JSON.stringify({
         id: user?.id,
@@ -386,9 +386,7 @@ const AddEditUser = () => {
         ...( phone !== user?.phone &&
           { phone: phone }
         ),
-        ...( dob !== user?.dob &&
-          { dob: dayjs(data.dateOfBirth).format("YYYY-MM-DD HH:mm:ss") }
-        ),
+        dob: dob,
         ...( formData.imageUrl !== user?.image_url &&
           { image_url: formData.imageUrl }
         ),
@@ -429,7 +427,7 @@ const AddEditUser = () => {
           await dispatch(userInfo({ filter: `id=${user?.id}` }))
         }
         PopupMessage(t('message.success.save-success'), "", "success");
-        navigate(`/center/manage-user`, { state: { allowed: true } });
+        navigate(`/center/manage-user`, { state: { refresh: true } });
       }
     }
     catch (error) {
@@ -676,7 +674,7 @@ const AddEditUser = () => {
                 onChange={(value) => handleDateOfBirthChange(value)}
                 error={!!errors.dateOfBirth}
                 register={register("dateOfBirth", { 
-                  required: true,
+                  required: false,
                 })}
                 maxDate={dayjs()}
               >
@@ -828,7 +826,6 @@ const AddEditUser = () => {
             />
             <div className='flex items-end ml-[-50px]'>
               <Button
-                type='submit'
                 variant="contained"
                 className="primary-btn"
                 startIcon={<ReplayIcon />}
@@ -895,7 +892,7 @@ const AddEditUser = () => {
 
             <Button
               variant="text"
-              className="secondary-checkpoint-search-btn"
+              className="cancel-btn"
               sx={{
                 width: "100px",
                 height: "40px",

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
+
+// Material UI
 import Chip from "@mui/material/Chip";
-import { TextField, Autocomplete } from "@mui/material";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
 
 interface MultiselectProps {
   options: {value: any, label: string}[];

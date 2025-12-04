@@ -88,12 +88,6 @@ body .swal2-backdrop-show {
   color: white !important;
 }
 
-.cancel-btn {
-  background-color: white !important;
-  color: black !important;
-  
-}
-
 .pin-map-btn {
   background-color: #797979 !important;
 }
@@ -228,6 +222,15 @@ body .swal2-backdrop-show {
 .success-progress-bar {
   background-color: #4CB64C !important;
   --toastify-color-progress-light: #4CB64C !important;
+}
+
+.cancel-btn {
+  background-color: white !important;
+  color: black !important;
+}
+
+.cancel-btn:hover {
+  background-color: #CCCCCC !important;
 }
 
 @keyframes bellShake {

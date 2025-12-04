@@ -1,6 +1,9 @@
 import React from "react"
-import { TextField, Autocomplete } from "@mui/material"
-import { Typography } from '@mui/material'
+
+// Material UI
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import Typography from '@mui/material/Typography';
 
 // i18n
 import { useTranslation } from 'react-i18next';

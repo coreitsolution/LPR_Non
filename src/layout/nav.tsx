@@ -101,8 +101,16 @@ function Nav() {
   };
 
   const navItems = [
-    { path: "/center/real-time-monitor", icon: "checking", label: "real-time" },
-    { path: "/center/search-plate-with-condition", icon: "search-condition", label: "search-condition" },
+    ...(
+      authData?.userInfo?.permissions?.center?.realtime?.select
+        ? [{ path: "/center/real-time-monitor", icon: "checking", label: "real-time" }]
+        : []
+    ),
+    ...(
+      authData?.userInfo?.permissions?.center?.conditionSearch?.select
+        ? [{ path: "/center/search-plate-with-condition", icon: "search-condition", label: "search-condition" }]
+        : []
+    ),
     // {
     //   path: "/center/search-plate-before-after",
     //   icon: "gps",
@@ -113,18 +121,32 @@ function Nav() {
     //   icon: "detect-person",
     //   label: "search-suspect-person",
     // },
-    {
-      path: "/center/special-plate",
-      icon: "special-plate",
-      label: "special-plate",
-    },
+    ...(
+      authData?.userInfo?.permissions?.center?.specialPlateManage?.select
+        ? [
+          {
+            path: "/center/special-plate",
+            icon: "special-plate",
+            label: "special-plate",
+          }
+        ]
+        : []
+    ),
     // {
     //   path: "/center/suspect-people",
     //   icon: "order-detect-person",
     //   label: "special-suspect-person",
     // },
-    { path: "/center/manage-user", icon: "add-user", label: "manage-user" },
-    { path: "/center/setting", icon: "settings", label: "settings" },
+    ...(
+      authData?.userInfo?.permissions?.center?.manageUser?.select
+        ? [{ path: "/center/manage-user", icon: "add-user", label: "manage-user" }]
+        : []
+    ),
+    ...(
+      authData?.userInfo?.permissions?.center?.setting?.select
+        ? [{ path: "/center/setting", icon: "settings", label: "settings" }]
+        : []
+    ),
     // { path: "/center/manage-checkpoint-cameras", icon: "manage-checkpoint-cameras", label: "manage-checkpoint-cameras" },
     // { icon: "bar-chart", 
     //   label: "bar-chart",
@@ -178,10 +200,7 @@ function Nav() {
 
     if (!isOpen) {
       // Hide all active toasts
-      notificationRedux.list.forEach(row => {
-        toast.dismiss(`notification-list-toast-${row.messageId}`);
-      });
-
+      toast.dismiss();
       return;
     }
 

@@ -19,6 +19,7 @@ export const mockUsers: User[] = Array.from({ length: 5 }, (_, index) => ({
   agency: ["IT Department", "HR Department", "Finance Department"][index % 3],
   permissions: {
     userRoleId: 1,
+    userRole: "ADMIN",
     center: {
       realtime: {
         select: true,

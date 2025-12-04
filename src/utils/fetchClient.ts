@@ -131,11 +131,6 @@ export const fetchClient = async <T>(
         throw err;
       }
 
-      // Prevent infinite recursion
-      if (options.retryCount && options.retryCount > 1) {
-        throw new Error("Too many retries");
-      }
-
       try {
         const newToken = await handleAuthError();
 

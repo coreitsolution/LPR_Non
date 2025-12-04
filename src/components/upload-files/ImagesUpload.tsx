@@ -4,17 +4,17 @@ import { useDispatch } from "react-redux"
 import { AppDispatch } from "../../app/store"
 import dayjs from 'dayjs'
 import buddhistEra from 'dayjs/plugin/buddhistEra'
-import { 
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  Button,
-} from '@mui/material';
+
+// Material UI
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
 
 // Icon
 import { Icon } from '../icons/Icon'

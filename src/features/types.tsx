@@ -162,7 +162,7 @@ export interface User {
 
 export interface UserPermission {
   userRoleId: number
-  userRole?: string
+  userRole: string
   center: CenterPermissions
 }
 

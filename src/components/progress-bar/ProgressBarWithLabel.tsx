@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { FileDown } from "lucide-react";
+import { motion } from "framer-motion";
+
+// Material UI
 import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { FileDown } from "lucide-react";
-import { motion } from "framer-motion";
 
 interface ProgressBarWithLabelProps extends LinearProgressProps {
   value: number,

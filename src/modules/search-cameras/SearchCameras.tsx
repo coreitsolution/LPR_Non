@@ -460,7 +460,7 @@ const SearchCameras: React.FC<SearchCamerasProps> = ({open, onClose, selectedCam
           </Button>
           <Button 
             variant="outlined" 
-            className="secondary-checkpoint-search-btn" 
+            className="cancel-btn" 
             sx={{
               width: "90px",
             }}

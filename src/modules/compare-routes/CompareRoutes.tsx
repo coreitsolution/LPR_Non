@@ -127,7 +127,7 @@ const CompareRoutes: React.FC<CompareRoutesProps> = ({ open, onClose, plateDetai
           <div className="flex justify-end pt-4">
             <Button
               variant="text"
-              className="secondary-checkpoint-search-btn"
+              className="cancel-btn"
               sx={{ width: '100px', height: '40px', '& .MuiSvgIcon-root': { fontSize: 20 } }}
               onClick={onClose}
             >

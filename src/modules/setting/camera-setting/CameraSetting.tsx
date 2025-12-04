@@ -636,7 +636,7 @@ const CameraSetting: React.FC<CameraSettingProps> = ({open, onClose, isEdit, sel
 
             <Button
               variant="text"
-              className="secondary-checkpoint-search-btn"
+              className="cancel-btn"
               sx={{
                 width: "100px",
                 height: "40px",

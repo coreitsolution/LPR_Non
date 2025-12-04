@@ -20,6 +20,7 @@ import Papa from "papaparse";
 import dayjs from 'dayjs';
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import { useLocation } from "react-router-dom";
 
 // Icons
 import SearchIcon from '@mui/icons-material/Search';
@@ -80,7 +81,7 @@ const ManageUser: React.FC<ManageUserProps> = ({}) => {
   const { isOpen } = useHamburger();
   const navigate = useNavigate();
   const { CENTER_API } = getUrls();
-
+  const location = useLocation();
   // Constants
   const CHUNK_SIZE = 500;
   const REQUEST_LIMIT = 5000;
@@ -126,6 +127,20 @@ const ManageUser: React.FC<ManageUserProps> = ({}) => {
     statusId: 2,
     checkpointId: "",
   });
+
+  useEffect(() => {
+    if (location.state?.refresh) {
+      setFormData({
+        name: "",
+        userPermissionId: 0,
+        statusId: 2,
+        checkpointId: "",
+      });
+      setValue("checkpointId", "");
+      fetchUsers(1, rowsPerPage);
+      setPage(1);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     setFormData({

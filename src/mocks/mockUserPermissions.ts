@@ -4,6 +4,7 @@ import { UserPermission } from "../features/types";
 export const mockUserPermission: UserPermission[] = [
   {
     userRoleId: 1,
+    userRole: "ADMIN",
     center: {
       realtime: {
         select: true,
@@ -24,6 +25,7 @@ export const mockUserPermission: UserPermission[] = [
   },
   {
     userRoleId: 2,
+    userRole: "User",
     center: {
       realtime: {
         select: true,
@@ -44,6 +46,7 @@ export const mockUserPermission: UserPermission[] = [
   },
   {
     userRoleId: 3,
+    userRole: "Super User",
     center: {
       realtime: {
         select: true,

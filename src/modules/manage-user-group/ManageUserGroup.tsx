@@ -155,24 +155,6 @@ const ManageUserGroup: React.FC<ManageUserGroupProps> = ({open, onClose, user, s
     // },
   };
 
-  const DEFAULT_CHECKPOINT_PERMISSION = {
-    realtime: {
-      select: false,
-    },
-    suspiciousPersonManage: {
-      select: false,
-    },
-    suspiciousPersonSearch: {
-      select: false,
-    },
-    specialPlateManage: {
-      select: false,
-    },
-    specialPlateSearch: {
-      select: false,
-    },
-  };
-
   const [formData, setFormData] = useState<UserPermission>({
     userRoleId: USER_ROLE_ID,
     userRole: "",
@@ -193,14 +175,12 @@ const ManageUserGroup: React.FC<ManageUserGroupProps> = ({open, onClose, user, s
     else {
       const permission = sliceDropdown.userGroups?.data.find(permission => permission.id === USER_ROLE_ID);
       const centerPermission = permission?.permissions.center || DEFAULT_CENTER_PERMISSION;
-      const checkpointPermission = permission?.permissions.checkpoint || DEFAULT_CHECKPOINT_PERMISSION;
 
       setFormData((prev) => ({
         ...prev,
         userRoleId: USER_ROLE_ID,
         userRole: permission?.group_name || "",
         center: centerPermission,
-        checkpoint: checkpointPermission
       }));
     }
   }, [open, userRoleId, user])
@@ -231,8 +211,9 @@ const ManageUserGroup: React.FC<ManageUserGroupProps> = ({open, onClose, user, s
         if (permission.id === value.value) {
           setFormData((prev) => ({
             ...prev,
+            userRole: permission.group_name,
+            userRoleId: value.value,
             center: permission.permissions.center ?? DEFAULT_CENTER_PERMISSION,
-            checkpoint: permission.permissions.checkpoint ?? DEFAULT_CHECKPOINT_PERMISSION
           }));
         }
       });
@@ -431,7 +412,7 @@ const ManageUserGroup: React.FC<ManageUserGroupProps> = ({open, onClose, user, s
 
             <Button
               variant="text"
-              className="secondary-checkpoint-search-btn"
+              className="cancel-btn"
               sx={{
                 width: "100px",
                 height: "40px",

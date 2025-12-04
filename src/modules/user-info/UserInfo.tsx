@@ -126,6 +126,10 @@ const UserInfo = () => {
   }, [isAllowed, navigate]);
 
   useEffect(() => {
+    setUser(authData.userInfo);
+  }, [authData.userInfo]);
+
+  useEffect(() => {
     if (user) {
       setFormData({
         prefixId: user.title_id,
@@ -176,10 +180,12 @@ const UserInfo = () => {
   
   const handleTextChange = (key: keyof typeof formData, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
+    setValue(key, value);
   };
 
   const handleDropdownChange = (key: keyof typeof formData, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
+    setValue(key, value);
   };
 
   const handlePrefixChange = (
@@ -203,27 +209,27 @@ const UserInfo = () => {
   };
 
   const handleNationalIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const input = event.target.value;
-    const cleaned = input.replace(/\D/g, '');
+    let input = event.target.value.replace(/\D/g, '');
     
-    if (cleaned.length <= 13) {
-      const formatted = formatThaiID(cleaned)
-      handleTextChange("nationalId", formatted);
-      handleTextChange("username", formatted);
-      setValue("username", cleaned);
-    }
-    return cleaned;
+    input = input.slice(0, 13);
+    
+    const formatted = formatThaiID(input);
+    
+    handleTextChange("nationalId", formatted);
+    handleTextChange("username", input);
   }
 
   const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const input = event.target.value;
-    const cleaned = input.replace(/\D/g, '');
+    let input = event.target.value.replace(/\D/g, '');
     
-    if (cleaned.length <= 10) {
-      const formatted = formatPhone(cleaned)
-      handleTextChange("phone", formatted)
+    input = input.slice(0, 10);
+    
+    const formatted = formatPhone(input);
+    
+    handleTextChange("phone", formatted);
+    if (!isEdit) {
+      handleTextChange("password", input);
     }
-    return cleaned
   };
 
   const handleCancelClick = () => {
@@ -253,8 +259,7 @@ const UserInfo = () => {
       if (!confirmed) return;
 
       const nationId = data.nationalId.replaceAll("-", "");
-      const newDob = dayjs(data.dateOfBirth).format("YYYY-MM-DD HH:mm:ss");
-      const oldDob = dayjs(user?.dob).format("YYYY-MM-DD HH:mm:ss");
+      const newDob = data.dateOfBirth ? dayjs(data.dateOfBirth).format("YYYY-MM-DD HH:mm:ss") : null;
       const phone = data.phone.replaceAll("-", "");
 
       const body = JSON.stringify({
@@ -269,14 +274,12 @@ const UserInfo = () => {
           && { username: data.username }
         ),
         ...( data.password 
-          && { password: data.password }
+          && { password: data.password.slice(0, 10) }
         ),
         ...( nationId !== user?.idcard
           && { idcard: nationId }
         ),
-        ...( newDob !== oldDob
-          && { dob: newDob }
-        ),
+        dob: newDob,
         ...( data.firstName !== user?.firstname
           && { firstname: data.firstName }
         ),
@@ -531,7 +534,7 @@ const UserInfo = () => {
                 onChange={(value) => handleDateOfBirthChange(value)}
                 error={!!errors.dateOfBirth}
                 register={register("dateOfBirth", { 
-                  required: true,
+                  required: false,
                 })}
               >
               </DatePickerBuddhist>
@@ -664,7 +667,7 @@ const UserInfo = () => {
 
             <Button
               variant="text"
-              className="secondary-checkpoint-search-btn"
+              className="cancel-btn"
               sx={{
                 width: "100px",
                 height: "40px",

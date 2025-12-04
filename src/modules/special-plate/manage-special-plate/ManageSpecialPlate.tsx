@@ -1,19 +1,19 @@
 import React, {useState, useCallback, useRef, useEffect } from 'react'
-import { 
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Typography,
-  Button,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
-  Divider,
-} from '@mui/material';
 import { useForm, Controller } from "react-hook-form";
 import dayjs from 'dayjs';
 import { useSelector } from "react-redux";
 import { RootState } from "../../../app/store";
+
+// Material UI
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Divider from '@mui/material/Divider';
 
 // Components
 import TextBox from '../../../components/text-box/TextBox';
@@ -186,7 +186,6 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
       setValue("case_number", "");
       setValue("arrest_date", "");
       setValue("end_arrest_date", "");
-      setValue("active_status", "");
       setValue("active_status", 0);
     }
   }, [selectedRow, authData.userInfo])
@@ -662,6 +661,7 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
       ...prevState,
       arrest_warrant_date: date,
     }))
+    setValue("arrest_date", date);
   }
 
   const handleEndArrestDateChange = (date: Date | null) => {
@@ -669,6 +669,7 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
       ...prevState,
       end_arrest_date: date,
     }))
+    setValue("end_arrest_date", date);
   }
 
   const updateSpecialPlate = async (data: any) => {
@@ -697,8 +698,8 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
 
       if (!selectedRow) return;
 
-      const arrestDate = data.arrest_date ? dayjs(data.arrest_date).format("YYYY-MM-DD") : "";
-      const endArrestDate = data.end_arrest_date ? dayjs(data.end_arrest_date).format("YYYY-MM-DD") : "";
+      const arrestDate = data.arrest_date ? dayjs(data.arrest_date).format("YYYY-MM-DD") : null;
+      const endArrestDate = data.end_arrest_date ? dayjs(data.end_arrest_date).format("YYYY-MM-DD") : null;
 
       const body = JSON.stringify({
         id: selectedRow.id,
@@ -843,14 +844,22 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
     const oldFileArray = selectedRow?.filesData?.map((file) => file.url) ?? [];
     const isFileChanged = JSON.stringify(fileArray) !== JSON.stringify(oldFileArray);
 
+    const arrest_warrant_date = selectedRow?.arrest_warrant_date ? dayjs(selectedRow.arrest_warrant_date).format("YYYY-MM-DD") : null
+    const new_arrest_warrant_date = formData.arrest_date ? dayjs(formData.arrest_date).format("YYYY-MM-DD") : null
+    const arrest_warrant_expire_date = selectedRow?.arrest_warrant_expire_date ? dayjs(selectedRow.arrest_warrant_expire_date).format("YYYY-MM-DD") : null
+    const new_arrest_warrant_expire_date = formData.end_arrest_date ? dayjs(formData.end_arrest_date).format("YYYY-MM-DD") : null
+
     const isOtherDataChanged =
       formData.plate_group !== selectedRow?.plate_prefix ||
       formData.plate_number !== selectedRow?.plate_number ||
       getStringId(formData.region_code) !== selectedRow?.region_code ||
       getId(formData.plate_type) !== selectedRow?.plate_class_id ||
-      formData.behavior !== selectedRow?.behavior
+      formData.behavior !== selectedRow?.behavior ||
+      formData.case_number !== selectedRow?.case_number ||
+      new_arrest_warrant_date !== arrest_warrant_date ||
+      new_arrest_warrant_expire_date !== arrest_warrant_expire_date
 
-    const statusChangeOnly = isOnlyStatusChanged && isImageChanged && isFileChanged && !isOtherDataChanged;
+    const statusChangeOnly = isOnlyStatusChanged && !isImageChanged && !isFileChanged && !isOtherDataChanged;
 
     return { all: statusChangeOnly || isOtherDataChanged || isImageChanged || isFileChanged, onlyStatus: statusChangeOnly, isImageChanged, isFileChanged };
   };
@@ -871,7 +880,8 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
   }
 
   const clearData = () => {
-    const ownerName = authData.userInfo ? `${authData?.userInfo?.firstname} ${authData?.userInfo?.lastname}` : "-";
+    const prefix = sliceDropdown.prefix?.data?.find((prefix) => prefix.id === authData?.userInfo?.title_id)
+    const ownerName = authData.userInfo ? `${prefix ? i18n.language === "th" ? prefix.title_th : prefix.title_en : ""}${authData?.userInfo?.firstname} ${authData?.userInfo?.lastname}` : "-";
     const ownerPhone = authData.userInfo ? formatPhone(authData?.userInfo?.phone) : "-";
     setFormData({
       plate_group: "",
@@ -1164,7 +1174,7 @@ const ManageSpecialPlate: React.FC<ManageSpecialPlateProps> = ({open, onClose, s
 
                 <Button
                   variant="text"
-                  className="secondary-checkpoint-search-btn"
+                  className="cancel-btn"
                   sx={{
                     width: "100px",
                     height: "40px",

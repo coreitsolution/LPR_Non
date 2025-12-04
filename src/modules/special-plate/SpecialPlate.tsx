@@ -69,7 +69,7 @@ const SpecialPlatePage: React.FC<SpecialPlateProps> = ({}) => {
   const [isFileImportOpen, setIsFileImportOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openManageSpecialPlate, setOpenManageSpecialPlate] = useState(false);
-  const [importMenu, setImportMenu] = React.useState<null | HTMLElement>(null);
+  const [importMenu, setImportMenu] = useState<null | HTMLElement>(null);
   const open = Boolean(importMenu);
 
   // Data

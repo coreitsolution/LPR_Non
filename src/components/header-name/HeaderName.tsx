@@ -1,6 +1,9 @@
 import React from 'react'
-import { Breadcrumbs, Typography } from "@mui/material";
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
+
+// Material UI
+import Typography from "@mui/material/Typography";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 
 interface HeaderNameProps {
   header: string;

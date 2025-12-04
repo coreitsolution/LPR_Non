@@ -1,10 +1,12 @@
 import { DatePickerProps } from '@mui/x-date-pickers/DatePicker'
 import { DateTimePicker, DateTimePickerProps } from '@mui/x-date-pickers/DateTimePicker';
-import { Typography } from '@mui/material'
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers"
 import buddhistEraAdapter from "../../utils/buddhistEraAdapter"
 import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
+// Material UI
+import Typography from '@mui/material/Typography'
 
 // i18n
 import { useTranslation } from 'react-i18next';

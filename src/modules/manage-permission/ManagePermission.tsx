@@ -172,6 +172,7 @@ const ManagePermission: React.FC<ManagePermissionProps> = ({open, onClose}) => {
 
   const [formData, setFormData] = useState<UserPermission>({
     userRoleId: USER_ROLE_ID,
+    userRole: "",
     center: DEFAULT_CENTER_PERMISSION,
   });
 
@@ -210,6 +211,7 @@ const ManagePermission: React.FC<ManagePermissionProps> = ({open, onClose}) => {
         setFormData((prev) => ({
           ...prev,
           userRoleId: response.data[0].id,
+          userRole: response.data[0].group_name,
           center: response.data[0].permissions.center,
           checkpoint: response.data[0].permissions.checkpoint
         }));
@@ -266,6 +268,7 @@ const ManagePermission: React.FC<ManagePermissionProps> = ({open, onClose}) => {
       setIsLoading(true);
 
       const body = {
+        group_name: formData.userRole.toString().toLowerCase(),
         id: formData.userRoleId,
         permissions: {
           center: formData.center,
@@ -345,13 +348,17 @@ const ManagePermission: React.FC<ManagePermissionProps> = ({open, onClose}) => {
         if (permission.id === value.value) {
           setFormData((prev) => ({
             ...prev,
+            userRole: permission.group_name,
             center: permission.permissions.center ?? DEFAULT_CENTER_PERMISSION,
           }));
         }
       });
       setValue("userRoleName", value);
       setValue("roleType", "object");
-      if (value.label.toString().toLowerCase() !== "admin" && value.label.toString().toLowerCase() !== "user" && value.label.toString().toLowerCase() !== "super user") {
+      if (value.label.toString().toLowerCase() === "admin" || value.label.toString().toLowerCase() === "user" || value.label.toString().toLowerCase() === "super user") {
+        setIsDefaultPermission(true);
+      }
+      else {
         setIsDefaultPermission(false);
       }
     }
@@ -400,6 +407,7 @@ const ManagePermission: React.FC<ManagePermissionProps> = ({open, onClose}) => {
     setFormData((prev) => ({
       ...prev,
       userRoleId: USER_ROLE_ID,
+      userRole: "",
       center: DEFAULT_CENTER_PERMISSION,
     }));
     setUserGroups([]);
@@ -605,7 +613,7 @@ const ManagePermission: React.FC<ManagePermissionProps> = ({open, onClose}) => {
 
             <Button
               variant="text"
-              className="secondary-checkpoint-search-btn"
+              className="cancel-btn"
               sx={{
                 width: "100px",
                 height: "40px",

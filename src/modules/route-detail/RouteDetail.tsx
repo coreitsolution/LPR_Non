@@ -308,7 +308,7 @@ const RouteDetail: React.FC<RouteDetailProps> = ({open, onClose, plateDetailList
           <div className='flex justify-end'>
             <Button
               variant="text"
-              className="secondary-checkpoint-search-btn"
+              className="cancel-btn"
               sx={{
                 width: "100px",
                 height: "40px",

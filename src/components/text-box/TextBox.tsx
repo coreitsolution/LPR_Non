@@ -1,6 +1,11 @@
 import React, { useState } from "react"
-import { TextField, InputAdornment, IconButton, Typography } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+
+// Material UI
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
 
 type TextBoxProps = {
   id?: string
