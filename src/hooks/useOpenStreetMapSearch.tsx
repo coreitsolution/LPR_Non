@@ -394,9 +394,11 @@ export const useMapSearch = (map: LeafletMap | null, ableToClick = false) => {
         bounds.extend(coordinates);
       }
 
-      for (const cp of coordinatesList) {
-        await markerManager.createCheckpointMarker(cp);
-      }
+      await Promise.all(
+        coordinatesList.map(cp =>
+          markerManager.createCheckpointMarker(cp)
+        )
+      );
 
       if (coordinatesList.length > 1) {
         map.flyToBounds(bounds, {

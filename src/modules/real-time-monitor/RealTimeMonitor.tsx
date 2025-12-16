@@ -9,8 +9,7 @@ import dayjs from 'dayjs'
 import buddhistEra from 'dayjs/plugin/buddhistEra'
 import { useSelector } from "react-redux"
 import { RootState } from "../../app/store"
-import { toast } from 'react-toastify';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { Map as LeafletMap } from 'leaflet';
 import { motion, AnimatePresence } from "framer-motion";
 import utc from 'dayjs/plugin/utc';
@@ -56,7 +55,7 @@ import { getUrls } from '../../config/runtimeConfig';
 
 // API
 import {
-  updateToastMessage,
+    updateToastMessage,
 } from '../../features/realtime-data/realtimeDataSlice';
 
 dayjs.extend(buddhistEra);
@@ -67,7 +66,7 @@ interface RealTimeMonitorProps {
 
 }
 
-const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
+const RealTimeMonitor: React.FC<RealTimeMonitorProps> = () => {
   const dispatch = useAppDispatch();
   const { CENTER_FILE_URL, CENTER_API } = getUrls();
 
@@ -79,7 +78,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
   // Data
   const [prevCameraIds, setPrevCameraIds] = useState<Camera[]>([]);
   const [selectedCameraIds, setSelectedCameraIds] = useState<Camera[]>([]);
-  const [selectedCameraObjects, setSelectedCameraObjects] = useState<{value: any, label: string}[]>([]);
+  const [selectedCameraObjects, setSelectedCameraObjects] = useState<{value: string, label: string}[]>([]);
   const [map, setMap] = useState<LeafletMap | null>(null);
   const [cameraList, setCameraList] = useState<Camera[]>([])
   const [notificationList, setNotificationList] = useState<Map<string, NotificationList[]>>(new Map());
@@ -87,13 +86,14 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
   // State
   const [searchCheckpointsVisible, setSearchCheckpointsVisible] = useState(false);
   const [showScrollbar, setShowScrollbar] = useState(false);
-  const [isSearchClicked, setIsSearchClicked] = useState(false);
+  const [isSearchClicked, setIsSearchClicked] = useState(false); 
 
   // Options
-  const [camerasOption, setCamerasOption] = useState<{value: any, label: string}[]>([]);
+  const [camerasOption, setCamerasOption] = useState<{value: string, label: string}[]>([]);
 
   // Ref
   const shownToastsRef = useRef<string[]>([]);
+  const initialSearchRanRef = useRef(false);
 
   const cameraRefreshKey = useSelector((state: RootState) => state.refresh.cameraRefreshKey);
 
@@ -113,6 +113,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
     handleSubmit,
   } = useForm();
   
+  // Map Search Hook
   const {
     searchSpecialCheckpoint,
     clearSearchPlaces,
@@ -134,19 +135,20 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
   }, [i18n.language, i18n.isInitialized])
 
   useEffect(() => {
-    if (cameraList) {
+    if (cameraList.length > 0) {
       const hasAll = selectedCameraObjects.some((v) => v.value === "0");
-      const newCameraList = hasAll ? cameraList : cameraList.filter(c => selectedCameraObjects.map(sc => sc.value).includes(c.camera_uid));
+      const selectedUids = selectedCameraObjects.map(sc => String(sc.value)); 
+      
+      const newCameraList = hasAll 
+        ? cameraList 
+        : cameraList.filter(c => selectedUids.includes(c.camera_uid));
+      
       setSelectedCameraIds(newCameraList);
     }
   }, [selectedCameraObjects, cameraList])
 
   useEffect(() => {
-    setPrevCameraIds(cameraList);
-  }, [cameraList])
-
-  useEffect(() => {
-    if (cameraList) {
+    if (cameraList.length > 0) {
       const options = cameraList.map((row) => ({
         label: row.camera_name,
         value: row.camera_uid,
@@ -156,77 +158,80 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
   }, [cameraList, i18n.language, i18n.isInitialized])
 
   useEffect(() => {
-    if (!toastNotification || toastNotification.length === 0) return;
-
-    showToastsAndMapPin();
-  }, [toastNotification, selectedCameraIds]);
-
-  useEffect(() => {
     fetchData();
   }, [cameraRefreshKey]);
 
+  useEffect(() => {
+    if (map && cameraList.length > 0 && !initialSearchRanRef.current) {
+      setSelectedCameraObjects([{ label: t('dropdown.all'), value: "0" }]);
+      
+      // Run the search
+      handleSearch(cameraList); 
+      initialSearchRanRef.current = true;
+    }
+  }, [map, cameraList, i18n.language]);
+
+  useEffect(() => {
+    if (!toastNotification || toastNotification.length === 0 || !initialSearchRanRef.current) return;
+
+    showToastsAndMapPin();
+  }, [toastNotification, prevCameraIds]);
+
   useEffect(() => { 
-    if (!notificationList || !isSearchClicked) return;
+    if (!notificationList || !isSearchClicked) return; 
 
     const runSearch = async () => {
-      const tasks: Promise<void>[] = [];
+      const allNotificationItems: NotificationList[] = [];
 
-      for (const camera of prevCameraIds) {
+      for (const camera of prevCameraIds) { 
         const listForKey = notificationList.get(camera.camera_uid) || [];
 
         const sortedList = [...listForKey].sort(
-          (a, b) => new Date(a.detectTime).getTime() - new Date(b.detectTime).getTime()
+          (a, b) => new Date(b.detectTime).getTime() - new Date(a.detectTime).getTime()
         );
 
         const isLocationWithLabel = true;
         const defaultColor = "#FDCC0A";
 
         if (sortedList.length > 0) {
-          // Multiple notifications → show pins + dialog
           const enhancedList = sortedList.map(item => ({
             ...item,
+            camera_latitude: camera.latitude, 
+            camera_longitude: camera.longitude,
             iconColor: item.iconColor || "#DD2025",
             bgColor: item.bgColor || "#DD2025",
             isLocationWithLabel,
             isSpecialLocation: true
           }));
 
-          tasks.push(searchSpecialCheckpoint(enhancedList));
-        } 
-        else {
-          // No notifications → single pin only
-          const fallbackItem = [{
+          allNotificationItems.push(...enhancedList); 
+
+        } else {
+          const fallbackItem = {
             id: camera.id,
             camera_uid: camera.camera_uid,
-            camera_name: "",
-            plate_number: "",
-            plate_prefix: "",
-            region_code: "",
+            camera_name: camera.camera_name,
+            // ... other fallback properties
             iconColor: defaultColor,
             bgColor: defaultColor,
-            textShadow: "",
             isLocationWithLabel,
             isSpecialLocation: false,
             detectTime: "",
             camera_latitude: camera.latitude,
             camera_longitude: camera.longitude,
-          }];
+          };
 
-          tasks.push(searchSpecialCheckpoint(fallbackItem));
+          allNotificationItems.push(fallbackItem as NotificationList); 
         }
       }
-
-      await Promise.all(tasks);
+        
+      if (allNotificationItems.length > 0) {
+        await searchSpecialCheckpoint(allNotificationItems); 
+      }
     };
 
     runSearch();
-  }, [notificationList]);
-
-  useEffect(() => {
-    if (!map && selectedCameraIds.length > 0) return;
-
-    handleSearch();
-  }, [map, selectedCameraIds])
+  }, [notificationList, isSearchClicked, prevCameraIds]);
 
   const fetchData = async () => {
     try {
@@ -249,37 +254,38 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
   };
 
   const showToastsAndMapPin = async () => {
+    const uniqueToastIds: string[] = [];
+    
     for (const data of toastNotification) {
       const uniqueKey = `${data.plate}-${data.epoch_end}`;
-
-      if (selectedCameraIds.length === 0) return;
 
       // Skip if already shown
       if (shownToastsRef.current.includes(uniqueKey)) continue;
 
-      // Track shown toasts
+      const cameraMatched = prevCameraIds.find( 
+        (camera) => camera.camera_uid === data.camera_uid
+      );
+
+      if (!cameraMatched) continue; // Skip if camera is not currently selected/pinned
+
       shownToastsRef.current.unshift(uniqueKey);
       if (shownToastsRef.current.length > 20) {
         shownToastsRef.current = shownToastsRef.current.slice(0, 20);
       }
-
-      // Match camera
-      const cameraMatched = selectedCameraIds.find(
-        (camera) => camera.camera_uid === data.camera_uid
-      );
+      
+      uniqueToastIds.push(uniqueKey);
 
       const updatedData = {
         ...data,
-        camera_name: cameraMatched?.camera_name || "-",
-        camera_latitude: cameraMatched?.latitude || "",
-        camera_longitude: cameraMatched?.longitude || "",
+        camera_name: cameraMatched.camera_name || "-",
+        camera_latitude: cameraMatched.latitude || "",
+        camera_longitude: cameraMatched.longitude || "",
       };
 
       const newEpochEnd = dayjs(data.epoch_end).format(
         i18n.language === "th" ? "DD-MM-BBBB HH:mm:ss" : "DD-MM-YYYY HH:mm:ss"
       );
 
-      // Update notification list
       setNotificationList((prev) => {
         const newMap = new Map(prev);
         const key = data.camera_uid;
@@ -319,14 +325,15 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
               setNotificationList((prev) => {
                 const newMap = new Map(prev);
                 newMap.forEach((list, key) => {
-                  const filtered = list.filter(
+                    const filtered = list.filter(
                     (item) => item.id !== updatedData.id
-                  );
-                  if (filtered.length > 0) newMap.set(key, filtered);
-                  else newMap.delete(key);
+                    );
+                    if (filtered.length > 0) newMap.set(key, filtered);
+                    else newMap.delete(key);
                 });
                 return newMap;
               });
+              
               const newData = toastNotification.filter(
                 (item) => item.id !== updatedData.id
               );
@@ -350,56 +357,7 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
       );
     }
   };
-
-  const showMapPin = async () => {
-    for (const data of toastNotification) {
-
-      // Match camera
-      const cameraMatched = selectedCameraIds.find(
-        (camera) => camera.camera_uid === data.camera_uid
-      );
-
-      const updatedData = {
-        ...data,
-        camera_name: cameraMatched?.camera_name || "-",
-        camera_latitude: cameraMatched?.latitude || "",
-        camera_longitude: cameraMatched?.longitude || "",
-      };
-
-      const newEpochEnd = dayjs(data.epoch_end).format(
-        i18n.language === "th" ? "DD-MM-BBBB HH:mm:ss" : "DD-MM-YYYY HH:mm:ss"
-      );
-
-      // Update notification list
-      setNotificationList((prev) => {
-        const newMap = new Map(prev);
-        const key = data.camera_uid;
-        const existing = newMap.get(key) || [];
-
-        newMap.set(key, [
-          ...existing,
-          {
-            id: data.id,
-            camera_uid: data.camera_uid,
-            camera_name: updatedData.camera_name,
-            plate_number: data.plate_number,
-            plate_prefix: data.plate_prefix,
-            region_code: data.region_code,
-            iconColor: data.color,
-            bgColor: data.pin_background_color,
-            textShadow: data.text_shadow,
-            isLocationWithLabel: true,
-            isSpecialLocation: true,
-            detectTime: newEpochEnd,
-            camera_latitude: updatedData.camera_latitude,
-            camera_longitude: updatedData.camera_longitude,
-          },
-        ]);
-        return newMap;
-      });
-    }
-  };
-
+  
   const handleCameraChange = (ids: string[]) => {
     let newIds: string[];
 
@@ -411,42 +369,38 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
 
     const selectedObjects = camerasOption.filter(c => newIds.includes(c.value));
     setSelectedCameraObjects(selectedObjects);
-
-    const hasAll = selectedObjects.some((v) => v.value === "0");
-    
-    setSelectedCameraIds(hasAll ? cameraList : cameraList.filter(c => newIds.includes(c.camera_uid)));
   };
 
-  const handleSearch = async () => {
-    if (selectedCameraObjects.length === 0) {
+  const handleSearch = async (initialCameras?: Camera[]) => {
+    if (!map) return;
+    
+    const currentSelectedCameras = initialCameras || selectedCameraIds;
+
+    if (currentSelectedCameras.length === 0) {
       clearSearchPlaces();
+      setPrevCameraIds([]);
       return;
     }
+    
     setIsSearchClicked(true);
-    clearSearchPlaces();
 
-    const removedIds = prevCameraIds.filter(id => !selectedCameraIds.includes(id));
+    const removedIds = prevCameraIds.filter(prevCam => 
+      !currentSelectedCameras.some(newCam => newCam.camera_uid === prevCam.camera_uid)
+    );
 
-    if (removedIds.length > 0) {
-      removedIds.forEach(camera => {
-        const removedCheckpoint = cameraList.find(cp => cp.camera_uid === camera.camera_uid);
-        if (removedCheckpoint) {
-          const location = {
-            lat: parseFloat(removedCheckpoint.latitude),
-            lng: parseFloat(removedCheckpoint.longitude),
-          };
-          
-          clearPlaceMarkerWithLocation(location);
-        }
-      });
-    }
+    removedIds.forEach(camera => {
+      clearPlaceMarkerWithLocation({
+        lat: parseFloat(camera.latitude),
+        lng: parseFloat(camera.longitude),
+      }); 
+    });
 
-    setPrevCameraIds(selectedCameraIds);
+    setPrevCameraIds(currentSelectedCameras);
 
-    const data = selectedCameraIds.map((camera) => {
-      let iconColor = "#FDCC0A";
-      let isLocationWithLabel = true;
-      let isSpecialLocation = false;
+    const searchData = currentSelectedCameras.map((camera) => {
+      const activeAlerts = (notificationList.get(camera.camera_uid) || []).length > 0;
+      const defaultColor = "#FDCC0A";
+      const alertColor = "#DD2025";
 
       return {
         id: camera.id,
@@ -455,31 +409,39 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
         plate_number: "",
         plate_prefix: "",
         region_code: "",
-        iconColor,
-        bgColor: iconColor,
+        iconColor: activeAlerts ? alertColor : defaultColor,
+        bgColor: activeAlerts ? alertColor : defaultColor,
         textShadow: "",
-        isLocationWithLabel,
-        isSpecialLocation,
+        isLocationWithLabel: true,
+        isSpecialLocation: activeAlerts,
         detectTime: "",
         camera_latitude: camera.latitude,
         camera_longitude: camera.longitude,
       }
     })
 
-    await searchSpecialCheckpoint(data);
+    await searchSpecialCheckpoint(searchData);
 
-    showMapPin();
+    setNotificationList(prev => new Map(prev)); 
   };
+  
+  const onSubmitSearch = () => {
+    handleSearch();
+  }
 
   const handleClearSearch = async () => {
     setSelectedCameraObjects([{ label: t('dropdown.all'), value: "0" }]);
+    
+    clearSearchPlaces();
+    setPrevCameraIds([]);
+    setIsSearchClicked(false);
   };
 
   const handleMapLoad = useCallback((mapInstance: LeafletMap | null) => {
     setMap(mapInstance)
   }, []);
 
-  const handleCamerasSelected = (cameraSelected: {value: any, label: string}[]) => {
+  const handleCamerasSelected = (cameraSelected: {value: string, label: string}[]) => {
     setSelectedCameraObjects(cameraSelected);
   };
 
@@ -500,58 +462,58 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
         <Typography variant="h5" color="white" className="font-bold">{t('screen.real-time.title')}</Typography>
         
         {/* Search Filter Part */}
-        <form onSubmit={handleSubmit(handleSearch)}>
+        <form onSubmit={handleSubmit(onSubmitSearch)}>
           <div className='flex mt-3'>
             <div className='flex w-[60vw] space-x-3'>
               <div className='flex flex-col w-full space-y-2'>
                 <p className='text-[15px]'>{t('component.checkpoint-2')}</p>
                 <div className='w-full items-center justify-center'>
-                  <MultiSelectCameras 
+                    <MultiSelectCameras 
                     limitTags={3} 
                     selectedValues={selectedCameraObjects}
                     options={camerasOption} 
                     onChange={handleCameraChange}
                     placeHolder={t('placeholder.checkpoint-2')}
-                  />
+                    />
                 </div>
               </div>
               <div className='flex items-end'>
                 <button 
-                  type="button"
-                  className="flex items-center justify-center bg-[#797979] w-[60px] h-10 rounded-[5px] cursor-pointer"
-                  onClick={() => setSearchCheckpointsVisible(true)}>
-                  <img src={PinGoogleMap} alt="Pin Google map" className='w-[25px] h-[25px]' />
+                    type="button"
+                    className="flex items-center justify-center bg-[#797979] w-[60px] h-10 rounded-[5px] cursor-pointer"
+                    onClick={() => setSearchCheckpointsVisible(true)}>
+                    <img src={PinGoogleMap} alt="Pin Google map" className='w-[25px] h-[25px]' />
                 </button>
               </div>
 
               <div className='flex items-end gap-2 ml-2'>
                 <Button
-                  type='submit'
-                  variant="contained"
-                  className="primary-btn"
-                  startIcon={<SearchIcon />}
-                  sx={{
+                    type='submit'
+                    variant="contained"
+                    className="primary-btn"
+                    startIcon={<SearchIcon />}
+                    sx={{
                     width: t('button.search-width'),
                     height: "40px",
                     textTransform: 'capitalize',
                     '& .MuiSvgIcon-root': { 
                       fontSize: 26 
                     } 
-                  }}
-                  >
-                  {t('button.search')}
+                    }}
+                    >
+                    {t('button.search')}
                 </Button>
                 <Button 
-                  variant="outlined" 
-                  className="secondary-btn" 
-                  onClick={handleClearSearch}
-                  sx={{
+                    variant="outlined" 
+                    className="secondary-btn" 
+                    onClick={handleClearSearch}
+                    sx={{
                     width: t('button.clear-width'),
                     height: "40px",
                     textTransform: 'capitalize',
-                  }}
+                    }}
                 >
-                  {t('button.clear')}
+                    {t('button.clear')}
                 </Button>
               </div>
             </div>
@@ -583,19 +545,19 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
                 pauseOnHover
                 theme="dark"
                 style={{
-                  position: 'absolute',
-                  bottom: '1px',
-                  left: '5px',
-                  zIndex: 50,
-                  maxHeight: '75vh',
-                  overflowX: 'hidden',
-                  overflowY: showScrollbar ? 'auto' : 'hidden',
-                  scrollbarWidth: showScrollbar ? 'thin' : 'none',
-                  msOverflowStyle: showScrollbar ? 'auto' : 'none',
+                    position: 'absolute',
+                    bottom: '1px',
+                    left: '5px',
+                    zIndex: 50,
+                    maxHeight: '75vh',
+                    overflowX: 'hidden',
+                    overflowY: showScrollbar ? 'auto' : 'hidden',
+                    scrollbarWidth: showScrollbar ? 'thin' : 'none',
+                    msOverflowStyle: showScrollbar ? 'auto' : 'none',
                 }}
                 className={`${showScrollbar ? 'customScrollbar' : 'hide-scrollbar'}`}
                 toastClassName={() =>
-                  'bg-black mb-2'
+                    'bg-black mb-2'
                 }
               />
             </div>
@@ -604,13 +566,14 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
           <div className='h-[75.5vh] overflow-y-auto'>
             <AnimatePresence initial={false}>
               {realtimeData.map((data, index) => {
+                // Filter results to show only those for currently pinned cameras
                 if (prevCameraIds.every((camera) => camera.camera_uid !== data.camera_uid)) return null;
                 
                 return (
-                  <motion.div
+                    <motion.div
                     key={`data_${data.id}_${index}`}
                     className='flex flex-col border border-[#CCD0CF]'
-                  >
+                    >
                     <div className='grid grid-cols-[55%_45%]'>
                       {/* Plate Header */}
                       {
@@ -620,10 +583,10 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
                           const provinceName = getProvinceName(data.region_code);
                           return (
                             <p
-                              className="text-center"
-                              style={{ backgroundColor: feedBackgroundColor, color }}
+                                className="text-center"
+                                style={{ backgroundColor: feedBackgroundColor, color }}
                             >
-                              {`${data.plate}${provinceName && ` ${provinceName}`}`}
+                                {`${data.plate}${provinceName && ` ${provinceName}`}`}
                             </p>
                           );
                         })()
@@ -656,40 +619,40 @@ const RealTimeMonitor: React.FC<RealTimeMonitorProps> = ({}) => {
                         <div className="h-full flex flex-col p-1 pl-3 space-y-2">
                           {
                             (() => {
-                              const vehicleColor = sliceDropdown.vehicleColors?.data.find(color => color.color === data.vehicle_color);
+                                const vehicleColor = sliceDropdown.vehicleColors?.data.find(color => color.color === data.vehicle_color);
 
-                              let newVehicleColor = "-";
-                              if (vehicleColor) {
-                                newVehicleColor = i18n.language === "th"
+                                let newVehicleColor = "-";
+                                if (vehicleColor) {
+                                  newVehicleColor = i18n.language === "th"
                                   ? vehicleColor.color_th || "-"
                                   : vehicleColor.color_en || "-";
-                              } 
-                              else {
-                                newVehicleColor = data.vehicle_color || "-";
-                              }
+                                } 
+                                else {
+                                  newVehicleColor = data.vehicle_color || "-";
+                                }
 
-                              return (
-                                [
+                                return (
+                                  [
                                   { label: t('feed-data.type'), value: data.vehicle_body_type },
                                   { label: t('feed-data.brand'), value: data.vehicle_make },
                                   { label: t('feed-data.color'), value: newVehicleColor },
                                   { label: t('feed-data.model'), value: data.vehicle_model },
-                                ].map(({ label, value }, idx) => (
+                                  ].map(({ label, value }, idx) => (
                                   <div className="flex" key={idx}>
                                     <span className="w-[55px] text-left">{label}</span>
                                     <span className="mx-1">:</span>
                                     <span className="w-[135px] truncate" title={reformatString(value)}>
-                                      {reformatString(value)}
+                                        {reformatString(value)}
                                     </span>
                                   </div>
-                                ))
-                              )
+                                  ))
+                                )
                             })()
                           }
                         </div>
                       </div>
                     </div>
-                  </motion.div>
+                    </motion.div>
                 )
               })
               }

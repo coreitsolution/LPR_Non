@@ -650,9 +650,13 @@ function Nav() {
           )}
         </div>
       </div>
-      <div className="fixed items-center justify-center bg-black bottom-5 left-5">
-        <p>{`Ver ${version}`}</p>
-      </div>
+      {
+        isOpen && (
+          <div className="fixed items-center justify-center bg-black bottom-5 left-5">
+            <p>{`Ver ${version}`}</p>
+          </div>
+        )
+      }
     </nav>
   );
 }
