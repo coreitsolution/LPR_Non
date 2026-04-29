@@ -76,8 +76,12 @@ import { toastChannel } from "./utils/channel";
 import { useSse } from "./utils/useSse";
 import { createNotificationToast } from "./utils/notification";
 import { fetchClient, combineURL } from "./utils/fetchClient";
+
 // Types
 import { SpecialPlate, EventNotifyResponse, EventNotify } from "./features/types";
+
+// Constants
+import { SHOW_POPUP_STORAGE_KEY } from "./constants/localStorage";
 
 const PrivateRouteWrapper = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
@@ -207,6 +211,8 @@ const PrivateRouteWrapper = ({ children }: { children: React.ReactNode }) => {
       ? "cameraOnline"
       : "cameraOffline"
 
+    const storedValue = localStorage.getItem(SHOW_POPUP_STORAGE_KEY);
+
     createNotificationToast({
       dispatch,
       component: CameraStatusPopup,
@@ -227,7 +233,8 @@ const PrivateRouteWrapper = ({ children }: { children: React.ReactNode }) => {
         maxHeight: isOnline ? "220px" : "250px",
       },
       closeAction: "closeCameraStatusAlert",
-      id: cameraData.event_id
+      id: cameraData.event_id,
+      isShowPopUp: storedValue === null || storedValue === "true" ? true : false,
     });
   };
 

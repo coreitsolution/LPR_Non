@@ -134,7 +134,9 @@
     "plate-type-group": "กลุ่มทะเบียน",
     "remark-behavior": "หมายเหตุ/พฤติการณ์",
     "sub-district": "ตำบล",
-    "search-camera-id": "ค้นหากล้อง(ID)"
+    "search-camera-id": "ค้นหากล้อง(ID)",
+    "username": "Username",
+    "password": "Password"
   },
   "placeholder": {
     "checkpoint-station": "ค้นหาจุดตรวจชื่อด่าน",
@@ -201,7 +203,9 @@
     "checkpoint-all": "ทั้งหมด",
     "add-checkpoint-data": "เพิ่มข้อมูลด่าน",
     "sub-district": "กรุณาเลือกตำบล",
-    "search-camera-id": "ค้นหา"
+    "search-camera-id": "ค้นหา",
+    "username": "Username",
+    "password": "Password"
   },
   "screen": {
     "real-time": {
@@ -574,5 +578,11 @@
     "show-notification": "Show Notification",
     "hide-notification": "Hide Notification",
     "confirm-all-notification": "Confirm All Notification"
+  },
+  "form": {
+    "password": {
+      "min": "รหัสผ่านต้องมีความยาวอย่างน้อย {{number}} ตัวอักษร",
+      "max": "รหัสผ่านต้องมีความยาวไม่เกิน {{number}} ตัวอักษร"
+    }
   }
 }

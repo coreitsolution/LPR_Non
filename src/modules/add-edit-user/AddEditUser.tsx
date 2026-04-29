@@ -795,7 +795,7 @@ const AddEditUser = () => {
               <TextBox
                 sx={{ marginTop: "10px", fontSize: "15px" }}
                 id="username"
-                label="Username"
+                label={`${t('component.username')}`}
                 autoComplete="username"
                 value={formData.username}
                 required={true}
@@ -811,7 +811,7 @@ const AddEditUser = () => {
               sx={{ marginTop: "10px", fontSize: "15px" }}
               type="password"
               id="password"
-              label="Password"
+              label={`${t('component.password')}`}
               autoComplete="current-password"
               value={formData.password}
               onChange={(event) =>
@@ -820,9 +820,18 @@ const AddEditUser = () => {
               error={!!errors.password}
               register={register("password", { 
                 required: isEdit ? false : true,
+                minLength: {
+                  value: 4,
+                  message: t('form.password.min', { number: 4 }),
+                },
+                maxLength: {
+                  value: 16,
+                  message: t('form.password.max', { number: 16 }),
+                },
               })}
               required={isEdit ? false : true}
               disabled={disablePassword()}
+              helperText={errors.password?.message as string}
             />
             <div className='flex items-end ml-[-50px]'>
               <Button

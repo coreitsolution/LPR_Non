@@ -1,0 +1,1 @@
+export const SHOW_POPUP_STORAGE_KEY = "showNotificationPopup";

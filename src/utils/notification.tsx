@@ -28,6 +28,7 @@ type NotificationToastParams = {
   id: number;
   updateAction?: () => void;
   closeAction?: string;
+  isShowPopUp?: boolean;
 };
 
 export const createNotificationToast = ({
@@ -44,6 +45,7 @@ export const createNotificationToast = ({
   id,
   updateAction,
   closeAction,
+  isShowPopUp = true,
 }: NotificationToastParams) => {
   const toastId = `notification-list-toast-${messageId}`;
 
@@ -95,7 +97,9 @@ export const createNotificationToast = ({
     },
   };
 
-  showToast(component, data, theme, toastId, style);
+  if (isShowPopUp) {
+    showToast(component, data, theme, toastId, style);
+  };
 };
 
 

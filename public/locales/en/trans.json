@@ -134,7 +134,9 @@
     "plate-type-group": "Plate Type",
     "remark-behavior": "Remark/Behavior",
     "sub-district": "Sub District",
-    "search-camera-id": "Search Camera (ID)"
+    "search-camera-id": "Search Camera (ID)",
+    "username": "Username",
+    "password": "Password"
   },
   "placeholder": {
     "checkpoint-station": "Find the checkpoint name",
@@ -201,7 +203,9 @@
     "checkpoint-all": "All",
     "add-checkpoint-data": "Add Checkpoint Data",
     "sub-district": "Please select the sub district",
-    "search-camera-id": "Search"
+    "search-camera-id": "Search",
+    "username": "Username",
+    "password": "Password"
   },
   "screen": {
     "real-time": {
@@ -574,5 +578,11 @@
     "show-notification": "Show Notification",
     "hide-notification": "Hide Notification",
     "confirm-all-notification": "Confirm All Notification"
+  },
+  "form": {
+    "password": {
+      "min": "Password must be at least {{number}} characters long",
+      "max": "Password must not exceed {{number}} characters"
+    }
   }
 }

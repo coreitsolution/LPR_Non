@@ -1,10 +1,10 @@
 {
-  "CENTER_API": "https://lpr-center.local",
+  "CENTER_API": "https://coreit-lpr-center.local",
   "CENTER_FILE_URL": "",
   "CENTER_API_VERSION": "v0",
   "CENTER_TOKEN": "1e7c00ad1e0bfd4a4e7c0d617345c1dca95493f36974d7b295cbf54bb8af736a",
   "CENTER_OSRM_URL": "http://localhost:5000",
-  "CENTER_SERVER_SENT_EVENTS_URL": "https://lpr-center.local/events-agent/events",
+  "CENTER_SERVER_SENT_EVENTS_URL": "https://coreit-lpr-center.local/events-agent/events",
   "CENTER_SERVER_SENT_EVENTS_TOKEN": "fKa9RnG6H9Oo3giH2-eessXsPwk0YZ3jqxcjfsA7Zrjq5YaY9eh.ibMFXcyKPSRMGU0tb-n8q4yxqBtJFeQCvLSaC7TyAay.z02wJm",
   "PROJECT_NAME": "License Plate Recognition",
   "NAV_LOGO_BG_WHITE": false

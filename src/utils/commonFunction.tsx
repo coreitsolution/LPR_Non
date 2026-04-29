@@ -8,6 +8,8 @@ import { Option } from '../features/types';
 const SALT_ROUNDS = 10;
 
 export const reformatString = (input: string): string => {
+  if (typeof input !== "string") return "";
+  
   return input
     .split('_') // Split the string by underscores
     .map(word => 

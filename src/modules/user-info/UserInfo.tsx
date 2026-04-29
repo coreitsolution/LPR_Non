@@ -274,7 +274,7 @@ const UserInfo = () => {
           && { username: data.username }
         ),
         ...( data.password 
-          && { password: data.password.slice(0, 10) }
+          && { password: data.password }
         ),
         ...( nationId !== user?.idcard
           && { idcard: nationId }
@@ -616,7 +616,7 @@ const UserInfo = () => {
               <TextBox
                 sx={{ marginTop: "10px", fontSize: "15px" }}
                 id="username"
-                label="Username"
+                label={`${t('component.username')}`}
                 value={formData.username}
                 required={false}
                 error={!!errors.username}
@@ -631,7 +631,7 @@ const UserInfo = () => {
               sx={{ marginTop: "10px", fontSize: "15px" }}
               type="password"
               id="password"
-              label="Password"
+              label={`${t('component.password')}`}
               value={formData.password}
               onChange={(event) =>
                 handleTextChange("password", event.target.value)
@@ -639,9 +639,18 @@ const UserInfo = () => {
               error={!!errors.password}
               register={register("password", { 
                 required: false,
+                minLength: {
+                  value: 4,
+                  message: t('form.password.min', { number: 4 }),
+                },
+                maxLength: {
+                  value: 16,
+                  message: t('form.password.max', { number: 16 }),
+                },
               })}
               required={false}
               disabled={!isEdit}
+              helperText={errors.password?.message as string}
             />
           </div>
 
